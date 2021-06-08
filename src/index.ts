@@ -54,6 +54,7 @@ class HttpError extends Error  {
     this.status = status in STATUS_CODES ? status : 500
     this.message = message || STATUS_CODES[status] || 'unknown'
     this.origin = origin
+    // Determines if details about the error should be automatically exposed in a response.
     this.expose = expose
     Error.captureStackTrace(this, this.constructor)
   }
@@ -61,6 +62,18 @@ class HttpError extends Error  {
   get name(): string {
     return 'HttpError'
   }
+
+  static isHttpError (value: unknown): boolean {
+    return value instanceof HttpError
+  }
+}
+
+
+/**
+* Expose `isHttpError`.
+*/
+export function isHttpError(value: unknown): boolean {
+  return value instanceof HttpError
 }
 
 /**
@@ -68,67 +81,3 @@ class HttpError extends Error  {
 */
 
 export default HttpError
-
-
-// function createError () {
-//   var err
-//   var msg
-//   var status = 500
-//   var props = {}
-//   for (var i = 0; i < arguments.length; i++) {
-//     var arg = arguments[i]
-//     if (arg instanceof Error) {
-//       err = arg
-//       status = err.status || err.statusCode || status
-//       continue
-//     }
-//     switch (typeof arg) {
-//       case 'string':
-//         msg = arg
-//         break
-//       case 'number':
-//         status = arg
-//         if (i !== 0) {
-//           deprecate('non-first-argument status code; replace with createError(' + arg + ', ...)')
-//         }
-//         break
-//       case 'object':
-//         props = arg
-//         break
-//     }
-//   }
-
-//   if (typeof status === 'number' && (status < 400 || status >= 600)) {
-//     deprecate('non-error status code; use only 4xx or 5xx status codes')
-//   }
-
-//   if (typeof status !== 'number' ||
-//     (!statuses[status] && (status < 400 || status >= 600))) {
-//     status = 500
-//   }
-
-//   // constructor
-//   var HttpError = createError[status] || createError[codeClass(status)]
-
-//   if (!err) {
-//     // create error
-//     err = HttpError
-//       ? new HttpError(msg)
-//       : new Error(msg || statuses[status])
-//     Error.captureStackTrace(err, createError)
-//   }
-
-//   if (!HttpError || !(err instanceof HttpError) || err.status !== status) {
-//     // add properties to generic error
-//     err.expose = status < 500
-//     err.status = err.statusCode = status
-//   }
-
-//   for (var key in props) {
-//     if (key !== 'status' && key !== 'statusCode') {
-//       err[key] = props[key]
-//     }
-//   }
-
-//   return err
-// }

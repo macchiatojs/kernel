@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import HttpError from '../src'
+import HttpError, { isHttpError } from '../src'
 
 describe('http-error', () => {
   it('should have error stack and status', ()=> {
@@ -46,5 +46,25 @@ describe('http-error', () => {
     expect(error.status).to.be.equal(500)
     // here unknown because we pass 700 as status code.
     expect(() => { throw error }).to.throw(/unknown/) 
+  })
+
+  it('should check method through isHttpError as static method', () => {
+    const error = new HttpError(404)
+
+    expect(error.stack).to.be.not.undefined
+    expect(error.name).to.be.equal('HttpError')
+    expect(error.status).to.be.equal(404)
+    expect(() => { throw error }).to.throw(/Not Found/)
+    expect(HttpError.isHttpError(error)).to.be.true
+  })
+
+  it('should check method through isHttpError as separate method', () => {
+    const error = new HttpError(404)
+
+    expect(error.stack).to.be.not.undefined
+    expect(error.name).to.be.equal('HttpError')
+    expect(error.status).to.be.equal(404)
+    expect(() => { throw error }).to.throw(/Not Found/)
+    expect(isHttpError(error)).to.be.true
   })
 })

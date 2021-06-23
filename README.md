@@ -1,4 +1,4 @@
-# agnostic-http-errors
+# @macchiatojs/http-error
 
 A Modern Http Errors.
 
@@ -6,15 +6,15 @@ A Modern Http Errors.
 
 ```bash
 # npm
-$ npm install agnostic-http-errors
+$ npm install @macchiatojs/http-error
 # yarn
-$ yarn add agnostic-http-errors
+$ yarn add @macchiatojs/http-error
 ```
 
 ## `Usage`
 
 ```typescript
-import HttpErrors from "agnostic-http-errors";
+import HttpErrors from "@macchiatojs/http-error";
 
 throw new HttpError(404, "Not Found!");
 ```

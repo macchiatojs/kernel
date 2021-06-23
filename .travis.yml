@@ -2,6 +2,7 @@ language: node_js
 node_js:
   - 14
   - 15
+  - 16
 script:
   - npm run ci
 after_script:

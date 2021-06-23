@@ -1,5 +1,5 @@
 {
-  "name": "agnostic-http-error",
+  "name": "@macchiatojs/http-error",
   "version": "0.0.0",
   "description": "A Modern Http Error.",
   "main": "dist/index.js",
@@ -23,7 +23,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/3imed-jaberi/agnostic-http-error.git"
+    "url": "git+https://github.com/macchiatojs/http-error.git"
   },
   "keywords": [
     "middleware",
@@ -54,7 +54,7 @@
     "node": ">= 14"
   },
   "bugs": {
-    "url": "https://github.com/3imed-jaberi/agnostic-http-error/issues"
+    "url": "https://github.com/macchiatojs/http-error/issues"
   },
-  "homepage": "https://github.com/3imed-jaberi/agnostic-http-error#readme"
+  "homepage": "https://github.com/macchiatojs/http-error#readme"
 }

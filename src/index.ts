@@ -1,5 +1,5 @@
 /**
- * @3imed-jaberi/http-error
+ * @macchiatojs/http-error
  *
  * Copyright(c) 2021 Imed Jaberi
  * MIT Licensed
@@ -13,7 +13,7 @@
 
 import { STATUS_CODES  } from 'http'
 
-type TOrigin = { status?: number, statusCode?: number } | null
+type originType = { status?: number, statusCode?: number } | null
 
 /**
  * HttpError
@@ -31,7 +31,7 @@ class HttpError extends Error  {
   public code: number|string
   public status: string
   public message: string
-  public origin: TOrigin
+  public origin: originType
   public expose: boolean
 
   // so much arity going on ~_~
@@ -39,7 +39,7 @@ class HttpError extends Error  {
     /* istanbul ignore next */
     code: number|string = 500,
     message = '',
-    origin: TOrigin = null,
+    origin: originType = null,
     expose = false
   ) {
     super()

@@ -1,7 +1,5 @@
 # @macchiatojs/kernel
 
-A Modern Http Errors.
-
 ## `Installation`
 
 ```bash

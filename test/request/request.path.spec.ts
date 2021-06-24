@@ -1,5 +1,3 @@
-// -------------fama ahja fi path
-import path from 'path/posix'
 import request from 'supertest'
 import Kernel, { Request, Response } from '../../src'
 

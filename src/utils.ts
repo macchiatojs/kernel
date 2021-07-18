@@ -23,20 +23,15 @@ export function getFlag(body: unknown) {
 }
 
 // determine the length the current body.
-export function getLength(body: unknown, flag = FLAG_STRING) {
+export function getLength(body: any, flag = FLAG_STRING) {
   if (!body) return 0
-  if (flag === FLAG_STRING) return Buffer.byteLength(body as string)
+  if (flag === FLAG_STRING) return Buffer.byteLength(body)
   if (flag === FLAG_OBJECT) return Buffer.byteLength(JSON.stringify(body))
   if (flag === FLAG_BUFFER) return (body as Buffer).length
 }
 
 //
-export function send(
-  response: ServerResponse,
-  body: unknown = null,
-  flag = FLAG_STRING,
-  onError: (err: HttpError|Error) => void
-) {
+export function send(response: ServerResponse, body: any = null, flag = FLAG_STRING, onError: (err: HttpError|Error) => void) {
   // body is null
   if (body === null) {
     return response.end()
@@ -53,7 +48,7 @@ export function send(
       response.setHeader('content-type', 'application/octet-stream')
     }
     // Track fs.createReadStream('not-file-exists')
-    if (!(body as Stream).listeners('error').includes(onError)) (body as Stream).on('error', onError)
+    // if (!(body as Stream).listeners('error').includes(onError)) (body as Stream).on('error', onError)
     return (body as Stream).pipe(response)
   }
 
@@ -63,7 +58,7 @@ export function send(
       response.setHeader('content-type', 'application/octet-stream')
     }
 
-    return response.end(body as Buffer)
+    return response.end(body)
   }
 
   // body is json
@@ -74,6 +69,9 @@ export function send(
     }
 
     body = JSON.stringify(body)
+    // if (!res.headersSent) {
+    //   ctx.length = Buffer.byteLength(body);
+    // }
   }
 
   // body is string  (parsed number, boolean ... as string)
@@ -81,12 +79,7 @@ export function send(
 }
 
 //
-export function sendError(
-  response: ServerResponse,
-  err: HttpError | Error,
-  __DEV__: boolean,
-  headersSent = false
-) {
+export function sendError(response: ServerResponse, err: HttpError | Error, __DEV__: boolean, headersSent = false) {
   if (response.headersSent || !writable(response)) {
     headersSent = true
     ;(err as any).headersSent = true
@@ -94,28 +87,22 @@ export function sendError(
 
   if (headersSent) return
 
-  const { status = 500, stack, expose } = err as any
-  let { message } = err
-  message = 'Internal Server Error'
-  message = __DEV__ ? stack : (expose ? message : String(status))
+  let { status = 500, message = 'Internal Server Error', stack, expose } = err as any // eslint-disable-line prefer-const
+ 
+  message = __DEV__ ? stack : (expose ? message : `${status}`)
 
   // force text/plain
-  const headerText = {
+  response.writeHead(status, {
     'content-length': Buffer.byteLength(message),
     'content-type': 'text/plain'
-  }
-
-  response.writeHead(status, headerText)
+  })
   response.end(message)
 }
 
 //
 export function writable(response: ServerResponse) {
   // can't write any more after response finished
-  if (
-    response.writableEnded
-    // || response.responded
-  ) return false
+  if (response['writableEnded'] || response['responded']) return false
 
   const socket = response.socket
   // there are already pending outgoing response, but still writable

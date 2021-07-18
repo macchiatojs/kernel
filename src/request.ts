@@ -11,6 +11,7 @@ import { isIP } from 'net'
 import fresh from 'fresh'
 
 import Response from './response'
+import Kernel from './kernel'
 
 const METHODS = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE']
 const QUERY = Symbol('Request#query')
@@ -23,19 +24,20 @@ const QUERY = Symbol('Request#query')
  * @api public
  */
 class Request {
-  #config!: Map<string, unknown>
-  #rawRequest: httpIncomingMessage
+  #app!: Kernel
   #response?: Response
   #accept: Accepts
   #memoizedURL?: URL
   #ip?: string
+  config!: Map<string, unknown>
+  rawRequest: httpIncomingMessage
 
   /**
    * 
    * @param request 
    */
   constructor(request: httpIncomingMessage) {
-    this.#rawRequest = request
+    this.rawRequest = request
     this.#accept = accepts(request)
   }
 
@@ -46,10 +48,11 @@ class Request {
    * @param {Response} response
    * @api private
    */
-  initialize(config, response: Response) {
-    this.#config = config
+  initialize(app: Kernel, config: Map<string, unknown>, response: Response) {
+    this.#app = app
+    this.config = config
     this.#response = response
-    this.#ip = this.ips[0] || this.#rawRequest.socket.remoteAddress || ''
+    this.#ip = this.ips[0] || this.rawRequest.socket.remoteAddress || ''
   }
 
   /**
@@ -59,18 +62,18 @@ class Request {
    * @api public
    */
   public get socket() {
-    return this.#rawRequest.socket as TLSSocket
+    return this.rawRequest.socket as TLSSocket
   }
 
-  /**
-   * Return the raw request.
-   *
-   * @return {httpIncomingMessage}
-   * @api public
-   */
-  public get raw() {
-    return this.#rawRequest
-  }
+  // /**
+  //  * Return the raw request.
+  //  *
+  //  * @return {httpIncomingMessage}
+  //  * @api public
+  //  */
+  // public get raw() {
+  //   return this.rawRequest
+  // }
 
   /**
    * Get request original url.
@@ -79,7 +82,7 @@ class Request {
    * @api public
    */
   public get originalUrl(): string|undefined {
-    return this.#rawRequest.url?.split('?')[0]
+    return this.rawRequest.url?.split('?')[0]
   }
 
   /**
@@ -89,7 +92,7 @@ class Request {
    * @api public
    */
   public get method() {
-    return this.#rawRequest.method
+    return this.rawRequest.method
   }
 
   /**
@@ -99,7 +102,7 @@ class Request {
    * @api public
    */
   set method(value) {
-    this.#rawRequest.method = value
+    this.rawRequest.method = value
   }
 
   /**
@@ -109,7 +112,7 @@ class Request {
    * @api public
    */
   public get url() {
-    return this.#rawRequest.url
+    return this.rawRequest.url
   }
 
   /**
@@ -119,7 +122,7 @@ class Request {
    * @api public
    */
   set url(val) {
-    this.#rawRequest.url = val
+    this.rawRequest.url = val
   }
 
   /**
@@ -129,7 +132,7 @@ class Request {
    * @api public
    */
   public get headers() {
-    return this.#rawRequest.headers
+    return this.rawRequest.headers
   }
 
   /**
@@ -279,7 +282,7 @@ class Request {
    * @api public
    */
   is(type, ...types) {    
-    return typeIs(this.#rawRequest, type, ...types)
+    return typeIs(this.rawRequest, type, ...types)
   }
 
   /**
@@ -320,7 +323,7 @@ class Request {
    * @api public
    */
   public get fresh(): boolean {
-    const method = this.#rawRequest.method
+    const method = this.rawRequest.method
     const status = this.#response!.status
 
     // GET or HEAD for weak freshness validation only
@@ -328,7 +331,7 @@ class Request {
 
     // 2xx or 304 as per rfc2616 14.26
     if ((status >= 200 && status < 300) || status === 304) {
-      return fresh(this.#rawRequest.headers, this.#response!.headers)
+      return fresh(this.rawRequest.headers, this.#response!.headers)
     }
 
     return false
@@ -355,7 +358,7 @@ class Request {
    * @api public
    */
   public get host() {
-    let host = this.#config?.get('trust proxy') && this.get('x-forwarded-host')
+    let host = this.config?.get('trust proxy') && this.get('x-forwarded-host')
     host = host || this.get('Host')
     if (!host) return ''
     return (host as string).split(/\s*,\s*/)[0].split(':', 1)[0]
@@ -417,7 +420,7 @@ class Request {
     const hostname = this.hostname
     if (!hostname) return []
     return (isIP(hostname) ? [hostname] : hostname.split('.').reverse()).slice(
-      this.#config?.get('subdomain offset') as number
+      this.config?.get('subdomain offset') as number
     )
   }
 
@@ -434,7 +437,7 @@ class Request {
    */
   public get protocol() {
     if (this.socket.encrypted) return 'https'
-    if (!this.#config?.get('trust proxy')) return 'http'
+    if (!this.config?.get('trust proxy')) return 'http'
     return (this.get('x-forwarded-proto') || 'http').split(/\s*,\s*/)[0]
   }
 
@@ -494,7 +497,7 @@ class Request {
    * @api public
    */
   public get ips() {
-    const proxy = this.#config?.get('trust proxy')
+    const proxy = this.config?.get('trust proxy')
     const value = this.get('x-forwarded-for')
     return proxy && value ? value.split(/\s*,\s*/) : []
   }
@@ -552,7 +555,7 @@ class Request {
    * @api public
    */
   public get path(): string {
-    return parseUrl(this.#rawRequest)?.pathname as string
+    return parseUrl(this.rawRequest)?.pathname as string
   }
 
   /**
@@ -562,7 +565,7 @@ class Request {
    * @api public
    */
   public set path(path: string) {
-    const url = parseUrl(this.#rawRequest)
+    const url = parseUrl(this.rawRequest)
     if (url?.pathname === path) return
 
     url!.pathname = path
@@ -600,7 +603,7 @@ class Request {
    * @api public
    */
   public get querystring() {
-    return parseUrl(this.#rawRequest)?.query || ''
+    return parseUrl(this.rawRequest)?.query || ''
   }
 
   /**
@@ -610,7 +613,7 @@ class Request {
    * @api public
    */
   public set querystring(str) {
-    const url = parseUrl(this.#rawRequest)
+    const url = parseUrl(this.rawRequest)
     if (url?.search === `?${str}`) return
 
     url!.search = str as string
@@ -672,7 +675,7 @@ class Request {
    * @api public
    */
   inspect() {
-    // if (!this.#rawRequest) return
+    // if (!this.rawRequest) return
     return this.toJSON()
   }
 

@@ -1,4 +1,5 @@
-import { STATUS_CODES as statuses, ServerResponse, IncomingMessage } from 'http'
+import { TLSSocket } from 'tls';
+import { STATUS_CODES as statuses, ServerResponse } from 'http'
 import contentDisposition from 'content-disposition'
 import HttpError from '@macchiatojs/http-error'
 import { is as typeIs } from 'type-is'
@@ -6,10 +7,9 @@ import { extname } from 'path'
 import assert from 'assert'
 import vary from 'vary'
 
-import { getFlag, getLength, getMimeType, send, FLAG_STREAM } from './utils'
+import { getFlag, getLength, getMimeType, send, writable, FLAG_STREAM } from './utils'
 import Request from './request'
-
-const BODY = Symbol('Response#body')
+import Kernel from './kernel';
 
 /**
  * Response
@@ -19,16 +19,17 @@ const BODY = Symbol('Response#body')
  * @api public
  */
 
-class Response extends ServerResponse {
-  #config!: Map<string, unknown>
-  #rawResponse: ServerResponse
+class Response {
+  #app!: Kernel
   #request!: Request
+  #BODY: any
+  config!: Map<string, unknown>
+  rawResponse: ServerResponse
   flag!: number
-  onError: (error: Error|HttpError) => void
+  onError: (err: HttpError|Error) => void
 
-  constructor(response: ServerResponse, request: IncomingMessage) {
-    super(request)
-    this.#rawResponse = response
+  constructor(response: ServerResponse) {
+    this.rawResponse = response
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     this.onError = () => {}
   }
@@ -40,9 +41,30 @@ class Response extends ServerResponse {
    * @param {Request} request
    * @api private
    */
-  initialize(config: Map<string, unknown>, request: Request) {
-    this.#config = config
+  initialize(app: Kernel, config: Map<string, unknown>, request: Request) {
+    this.#app = app
+    this.config = config
     this.#request = request
+  }
+  
+  /**
+   * Return the request socket.
+   *
+   * @return {Connection}
+   * @api public
+   */
+  public get socket() {
+    return this.#request.socket as TLSSocket
+  }
+
+  /**
+   * Return the raw response.
+   *
+   * @return {ServerResponse}
+   * @api public
+   */
+  public get raw() {
+    return this.rawResponse
   }
 
   /**
@@ -52,7 +74,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public get status(): number {
-    return this.#rawResponse.statusCode
+    return this.rawResponse.statusCode
   }
 
   /**
@@ -65,9 +87,9 @@ class Response extends ServerResponse {
     assert(typeof code === 'number', 'status code must be a number')
     const message = statuses[code]
     assert(message, `invalueid status code: ${code}`)
-    assert(!this.#rawResponse.headersSent, 'headers have already been sent')
-    this.#rawResponse.statusCode = code
-    this.#rawResponse.statusMessage = message
+    assert(!this.rawResponse.headersSent, 'headers have already been sent')
+    this.rawResponse.statusCode = code
+    this.rawResponse.statusMessage = message
   }
 
   /**
@@ -77,7 +99,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public get message() {
-    return this.#rawResponse.statusMessage
+    return this.rawResponse.statusMessage
     // ||  statuses[this.status]
   }
 
@@ -88,7 +110,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public set message(msg: string) {
-    this.#rawResponse.statusMessage = msg
+    this.rawResponse.statusMessage = msg
   }
 
   /**
@@ -98,7 +120,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public get body() {
-    return this[BODY]
+    return this.#BODY
   }
 
   /**
@@ -108,13 +130,13 @@ class Response extends ServerResponse {
    * @api public
    */
   public set body(value) {
-    this[BODY] = value
+    this.#BODY = value
 
-    if (this.#rawResponse.headersSent) return
+    if (this.rawResponse.headersSent) return
 
     // no content
     if (value === null) {
-      if (!'204 205 304'.includes(`${this.status}`)) this.status = 204
+      if (!this.#app.emptyBodyStatues.has(this.status)) this.status = 204
       this.remove('Content-Type')
       this.remove('Content-Length')
       this.remove('Transfer-Encoding')
@@ -126,7 +148,7 @@ class Response extends ServerResponse {
     // stream
     if (this.flag === FLAG_STREAM) {
       /* istanbul ignore next */
-      if (!value.listeners('error').includes(this.onError)) {
+      if (!new Set(value.listeners('error')).has(this.onError)) {
         value.on('error', this.onError)
       }
     }
@@ -139,7 +161,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public get headers() {
-    return this.#rawResponse.getHeaders()
+    return this.rawResponse.getHeaders()
   }
 
   /**
@@ -158,7 +180,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public get(field) {
-    return this.#rawResponse.getHeader(field)
+    return this.rawResponse.getHeader(field)
   }
 
   /**
@@ -179,7 +201,7 @@ class Response extends ServerResponse {
     value?: string | string[]
   ) {
     if (arguments.length === 2) {
-      this.#rawResponse.setHeader(field as string, value as string)
+      this.rawResponse.setHeader(field as string, value as string)
       return
     }
 
@@ -205,7 +227,7 @@ class Response extends ServerResponse {
    * @api public
    */
   has(field) {
-    return this.#rawResponse.hasHeader(field)
+    return this.rawResponse.hasHeader(field)
   }
 
   /**
@@ -244,7 +266,7 @@ class Response extends ServerResponse {
     const len = this.get('content-length')
     /* istanbul ignore next */
     if (len) return ~~len as number
-    return getLength(this[BODY], this.flag)
+    return getLength(this.#BODY, this.flag)
   }
 
   /**
@@ -264,7 +286,7 @@ class Response extends ServerResponse {
    * @api public
    */
   public get headerSent() {
-    return this.#rawResponse.headersSent
+    return this.rawResponse.headersSent
   }
 
   /**
@@ -274,7 +296,7 @@ class Response extends ServerResponse {
    * @api public
    */
   vary(field: string | string[]) {
-    vary(this.#rawResponse, field)
+    vary(this.rawResponse, field)
   }
 
   /**
@@ -442,7 +464,20 @@ class Response extends ServerResponse {
    * @api public
    */
   remove(field: string) {
-    this.#rawResponse.removeHeader(field.toLowerCase())
+    this.rawResponse.removeHeader(field.toLowerCase())
+  }
+
+  /**
+   * Checks if the request is writable.
+   * Tests for the existence of the socket
+   * as node sometimes does not set it.
+   *
+   * @return {Boolean}
+   * @api private
+   */
+
+  get writable() {
+    return writable(this.rawResponse)
   }
 
   /**
@@ -451,7 +486,7 @@ class Response extends ServerResponse {
    * @api public
    */
   flush() {
-    return this.#rawResponse.flushHeaders()
+    return this.rawResponse.flushHeaders()
   }
 
   /**
@@ -464,7 +499,7 @@ class Response extends ServerResponse {
    * @api public
    */
   end(...args) {
-    return this.#rawResponse.end(...args)
+    return this.rawResponse.end(...args)
   }
 
   /**
@@ -483,8 +518,9 @@ class Response extends ServerResponse {
    * @api public
    */
   send(code, body) {
-    this.#rawResponse.statusCode = code
-    send(this.#rawResponse, body, getFlag(body), this.onError)
+    this.rawResponse['responded'] = true
+    this.rawResponse.statusCode = code
+    send(this.rawResponse, body, getFlag(body), this.onError)
 
     return
   }

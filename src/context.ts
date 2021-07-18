@@ -17,7 +17,7 @@ class Context {
   config: Map<string, unknown>
   rawRequest: IncomingMessage
   rawResponse: ServerResponse
-  request:Request
+  request: Request
   response: Response
 
   constructor(
@@ -37,11 +37,11 @@ class Context {
 
     // make request and response.
     this.request = new Request(request)
-    this.response = new Response(response, request)
+    this.response = new Response(response)
 
     // initialize the request and the response.
-    this.request.initialize(config, this.response)
-    this.response.initialize(config, this.request)
+    this.request.initialize(app, config, this.response)
+    this.response.initialize(app, config, this.request)
   }
 }
 

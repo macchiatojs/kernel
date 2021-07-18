@@ -88,7 +88,7 @@ describe('kernel', () => {
 
       request(app.start())
       .post('/')
-      .expect(404, /Internal Server Error/) // change to /Nothing/ when we use custom http errors...
+      .expect(404, /Nothing/)
       .end(done)
     })
 

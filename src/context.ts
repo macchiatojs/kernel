@@ -13,33 +13,23 @@ import Response from './response'
  * @api public
  */
 class Context {
-  app: Kernel
-  config: Map<string, unknown>
-  rawRequest: IncomingMessage
-  rawResponse: ServerResponse
   request: Request
   response: Response
 
   constructor(
-    app: Kernel,
-    config: Map<string, unknown>,
-    request: IncomingMessage,
-    response: ServerResponse
-  ) {
     // add the app instance.
-    this.app = app
+    public app: Kernel,
     // add the config Map.
-    this.config = config
-
+    public config: Map<string, unknown>,
     // add raw request and raw response to context.
-    this.rawRequest = request
-    this.rawResponse = response
+    public rawRequest: IncomingMessage,
+    public rawResponse: ServerResponse
+  ) {
+    // make request and this.response.
+    this.request = new Request(this.rawRequest)
+    this.response = new Response(this.rawResponse)
 
-    // make request and response.
-    this.request = new Request(request)
-    this.response = new Response(response)
-
-    // initialize the request and the response.
+    // initialize the request and the this.response.
     this.request.initialize(app, config, this.response)
     this.response.initialize(app, config, this.request)
   }

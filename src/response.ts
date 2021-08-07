@@ -7,9 +7,17 @@ import { extname } from 'path'
 import assert from 'assert'
 import vary from 'vary'
 
-import { getFlag, getLength, getMimeType, send, writable, FLAG_STREAM } from './utils'
+import { 
+  getFlag,
+  getLength,
+  getMimeType,
+  writable,
+  FLAG_STREAM,
+  EMPTY_BODY_STATUES,
+  respondHook
+} from './utils'
 import Request from './request'
-import Kernel from './kernel';
+import Kernel from './kernel'
 
 /**
  * Response
@@ -24,15 +32,10 @@ class Response {
   #request!: Request
   #BODY: any
   config!: Map<string, unknown>
-  rawResponse: ServerResponse
   flag!: number
-  onError: (err: HttpError|Error) => void
+  onError!: (err: HttpError|Error) => void
 
-  constructor(response: ServerResponse) {
-    this.rawResponse = response
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    this.onError = () => {}
-  }
+  constructor(public rawResponse: ServerResponse) {}
 
   /**
    * Initialize.
@@ -136,7 +139,7 @@ class Response {
 
     // no content
     if (value === null) {
-      if (!this.#app.emptyBodyStatues.has(this.status)) this.status = 204
+      if (!EMPTY_BODY_STATUES.has(this.status)) this.status = 204
       this.remove('Content-Type')
       this.remove('Content-Length')
       this.remove('Transfer-Encoding')
@@ -518,9 +521,12 @@ class Response {
    * @api public
    */
   send(code, body) {
-    this.rawResponse['responded'] = true
-    this.rawResponse.statusCode = code
-    send(this.rawResponse, body, getFlag(body), this.onError)
+    if (getFlag(body) !== 4) {
+      this.rawResponse['responded'] = true
+      this.rawResponse.statusCode = code
+    }
+
+    respondHook(this.rawResponse, body)
 
     return
   }

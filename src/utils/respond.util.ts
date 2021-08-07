@@ -7,7 +7,7 @@ import { ServerResponse } from 'http'
 // response helper for .send()
 export function respondHook(rawResponse: ServerResponse, body: any = null) {
   // 
-  let flag = getFlag(body)
+  const flag = getFlag(body)
 
   // body is null
   if (body === null) {

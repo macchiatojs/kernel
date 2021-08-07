@@ -14,7 +14,6 @@ import Response from './response'
 import Kernel from './kernel'
 
 const METHODS = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE']
-const QUERY = Symbol('Request#query')
 
 /**
  * Request
@@ -30,15 +29,14 @@ class Request {
   #memoizedURL?: URL
   #ip?: string
   config!: Map<string, unknown>
-  rawRequest: httpIncomingMessage
+  #QUERY!: { [key:string]: string }
 
   /**
    * 
    * @param request 
    */
-  constructor(request: httpIncomingMessage) {
-    this.rawRequest = request
-    this.#accept = accepts(request)
+  constructor(public rawRequest: httpIncomingMessage) {
+    this.#accept = accepts(rawRequest)
   }
 
   /**
@@ -581,7 +579,7 @@ class Request {
    */
   public get query(): ParsedUrlQuery {
     const str = this.querystring as string
-    const c: { [key: string]: unknown } = this[QUERY] || (this[QUERY] = {})
+    const c: { [key: string]: unknown } = this.#QUERY || (this.#QUERY = {})
     const q = c[str] || (c[str] = qs.parse(str)) 
     return q as ParsedUrlQuery
   }

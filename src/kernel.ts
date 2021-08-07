@@ -5,7 +5,7 @@ import HttpError from '@macchiatojs/http-error'
 import onFinished from 'on-finished'
 import Emitter from 'events'
 
-import { paramsFactory, send, sendError, WrapKoaCompose } from './utils'
+import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils'
 import Context from './context'
 import Request from './request'
 import Response from './response'
@@ -32,11 +32,9 @@ class Kernel extends Emitter {
   dev: boolean
   middleware: any
   config: Map<string, unknown>
-  emptyBodyStatues: Set<number>
 
   constructor(options?: { expressify?: boolean, koaCompose?: any }) {
     super()
-    this.emptyBodyStatues = new Set([204, 205, 304])
     this.expressify = options?.expressify ?? true
     this.env = process.env.NODE_ENV || 'development'
     this.dev = this.env.startsWith('dev')
@@ -51,59 +49,30 @@ class Kernel extends Emitter {
   }
 
   use(fn: MacchiatoMiddleware) {
-    if (typeof fn !== 'function') {
-      throw new TypeError('middleware must be a function!')
-    }
-
     this.middleware.push(fn)
     return this
   }
 
-  #handleRequest(req: IncomingMessage, res: ServerResponse) {
-    const context = new Context(this, this.config, req, res)
-    const onError = (err: HttpError|Error|null) => {
-      if (!err) return
+  #handleRequest() {
+    return (req: IncomingMessage, res: ServerResponse) => {
+      const context = new Context(this, this.config, req, res)
+      const onError = (err: HttpError|Error|null) => { onErrorListener(err)(this, res)(context) }
+      const handleResponse = () => respond(context)
 
-      if (!HttpError.isHttpError(err)) {
-        err = new HttpError((err as any)?.code, err.message, err)
-      }
+      onFinished(res, (context.response.onError = onError))
 
-      sendError(res, err, this.dev)
-      this.emit('error', err, ...paramsFactory(this.expressify, context))
+      // invoke
+      return (
+        this.middleware.compose(
+          ...paramsFactory(this.expressify, context)
+        ).then(handleResponse).catch(onError)
+      )
     }
-    const handleResponse = () => this.#respond(context)
-
-    onFinished(res, (context.response.onError = onError))
-
-    // invoke
-    return (
-      this.middleware.compose(
-        ...paramsFactory(this.expressify, context)
-      ).then(handleResponse).catch(onError)
-    )
-  }
-
-  #respond({ rawResponse, response, request: { method } }: Context) {
-    /* istanbul ignore next */
-    if (!response.writable) return
-
-    // ignore body
-    if (this.emptyBodyStatues.has(response.status)) {
-      // strip headers
-      response.body = null
-      return rawResponse.end()
-    }
-
-    if (method === 'HEAD') {
-      return rawResponse.end()
-    }
-
-    send(rawResponse, response.body, response.flag, response.onError)
   }
 
   start(...args) {
     if (!this.#server) this.#server = new Server()
-    this.#server.on('request', (req: IncomingMessage, res: ServerResponse) => this.#handleRequest(req, res))
+    this.#server.on('request', this.#handleRequest())
     return this.#server.listen(...args)
   }
 

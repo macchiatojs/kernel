@@ -1,9 +1,9 @@
-import type { ServerResponse } from 'http';
+import type { ServerResponse } from 'http'
 
 //
-export function writable(response: ServerResponse) {
+export function writable(response: ServerResponse): boolean {
   // can't write any more after response finished
   if (response['writableEnded'] || response['responded']) return false
   /* istanbul ignore next */
-  return response.socket?.writable
+  return !!response.socket?.writable
 }

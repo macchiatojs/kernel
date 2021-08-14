@@ -3,9 +3,10 @@ import { EMPTY_BODY_STATUES } from './statues.util'
 import { FLAG_OBJECT, FLAG_BUFFER, FLAG_STREAM, getFlag } from './flags.utils'
 import type Context from '../context'
 import type { ServerResponse } from 'http'
+import type { BodyContent } from '../types'
 
 // response helper for .send()
-export function respondHook(rawResponse: ServerResponse, body: any = null) {
+export function respondHook(rawResponse: ServerResponse, body: BodyContent = null): ServerResponse|void {
   // 
   const flag = getFlag(body)
 
@@ -53,7 +54,7 @@ export function respondHook(rawResponse: ServerResponse, body: any = null) {
 }
 
 // response helper for main request hanlder.
-export function respond({ rawResponse, response, request: { method } }: Context) {
+export function respond({ rawResponse, response, request: { method } }: Context): void {
   //
   if (!response.writable) return
 

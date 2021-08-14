@@ -1,3 +1,6 @@
+import type Context from '../context'
+import type { Next } from '../types'
+
 // wrap the koa-compose module to be with same used behaviour
 export class WrapKoaCompose extends Array {
   #koaCompose
@@ -7,7 +10,7 @@ export class WrapKoaCompose extends Array {
     this.#koaCompose = koaCompose
   }
 
-  compose(ctx, next?) {
+  compose(ctx: Context, next?: Next) {
     return this.#koaCompose(this)(ctx, next)
   }
 }

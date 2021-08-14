@@ -1,6 +1,7 @@
+import type { Stream } from 'stream'
 import type { TLSSocket } from 'tls'
 import { STATUS_CODES as statuses } from 'http'
-import type { ServerResponse } from 'http'
+import type { OutgoingHttpHeaders, ServerResponse } from 'http'
 import { extname } from 'path'
 import assert from 'assert'
 import { is as typeIs } from 'type-is'
@@ -11,7 +12,7 @@ import vary from 'vary'
 import type Kernel from './kernel'
 import type Request from './request'
 import type Cookies from 'cookies'
-import type { onErrorHandler } from './types'
+import type { BodyContent, KeyValueObject, onErrorHandler } from './types'
 import { 
   getFlag,
   getLength,
@@ -21,6 +22,13 @@ import {
   EMPTY_BODY_STATUES,
   respondHook
 } from './utils'
+
+type toJSON = { 
+  status: number,
+  message: string,
+  headers: OutgoingHttpHeaders
+  body?: BodyContent
+}
 
 /**
  * Response
@@ -32,7 +40,7 @@ import {
 class Response {
   #app!: Kernel
   #request!: Request
-  #BODY: any
+  #BODY: BodyContent
   config!: Map<string, unknown>
   #cookies!: Cookies
   flag!: number
@@ -43,11 +51,11 @@ class Response {
   /**
    * Initialize.
    *
-   * @param {Object} config
+   * @param {object} config
    * @param {Request} request
    * @api private
    */
-  initialize(app: Kernel, config: Map<string, unknown>, request: Request, cookies: Cookies) {
+  initialize(app: Kernel, config: Map<string, unknown>, request: Request, cookies: Cookies): void {
     this.#app = app
     this.config = config
     this.#request = request
@@ -60,14 +68,14 @@ class Response {
    * @return {Connection}
    * @api public
    */
-  public get socket() {
+  public get socket(): TLSSocket {
     return this.#request.socket as TLSSocket
   }
 
   /**
    * Get response status code.
    *
-   * @return {Number}
+   * @return {number}
    * @api public
    */
   public get status(): number {
@@ -77,10 +85,10 @@ class Response {
   /**
    * Set response status code.
    *
-   * @param {Number} code
+   * @param {number} code
    * @api public
    */
-  public set status(code) {
+  public set status(code: number) {
     assert(typeof code === 'number', 'status code must be a number')
     const message = statuses[code]
     assert(message, `invalueid status code: ${code}`)
@@ -92,18 +100,17 @@ class Response {
   /**
    * Get response status message.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get message() {
-    return this.rawResponse.statusMessage
-    // ||  statuses[this.status]
+  public get message(): string {
+    return this.rawResponse.statusMessage 
   }
 
   /**
    * Set response status message.
    *
-   * @param {String} msg
+   * @param {string} msg
    * @api public
    */
   public set message(msg: string) {
@@ -116,17 +123,17 @@ class Response {
    * @return {Mixed}
    * @api public
    */
-  public get body() {
+  public get body(): BodyContent {
     return this.#BODY
   }
 
   /**
    * Set response body.
    *
-   * @param {String|Buffer|Object|Stream} value
+   * @param {string|number|Buffer|object|stream|null|undefined} value
    * @api public
    */
-  public set body(value) {
+  public set body(value: BodyContent) {
     this.#BODY = value
 
     if (this.rawResponse.headersSent) return
@@ -145,8 +152,8 @@ class Response {
     // stream
     if (this.flag === FLAG_STREAM) {
       /* istanbul ignore next */
-      if (!new Set(value.listeners('error')).has(this.onError)) {
-        value.on('error', this.onError)
+      if (!new Set((value as Stream).listeners('error')).has(this.onError)) {
+        (value as Stream).on('error', this.onError)
       }
     }
   }
@@ -154,10 +161,10 @@ class Response {
   /**
    * Return response headers.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
-  public get headers() {
+  public get headers(): OutgoingHttpHeaders {
     return this.rawResponse.getHeaders()
   }
 
@@ -172,12 +179,12 @@ class Response {
    *    response.get('content-type')
    *    // => "text/plain"
    *
-   * @param {String} field
-   * @return {String}
+   * @param {string} field
+   * @return {string}
    * @api public
    */
-  public get(field) {
-    return this.rawResponse.getHeader(field)
+  public get(field: string): string {
+    return this.rawResponse.getHeader(field) as string
   }
 
   /**
@@ -189,20 +196,20 @@ class Response {
    *    response.set('Accept', 'application/json')
    *    response.set({ Accept: 'text/plain', 'X-API-Key': 'tobi' })
    *
-   * @param {String|Object|Array} field
-   * @param {String} value
+   * @param {string|object} field
+   * @param {string|string[]} value
    * @api public
    */
   public set(
-    field: string | { [key: string]: string | string[] },
+    field: string | KeyValueObject<string | string[]>,
     value?: string | string[]
-  ) {
+  ): void {
     if (arguments.length === 2) {
       this.rawResponse.setHeader(field as string, value as string)
       return
     }
 
-    for (const key in field as { [key: string]: string | string[] }) {
+    for (const key in field as KeyValueObject<string | string[]>) {
       this.set(key, field[key])
     }
   }
@@ -219,12 +226,22 @@ class Response {
    *    response.has('X-Accept')
    *    // => false
    *
-   * @param {String} field
-   * @param {Boolean}
+   * @param {string} field
+   * @param {boolean}
    * @api public
    */
-  has(field) {
+  has(field: string): boolean {
     return this.rawResponse.hasHeader(field)
+  }
+
+  /**
+   * Get the ETag of a response.
+   *
+   * @return {string}
+   * @api public
+   */
+  public get etag(): string {
+    return this.get('etag') as string
   }
 
   /**
@@ -235,7 +252,7 @@ class Response {
    *    response.etag = '"md5hashsum"'
    *    response.etag = 'W/"123456789"'
    *
-   * @param {String} etag
+   * @param {string} etag
    * @api public
    */
   public set etag(value: string) {
@@ -244,55 +261,45 @@ class Response {
   }
 
   /**
-   * Get the ETag of a response.
-   *
-   * @return {String}
-   * @api public
-   */
-  public get etag() {
-    return this.get('etag') as string
-  }
-
-  /**
    * Return parsed response Content-Length when present.
    *
-   * @return {Number}
+   * @return {number}
    * @api public
    */
-  public get length() {
+  public get length(): number {
     const len = this.get('content-length')
     /* istanbul ignore next */
     if (len) return ~~len as number
-    return getLength(this.#BODY, this.flag)
+    return getLength(this.#BODY, this.flag) as number
   }
 
   /**
-   * Set Content-Length field to `n`.
+   * Set Content-Length field to `size`.
    *
-   * @param {Number} n
+   * @param {number} size
    * @api public
    */
-  public set length(n) {
-    this.set('content-length', String(n))
+  public set length(size: number) {
+    this.set('content-length', String(size))
   }
 
   /**
    * Check if a header has been written to the socket.
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @api public
    */
-  public get headerSent() {
+  public get headerSent(): boolean {
     return this.rawResponse.headersSent
   }
 
   /**
    * Vary on `field`.
    *
-   * @param {String} field
+   * @param {string} field
    * @api public
    */
-  vary(field: string | string[]) {
+  vary(field: string | string[]): void {
     vary(this.rawResponse, field)
   }
 
@@ -305,16 +312,13 @@ class Response {
    *
    * Examples:
    *
-   *    this.redirect('back');
-   *    this.redirect('back', '/index.html');
-   *    this.redirect('/login');
-   *    this.redirect('http://google.com');
+   *    this.redirect('/login')
+   *    this.redirect('http://google.com')
    *
-   * @param {String} url
-   * @param {String} [alt]
+   * @param {string} url
    * @api public
    */
-  redirect(url: string) {
+  redirect(url: string): void {
     // location
     if (url === 'back') url = this.#request.get('referrer') || '/'
     this.set('location', url)
@@ -344,10 +348,10 @@ class Response {
   /**
    * Set Content-Disposition header to "attachment" with optional `filename`.
    *
-   * @param {String} filename
+   * @param {string} filename
    * @api public
    */
-  attachment(filename?: string) {
+  attachment(filename?: string): void {
     if (filename) this.type = extname(filename)
     this.set('content-disposition', contentDisposition(filename))
   }
@@ -358,7 +362,7 @@ class Response {
    * @return {Date}
    * @api public
    */
-  public get lastModified() {
+  public get lastModified(): string|Date {
     const date = this.get('last-modified')
     if (date) return new Date(date as string)
     return ''
@@ -370,12 +374,25 @@ class Response {
    *     response.lastModified = new Date()
    *     response.lastModified = '2013-09-13'
    *
-   * @param {String|Date} type
+   * @param {string|Date} type
    * @api public
    */
   public set lastModified(value: string | Date) {
     if (typeof value === 'string') value = new Date(value)
     this.set('last-modified', value.toUTCString())
+  }
+
+  /**
+   * Return the response mime type void of
+   * parameters such as "charset".
+   *
+   * @return {string}
+   * @api public
+   */
+  public get type(): string {
+    const type = this.get('content-type')
+    if (!type) return ''
+    return (type as string).split(';')[0]
   }
 
   /**
@@ -390,7 +407,7 @@ class Response {
    *     response.type = 'application/json'
    *     response.type = 'png'
    *
-   * @param {String} type
+   * @param {string} type
    * @api public
    */
   public set type(type: string) {
@@ -404,28 +421,15 @@ class Response {
   }
 
   /**
-   * Return the response mime type void of
-   * parameters such as "charset".
-   *
-   * @return {String}
-   * @api public
-   */
-  public get type() {
-    const type = this.get('content-type')
-    if (!type) return ''
-    return (type as string).split(';')[0]
-  }
-
-  /**
    * Check whether the response is one of the listed types.
    * Pretty much the same as `this.#requestuest.is()`.
    *
-   * @param {String|Array} types...
-   * @return {String|false}
+   * @param {string|string[]} types...
+   * @return {string|false}
    * @api public
    */
-  is(type?, ...types) {
-    return typeIs(this.type, type, ...types);
+  is(type?, ...types: string[]): string|false {
+    return typeIs(this.type, type, ...types)
   }
 
   /**
@@ -437,11 +441,11 @@ class Response {
    *    response.append('Set-Cookie', 'foo=bar; Path=/; HttpOnly')
    *    response.append('Warning', '199 Miscellaneous warning')
    *
-   * @param {String} field
-   * @param {String|Array} value
+   * @param {string} field
+   * @param {string|string[]} value
    * @api public
    */
-  append(field: string, value: string | string[]) {
+  append(field: string, value: string | string[]): void {
     const prev = this.get(field) as string
 
     if (prev) {
@@ -456,10 +460,10 @@ class Response {
   /**
    * Remove header `field`.
    *
-   * @param {String} field
+   * @param {string} field
    * @api public
    */
-  remove(field: string) {
+  remove(field: string): void {
     this.rawResponse.removeHeader(field.toLowerCase())
   }
 
@@ -468,11 +472,10 @@ class Response {
    * Tests for the existence of the socket
    * as node sometimes does not set it.
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @api private
    */
-
-  get writable() {
+  get writable(): boolean {
     return writable(this.rawResponse)
   }
 
@@ -481,20 +484,17 @@ class Response {
    *
    * @api public
    */
-  flush() {
+  flush(): void {
     return this.rawResponse.flushHeaders()
   }
 
   /**
    * End a response, likes `response.end(...)`.
    *
-   * @param {String|Buffer} data
-   * @param {String} encoding
-   * @param {Function} callback
-   * @return {Boolean}
+   * @return {boolean}
    * @api public
    */
-  end(...args) {
+  end(...args: any): void {
     return this.rawResponse.end(...args)
   }
 
@@ -503,26 +503,23 @@ class Response {
    *
    * Examples:
    *
-   *     response.send(200, new Buffer('wahoo'));
-   *     response.send(200, '<p>some html</p>');
-   *     response.send(200, { some: 'json' });
-   *     response.send(200, stream);
+   *     response.send(200, new Buffer('wahoo'))
+   *     response.send(200, '<p>some html</p>')
+   *     response.send(200, { some: 'json' })
+   *     response.send(200, stream)
    *
-   * @param {Number} code
-   * @param {String|Buffer|Object|Stream} body
-   * @return {Boolean}
+   * @param {number} code
+   * @param {string|number|Buffer|object|stream|null|undefined} body
    * @api public
    */
-  send(code, body) {
+  send(code: number, body: BodyContent): ServerResponse|void {
     /* istanbul ignore next */
     if (getFlag(body) !== 4) {
       this.rawResponse['responded'] = true
       this.rawResponse.statusCode = code
     }
 
-    respondHook(this.rawResponse, body)
-
-    return
+    return respondHook(this.rawResponse, body)
   }
 
   /**
@@ -538,11 +535,11 @@ class Response {
   /**
    * Inspect implementation.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
-  inspect() {
-    const object: { [key: string]: any } = this.toJSON()
+  inspect(): toJSON {
+    const object = this.toJSON()
     object.body = this.body
 
     return object
@@ -551,10 +548,10 @@ class Response {
   /**
    * Return JSON representation.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
-  toJSON() {
+  toJSON(): toJSON {
     return {
       status: this.status,
       message: this.message,

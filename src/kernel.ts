@@ -1,3 +1,4 @@
+/* TODO: fix all any types here --lint-warn */
 import Emitter from 'events'
 import { Server } from 'http'
 import type { IncomingMessage, ServerResponse } from 'http'
@@ -7,7 +8,7 @@ import HttpError from '@macchiatojs/http-error'
 import onFinished from 'on-finished'
 
 import Context from './context'
-import type { MacchiatoMiddleware, onErrorHandler } from './types';
+import type { MacchiatoMiddleware, Next, onErrorHandler } from './types'
 import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils'
 
 /**
@@ -39,15 +40,15 @@ class Kernel extends Emitter {
     ])
   }
 
-  use(fn: MacchiatoMiddleware) {
+  use(fn: MacchiatoMiddleware): Kernel {
     this.middleware.push(fn)
     return this
   }
 
   #handleRequest() {
-    return (req: IncomingMessage, res: ServerResponse) => {
+    return (req: IncomingMessage, res: ServerResponse): Promise<Next|void>|void => {
       const context = new Context(this, this.config, req, res)
-      const onError = (err?: HttpError|Error|null) => onErrorListener(err as any)(this, res)(context)
+      const onError = (err?: HttpError|Error|null): void => onErrorListener(err as any)(this, res)(context)
       const handleResponse = () => respond(context)
 
       onFinished(res, (context.response.onError = onError))
@@ -61,13 +62,13 @@ class Kernel extends Emitter {
     }
   }
 
-  start(...args) {
+  start(...args: any): Server {
     if (!this.#server) this.#server = new Server()
     this.#server.on('request', this.#handleRequest())
     return this.#server.listen(...args)
   }
 
-  stop(callback?: onErrorHandler) {
+  stop(callback?: onErrorHandler): Kernel {
     if (this.#server) {
       this.#server.close(callback)
     }
@@ -75,7 +76,7 @@ class Kernel extends Emitter {
     return this
   }
 
-  reload(callback?: onErrorHandler, ...args) {
+  reload(callback?: onErrorHandler, ...args: any): Server {
     return this.stop(callback).start(...args)
   }
 }

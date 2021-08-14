@@ -1,11 +1,14 @@
 import HttpError from '@macchiatojs/http-error'
-import { paramsFactory } from "./params-factory.util"
-import { writable } from "./writable.util"
+import type { ServerResponse } from 'http'
+import type Context from '../context'
+import type Kernel from '../kernel'
+import { paramsFactory } from './params-factory.util'
+import { writable } from './writable.util'
 
 //
-export function onErrorListener (err: HttpError|Error|null) {
-  return (app, rawResponse) => {
-    return (context) => {
+export function onErrorListener(err: HttpError|Error|null): (app: Kernel, rawResponse: ServerResponse) => (context: Context) => void {
+  return (app: Kernel, rawResponse: ServerResponse) => {
+    return (context: Context) => {
       // don't do anything if there is no error.
       if (err === null) return
 
@@ -33,7 +36,7 @@ export function onErrorListener (err: HttpError|Error|null) {
       /* istanbul ignore next */
       message = app.dev ? stack : (expose ? message : `${statusCode}`)
 
-      if ((err as any).code === 'ENOENT') statusCode = 404;
+      if ((err as any).code === 'ENOENT') statusCode = 404
 
       // force text/plain
       rawResponse.writeHead(statusCode, {

@@ -1,4 +1,4 @@
-import type { IncomingMessage as httpIncomingMessage } from 'http'
+import type { IncomingHttpHeaders, IncomingMessage as httpIncomingMessage } from 'http'
 import { format as stringify, URL } from 'url'
 import type { Url } from 'url'
 import { parse as parseType } from 'content-type'
@@ -17,6 +17,11 @@ import type Response from './response'
 import type Kernel from './kernel'
 import type Cookies from 'cookies'
 import { METHODS } from './utils'
+type toJSON = {
+  method: string,
+  url: string,
+  headers: IncomingHttpHeaders
+}
 
 /**
  * Request
@@ -46,11 +51,11 @@ class Request {
   /**
    * Initialize.
    *
-   * @param {Object} config
+   * @param {object} config
    * @param {Response} response
    * @api private
    */
-  initialize(app: Kernel, config: Map<string, unknown>, response: Response, cookies: Cookies) {
+  initialize(app: Kernel, config: Map<string, unknown>, response: Response, cookies: Cookies): void {
     this.#app = app
     this.config = config
     this.#response = response
@@ -64,7 +69,7 @@ class Request {
    * @return {Connection}
    * @api public
    */
-  public get socket() {
+  public get socket(): TLSSocket {
     return this.rawRequest.socket as TLSSocket
   }
 
@@ -81,7 +86,7 @@ class Request {
   /**
    * Get request original url.
    *
-   * @return {String} url
+   * @return {string} url
    * @api public
    */
   public get originalUrl(): string|undefined {
@@ -91,17 +96,17 @@ class Request {
   /**
    * Get request method.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get method() {
+  public get method(): string|undefined {
     return this.rawRequest.method
   }
 
   /**
    * Set request method.
    *
-   * @param {String} value
+   * @param {string} value
    * @api public
    */
   set method(value) {
@@ -111,30 +116,30 @@ class Request {
   /**
    * Get request url.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get url() {
+  public get url(): string|undefined {
     return this.rawRequest.url
   }
 
   /**
    * Set request url.
    *
-   * @param {String} val
+   * @param {string} value
    * @api public
    */
-  set url(val) {
-    this.rawRequest.url = val
+  set url(value) {
+    this.rawRequest.url = value
   }
 
   /**
    * Return request headers.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
-  public get headers() {
+  public get headers(): IncomingHttpHeaders {
     return this.rawRequest.headers
   }
 
@@ -146,17 +151,17 @@ class Request {
    *
    * Examples:
    *
-   *     this.get('Content-Type');
+   *     this.get('Content-Type')
    *     // => "text/plain"
    *
-   *     this.get('content-type');
+   *     this.get('content-type')
    *     // => "text/plain"
    *
-   *     this.get('Something');
+   *     this.get('Something')
    *     // => undefined
    *
-   * @param {String} field
-   * @return {String}
+   * @param {string} field
+   * @return {string}
    * @api public
    */
   public get(field: string): string {
@@ -180,34 +185,34 @@ class Request {
    * Examples:
    *
    *     // Accept: text/html
-   *     this.accepts('html');
+   *     this.accepts('html')
    *     // => "html"
    *
    *     // Accept: text/*, application/json
-   *     this.accepts('html');
+   *     this.accepts('html')
    *     // => "html"
-   *     this.accepts('text/html');
+   *     this.accepts('text/html')
    *     // => "text/html"
-   *     this.accepts('json', 'text');
+   *     this.accepts('json', 'text')
    *     // => "json"
-   *     this.accepts('application/json');
+   *     this.accepts('application/json')
    *     // => "application/json"
    *
    *     // Accept: text/*, application/json
-   *     this.accepts('image/png');
-   *     this.accepts('png');
+   *     this.accepts('image/png')
+   *     this.accepts('png')
    *     // => false
    *
    *     // Accept: text/*;q=.5, application/json
-   *     this.accepts(['html', 'json']);
-   *     this.accepts('html', 'json');
+   *     this.accepts(['html', 'json'])
+   *     this.accepts('html', 'json')
    *     // => "json"
    *
-   * @param {String|Array} type(s)...
-   * @return {String|Array|false}
+   * @param {string[]} type(s)...
+   * @return {string|string[]|false}
    * @api public
    */
-  accepts(...args) {
+  accepts(...args): string|false|string[] {
     return this.#accept.types(...args)
   }
 
@@ -219,11 +224,11 @@ class Request {
    *
    *     ['gzip', 'deflate']
    *
-   * @param {String|Array} encoding(s)...
-   * @return {String|Array}
+   * @param {string[]} encoding(s)...
+   * @return {string[]}
    * @api public
    */
-  acceptsEncodings(...args) {
+  acceptsEncodings(...args: string[]): string|false {
     return this.#accept.encodings(...args)
   }
 
@@ -235,11 +240,11 @@ class Request {
    *
    *     ['utf-8', 'utf-7', 'iso-8859-1']
    *
-   * @param {String|Array} charset(s)...
-   * @return {String|Array}
+   * @param {string[]} charset(s)...
+   * @return {string[]}
    * @api public
    */
-  acceptsCharsets(...args) {    
+  acceptsCharsets(...args: string[]): string|false {  
     return this.#accept.charsets(...args)
   }
 
@@ -251,11 +256,11 @@ class Request {
    *
    *     ['es', 'pt', 'en']
    *
-   * @param {String|Array} lang(s)...
-   * @return {Array|String}
+   * @param {string[]} lang(s)...
+   * @return {string|false}
    * @api public
    */
-  acceptsLanguages(...args) {
+  acceptsLanguages(...args: string[]): string|false{
     return this.#accept.languages(...args)
   }
 
@@ -278,13 +283,13 @@ class Request {
    *     request.is('application/json') // => 'application/json'
    *     request.is('html', 'application/*') // => 'application/json'
    *
-   *     request.is('html'); // => false
+   *     request.is('html') // => false
    *
-   * @param {String|Array} types...
-   * @return {String|false|null}
+   * @param {string[]} types...
+   * @return {string|false|null}
    * @api public
    */
-  is(type, ...types) {    
+  is(type: string, ...types: string[]): string|false|null {    
     return typeIs(this.rawRequest, type, ...types)
   }
 
@@ -292,10 +297,10 @@ class Request {
    * Return the request mime type void of
    * parameters such as "charset".
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get type() {
+  public get type(): string {
     const type = this.get('content-type')
     if (!type) return ''
     return type.split(';')[0]
@@ -304,10 +309,10 @@ class Request {
   /**
    * Get the charset when present or undefined.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get charset() {
+  public get charset(): string {
     const type = this.get('content-type')
     if (!type) return ''
     try {
@@ -322,7 +327,7 @@ class Request {
    * Last-Modified and/or the ETag
    * still match.
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @api public
    */
   public get fresh(): boolean {
@@ -345,10 +350,10 @@ class Request {
    * "Last-Modified" and / or the "ETag" for the
    * resource has changed.
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @api public
    */
-  public get stale() {
+  public get stale(): boolean {
     return !this.fresh
   }
 
@@ -357,10 +362,10 @@ class Request {
    * and support X-Forwarded-Host when a
    * proxy is enabled.
    *
-   * @return {String} hostname:port
+   * @return {string} hostname:port
    * @api public
    */
-  public get host() {
+  public get host(): string {
     let host = this.config?.get('trust proxy') && this.get('x-forwarded-host')
     host = host || this.get('Host')
     if (!host) return ''
@@ -372,14 +377,14 @@ class Request {
    * and support X-Forwarded-Host when a
    * proxy is enabled.
    *
-   * @return {String} hostname
+   * @return {string} hostname
    * @api public
    */
-  public get hostname() {
+  public get hostname(): string {
     const host = this.host
     if (!host) return ''    
-    // if ('[' === host[0]) return this.URL.hostname || ''; // IPv6
-    if ('[' === host[0]) return this.#URL?.hostname || ''; // IPv6
+    // if ('[' === host[0]) return this.URL.hostname || '' // IPv6
+    if ('[' === host[0]) return this.#URL?.hostname || '' // IPv6
     return host.split(':', 1)[0]
   }
 
@@ -387,17 +392,17 @@ class Request {
    * Get WHATWG parsed URL.
    * Lazily memoized.
    *
-   * @return {URL|Object}
+   * @return {object}
    * @api public
    */
-  get #URL() {
+  get #URL(): URL|undefined {
     /* istanbul ignore else */
     if (!this.#memoizedURL) {
-      const originalUrl = this.originalUrl || ''; // avoid undefined in template string
+      const originalUrl = this.originalUrl || '' // avoid undefined in template string
       try {
-        this.#memoizedURL = new URL(`${this.origin}${originalUrl}`);
+        this.#memoizedURL = new URL(`${this.origin}${originalUrl}`)
       } catch (err) {
-        this.#memoizedURL = Object.create(null);
+        this.#memoizedURL = Object.create(null)
       }
     }
 
@@ -416,10 +421,10 @@ class Request {
    * `["ferrets", "tobi"]`.
    * If `app.subdomainOffset` is 3, this.subdomains is `["tobi"]`.
    *
-   * @return {Array}
+   * @return {string[]}
    * @api public
    */
-  public get subdomains() {
+  public get subdomains(): string[] {
     const hostname = this.hostname
     if (!hostname) return []
     return (isIP(hostname) ? [hostname] : hostname.split('.').reverse()).slice(
@@ -435,10 +440,10 @@ class Request {
    * a reverse proxy that supplies https for you this
    * may be enabled.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get protocol() {
+  public get protocol(): string {
     if (this.socket.encrypted) return 'https'
     if (!this.config?.get('trust proxy')) return 'http'
     return (this.get('x-forwarded-proto') || 'http').split(/\s*,\s*/)[0]
@@ -449,30 +454,30 @@ class Request {
    *
    *    request.protocol == 'https'
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @api public
    */
-  public get secure() {
+  public get secure(): boolean {
     return this.protocol === 'https'
   }
 
   /**
    * Get origin of URL.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get origin() {
+  public get origin(): string {
     return `${this.protocol}://${this.host}`
   }
 
   /**
    * Get full request URL.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get href() {
+  public get href(): string|undefined {
     // Support: `GET http://example.com/foo`
     if (/^https?:\/\//i.test(this.originalUrl!)) return this.originalUrl
     return this.origin + this.originalUrl
@@ -481,10 +486,10 @@ class Request {
   /**
    * Check if the request is idempotent.
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @api public
    */
-  public get idempotent() {
+  public get idempotent(): boolean {
     return METHODS.indexOf(this.method as string) !== -1
   }
 
@@ -496,10 +501,10 @@ class Request {
    * you would receive the array `["client", "proxy1", "proxy2"]`
    * where "proxy2" is the furthest down-stream.
    *
-   * @return {Array}
+   * @return {string[]}
    * @api public
    */
-  public get ips() {
+  public get ips(): string[] {
     const proxy = this.config?.get('trust proxy')
     const value = this.get('x-forwarded-for')
     return proxy && value ? value.split(/\s*,\s*/) : []
@@ -510,10 +515,10 @@ class Request {
    * When `app.proxy` is `true`, parse
    * the "X-Forwarded-For" ip address list and return the first one
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get ip() {
+  public get ip(): string|undefined {
     return this.#ip
   }
   
@@ -545,7 +550,7 @@ class Request {
    * @return {number|array}
    * @public
    */
-  range(size: number, options?: parseRange.Options) {
+  range(size: number, options?: parseRange.Options): parseRange.Result | parseRange.Ranges | void {
     const range = this.get('range')
     if (!range) return
     return parseRange(size, range, options)
@@ -554,7 +559,7 @@ class Request {
   /**
    * Get request pathname.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
   public get path(): string {
@@ -564,7 +569,7 @@ class Request {
   /**
    * Set pathname, retaining the query-string when present.
    *
-   * @param {String} path
+   * @param {string} path
    * @api public
    */
   public set path(path: string) {
@@ -579,7 +584,7 @@ class Request {
   /**
    * Get parsed query-string.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
   public get query(): ParsedUrlQuery {
@@ -592,7 +597,7 @@ class Request {
   /**
    * Set query-string as an object.
    *
-   * @param {Object} object
+   * @param {object} object
    * @api public
    */
   public set query(object) {
@@ -602,7 +607,7 @@ class Request {
   /**
    * Get query string.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
   public get querystring() {
@@ -612,7 +617,7 @@ class Request {
   /**
    * Set querystring.
    *
-   * @param {String} str
+   * @param {string} str
    * @api public
    */
   public set querystring(str) {
@@ -629,10 +634,10 @@ class Request {
    * Get the search string. Same as the querystring
    * except it includes the leading ?.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
-  public get search() {
+  public get search(): string {
     if (!this.querystring) return ''
     return `?${this.querystring}`
   }
@@ -641,7 +646,7 @@ class Request {
    * Set the search string. Same as
    * response.querystring= but included for ubiquity.
    *
-   * @param {String} str
+   * @param {string} str
    * @api public
    */
   public set search(str) {
@@ -651,10 +656,10 @@ class Request {
   /**
    * Return parsed Content-Length when present.
    *
-   * @return {Number}
+   * @return {number}
    * @api public
    */
-  public get length() {
+  public get length(): number|undefined {
     const len = this.get('content-length')
     if (len === '') return
     return ~~len
@@ -663,12 +668,12 @@ class Request {
   /**
    * Check if the request was an _XMLHttpRequest_.
    *
-   * @return {Boolean}
+   * @return {boolean}
    * @public
    */
-  public get xhr(){
-    const value = this.get('X-Requested-With') || '';
-    return value.toLowerCase() === 'xmlhttprequest';
+  public get xhr(): boolean {
+    const value = this.get('X-Requested-With') || ''
+    return value.toLowerCase() === 'xmlhttprequest'
   }
 
   /**
@@ -677,31 +682,30 @@ class Request {
    * @return {Cookies}
    * @api public
    */
-  get cookies(): Cookies{
+  get cookies(): Cookies {
     return this.#cookies
   }
 
   /**
    * Inspect implementation.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
-  inspect() {
-    // if (!this.rawRequest) return
+  inspect(): toJSON {
     return this.toJSON()
   }
 
   /**
    * Return JSON representation.
    *
-   * @return {Object}
+   * @return {object}
    * @api public
    */
-  toJSON() {
+  toJSON(): toJSON {
     return {
-      method: this.method,
-      url: this.url,
+      method: this.method!,
+      url: this.url!,
       headers: this.headers
     }
   }

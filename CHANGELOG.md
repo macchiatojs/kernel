@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.7.0 (15 Aug 2021)
+
+- lint code by remove ; and use ' over " ...etc
+
 ### v0.6.0 (14 Aug 2021)
 
 - use async/await over callbacks in tests

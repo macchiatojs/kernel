@@ -1,6 +1,6 @@
 {
   "name": "@macchiatojs/kernel",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,8 @@
     "dist"
   ],
   "scripts": {
-    "lint": "eslint . --ext .ts",
+    "lint:all": "eslint . --ext .ts",
+    "lint": "eslint ./src --ext .ts",
     "pretest": "rimraf dist",
     "test": "mocha --recursive --exit",
     "test:watch": "mocha --recursive --watch --exit",

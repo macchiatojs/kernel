@@ -1,5 +1,12 @@
 # CHANGE LOG
 
+### v0.5.0 (14 Aug 2021)
+
+- add cookies support `cookies@0.8.0`
+- update `mime-types@2.1.32`
+- update devDeps
+- improve code.
+
 ### v0.4.0 (14 Aug 2021)
 
 - imporv covreage 99%

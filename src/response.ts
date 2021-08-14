@@ -8,8 +8,10 @@ import contentDisposition from 'content-disposition'
 import HttpError from '@macchiatojs/http-error'
 import vary from 'vary'
 
+import type Kernel from './kernel'
 import type Request from './request'
-import type { default as Kernel, onErrorHandler } from './kernel'
+import type Cookies from 'cookies'
+import type { onErrorHandler } from './types'
 import { 
   getFlag,
   getLength,
@@ -27,12 +29,12 @@ import {
  * @param {ServerResponse} response
  * @api public
  */
-
 class Response {
   #app!: Kernel
   #request!: Request
   #BODY: any
   config!: Map<string, unknown>
+  #cookies!: Cookies
   flag!: number
   onError!: onErrorHandler<HttpError|Error|null>
 
@@ -45,12 +47,13 @@ class Response {
    * @param {Request} request
    * @api private
    */
-  initialize(app: Kernel, config: Map<string, unknown>, request: Request) {
+  initialize(app: Kernel, config: Map<string, unknown>, request: Request, cookies: Cookies) {
     this.#app = app
     this.config = config
     this.#request = request
+    this.#cookies = cookies
   }
-  
+
   /**
    * Return the request socket.
    *
@@ -523,6 +526,16 @@ class Response {
   }
 
   /**
+   * Return the cookies instance.
+   *
+   * @return {Cookies}
+   * @api public
+   */
+  get cookies(): Cookies{
+    return this.#cookies
+  }
+
+  /**
    * Inspect implementation.
    *
    * @return {Object}
@@ -557,14 +570,10 @@ export default Response
   //   this.status = code
   //   return this
   // }
-
   // json(payload) {
   //   return this.send(this.status, payload)
   // }
-
   // jsonp() {}
   // sendFile() {}
   // sendStatus() {}
-  // cookie() {}
-  // clearCookie() {}
   // render() {}

@@ -1,6 +1,8 @@
+import Cookies from 'cookies'
 import Request from './request'
 import Response from './response'
 import type Kernel from './kernel'
+import type { Option as CookiesOption } from 'cookies'
 import type { IncomingMessage, ServerResponse } from 'http'
 
 /**
@@ -13,6 +15,7 @@ import type { IncomingMessage, ServerResponse } from 'http'
  * @api public
  */
 class Context {
+  cookies: Cookies
   request: Request
   response: Response
 
@@ -25,13 +28,16 @@ class Context {
     public rawRequest: IncomingMessage,
     public rawResponse: ServerResponse
   ) {
+    // add cookies manager.
+    this.cookies = new Cookies(this.rawRequest, this.rawResponse, this.config.get('cookie') as CookiesOption)
+
     // make request and this.response.
     this.request = new Request(this.rawRequest)
     this.response = new Response(this.rawResponse)
 
     // initialize the request and the this.response.
-    this.request.initialize(app, config, this.response)
-    this.response.initialize(app, config, this.request)
+    this.request.initialize(app, config, this.response, this.cookies)
+    this.response.initialize(app, config, this.request, this.cookies)
   }
 }
 

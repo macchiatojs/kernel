@@ -15,6 +15,7 @@ import fresh from 'fresh'
 
 import type Response from './response'
 import type Kernel from './kernel'
+import type Cookies from 'cookies'
 import { METHODS } from './utils'
 
 /**
@@ -32,6 +33,7 @@ class Request {
   #ip?: string
   config!: Map<string, unknown>
   #QUERY!: { [key:string]: string }
+  #cookies!: Cookies
 
   /**
    * 
@@ -48,10 +50,11 @@ class Request {
    * @param {Response} response
    * @api private
    */
-  initialize(app: Kernel, config: Map<string, unknown>, response: Response) {
+  initialize(app: Kernel, config: Map<string, unknown>, response: Response, cookies: Cookies) {
     this.#app = app
     this.config = config
     this.#response = response
+    this.#cookies = cookies
     this.#ip = this.ips[0] || this.rawRequest.socket.remoteAddress || ''
   }
 
@@ -669,6 +672,16 @@ class Request {
   }
 
   /**
+   * Return the cookies instance.
+   *
+   * @return {Cookies}
+   * @api public
+   */
+  get cookies(): Cookies{
+    return this.#cookies
+  }
+
+  /**
    * Inspect implementation.
    *
    * @return {Object}
@@ -695,6 +708,3 @@ class Request {
 }
 
 export default Request
-
-// cookies
-// signedCookies

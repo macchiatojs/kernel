@@ -7,18 +7,8 @@ import HttpError from '@macchiatojs/http-error'
 import onFinished from 'on-finished'
 
 import Context from './context'
-import Request from './request'
-import Response from './response'
+import type { MacchiatoMiddleware, onErrorHandler } from './types';
 import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils'
-
-/**
- * @types
- */
-export type Next<T=any> = () => Promise<T>;
-export type KoaStyleMiddleware<C=Context, N=Next<any>, R=any> = (context: C, next: N) => R
-export type ExpressStyleMiddleware<Req=Request, Res=Response, N=Next<any>, R=any> = (request: Req, response: Res, next: N) => R
-export type MacchiatoMiddleware = ExpressStyleMiddleware|KoaStyleMiddleware
-export type onErrorHandler<T = Error> = (err?: T) => void
 
 /**
  * Kernel

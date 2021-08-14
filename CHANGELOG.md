@@ -1,6 +1,11 @@
 # CHANGE LOG
 
-### v0.3.0 (08 Aug 2021)
+### v0.4.0 (14 Aug 2021)
+
+- imporv covreage 99%
+- fix typo's
+
+### v0.3.0 (14 Aug 2021)
 
 - add generic to exported types
 - import with more clean way

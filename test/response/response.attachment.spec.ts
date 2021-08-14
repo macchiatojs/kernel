@@ -13,7 +13,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.attachment()
         response.send(200, 'foo')
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -24,9 +24,9 @@ describe('response', () => {
   describe('.attachment(filename)', () => {
     it('should add the filename param', async () => {
       app.use((request: Request, response: Response) => {
-        response.attachment('/path/to/image.png');
-        response.send(200, 'foo');
-      });
+        response.attachment('/path/to/image.png')
+        response.send(200, 'foo')
+      })
 
       await request(app.start())
       .get('/')
@@ -35,9 +35,9 @@ describe('response', () => {
 
     it('should set the Content-Type', async () => {
       app.use((request: Request, response: Response) => {
-        response.attachment('/path/to/image.png');
+        response.attachment('/path/to/image.png')
         response.send(200, Buffer.alloc(4, '.'))
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -48,9 +48,9 @@ describe('response', () => {
   describe('.attachment(utf8filename)', () => {
     it('should add the filename and filename* params', async () => {
       app.use((request: Request, response: Response) => {
-        response.attachment('/locales/日本語.txt');
-        response.send(200, 'japanese');
-      });
+        response.attachment('/locales/日本語.txt')
+        response.send(200, 'japanese')
+      })
 
       await request(app.start())
       .get('/')
@@ -60,9 +60,9 @@ describe('response', () => {
 
     it('should set the Content-Type', async () => {
       app.use((request: Request, response: Response) => {
-        response.attachment('/locales/日本語.txt');
-        response.send(200, 'japanese');
-      });
+        response.attachment('/locales/日本語.txt')
+        response.send(200, 'japanese')
+      })
 
       await request(app.start())
       .get('/')

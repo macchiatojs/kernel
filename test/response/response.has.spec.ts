@@ -12,9 +12,9 @@ describe('response', () => {
   describe('.has(field)', () => {
     it('should has a field', async () => {
       app.use((request: Request, response: Response) => {
-        response.set('Content-Type', 'text/x-foo');
-        response.send(200, response.has('Content-Type'));
-      });
+        response.set('Content-Type', 'text/x-foo')
+        response.send(200, response.has('Content-Type'))
+      })
 
       await request(app.start())
       .get('/')
@@ -23,8 +23,8 @@ describe('response', () => {
 
     it('should has not field', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, response.has('Content-Type'));
-      });
+        response.send(200, response.has('Content-Type'))
+      })
 
       await request(app.start())
       .get('/')

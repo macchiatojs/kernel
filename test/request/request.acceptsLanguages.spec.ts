@@ -14,8 +14,8 @@ describe('request', () => {
       app.use((request: Request, response: Response) => {
         request.acceptsLanguages('en-us').should.be.ok()
         request.acceptsLanguages('en').should.be.ok()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -26,8 +26,8 @@ describe('request', () => {
     it('should be false if language not accepted', async () => {
       app.use((request: Request, response: Response) => {
         request.acceptsLanguages('es').should.not.be.ok()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -41,8 +41,8 @@ describe('request', () => {
           request.acceptsLanguages('en').should.be.ok()
           request.acceptsLanguages('es').should.be.ok()
           request.acceptsLanguages('jp').should.be.ok()
-          response.end();
-        });
+          response.end()
+        })
 
         await request(app.start())
         .get('/')

@@ -15,7 +15,7 @@ describe('response', () => {
         response.flush()
         response.flush() // Should be idempotent.
         response.send(200, response.headerSent)
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -27,7 +27,7 @@ describe('response', () => {
         response.set('foo', 'bar')
         response.flush()
         response.send(200, response.get('foo'))
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -41,7 +41,7 @@ describe('response', () => {
         response.set('foo', 'bar')
         response.flush()
         response.send(401, [response.status, response.get('foo')])
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -72,7 +72,7 @@ describe('response', () => {
         }
 
         response.body = body
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -90,7 +90,7 @@ describe('response', () => {
     //     setTimeout(() => {
     //       stream.end(JSON.stringify({ message: 'hello!' }))
     //     }, 5000)
-    //   });
+    //   })
 
     //   await request(app.start())
     //   .get('/')

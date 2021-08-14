@@ -25,8 +25,8 @@ describe('request', () => {
           request.idempotent.should.be.True
         })
 
-        response.end('Welcome !');
-      });
+        response.end('Welcome !')
+      })
 
       await request(app.start())
       .get('/')
@@ -38,8 +38,8 @@ describe('request', () => {
         request.method = 'POST'
         request.idempotent.should.be.False
 
-        response.end('Welcome !');
-      });
+        response.end('Welcome !')
+      })
 
       await request(app.start())
       .get('/')

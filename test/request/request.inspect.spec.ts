@@ -22,8 +22,8 @@ describe('request', () => {
           }
         })
 
-        response.end('Welcome !');
-      });
+        response.end('Welcome !')
+      })
 
       await request(app.start())
       .get('/')

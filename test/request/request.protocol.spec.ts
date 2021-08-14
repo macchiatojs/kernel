@@ -12,8 +12,8 @@ describe('request', () => {
   describe('.protocol', () => {
     it('should return the protocol string', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.protocol);
-      });
+        response.end(request.protocol)
+      })
 
       await request(app.start())
       .get('/')
@@ -23,11 +23,11 @@ describe('request', () => {
     describe('when "trust proxy" is enabled', () => {
       it('should respect X-Forwarded-Proto', async () => {
 
-        app.config.set('trust proxy', true);
+        app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
-          response.end(request.protocol);
-        });
+          response.end(request.protocol)
+        })
 
         await request(app.start())
         .get('/')
@@ -36,12 +36,12 @@ describe('request', () => {
       })
 
       it('should default to the socket addr if X-Forwarded-Proto not present', async () => {
-        app.config.set('trust proxy', true);
+        app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
-          request.socket.encrypted = true;
-          response.end(request.protocol);
-        });
+          request.socket.encrypted = true
+          response.end(request.protocol)
+        })
 
         await request(app.start())
         .get('/')
@@ -49,11 +49,11 @@ describe('request', () => {
       })
 
       // it('should ignore X-Forwarded-Proto if socket addr not trusted', async () => {
-      //   app.config.set('trust proxy', '10.0.0.1');
+      //   app.config.set('trust proxy', '10.0.0.1')
 
       //   app.use((request: Request, response: Response) => {
-      //     response.end(request.protocol);
-      //   });
+      //     response.end(request.protocol)
+      //   })
 
       //   await request(app.start())
       //   .get('/')
@@ -62,11 +62,11 @@ describe('request', () => {
       // })
 
       it('should default to http', async () => {
-        app.config.set('trust proxy', true);
+        app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
-          response.end(request.protocol);
-        });
+          response.end(request.protocol)
+        })
 
         await request(app.start())
         .get('/')
@@ -75,11 +75,11 @@ describe('request', () => {
 
       describe('when trusting hop count', function () {
         it('should respect X-Forwarded-Proto', async () => {
-          app.config.set('trust proxy', 1);
+          app.config.set('trust proxy', 1)
 
           app.use((request: Request, response: Response) => {
-            response.end(request.protocol);
-          });
+            response.end(request.protocol)
+          })
 
           await request(app.start())
           .get('/')
@@ -92,8 +92,8 @@ describe('request', () => {
     describe('when "trust proxy" is disabled', () => {
       it('should ignore X-Forwarded-Proto', async () => {
         app.use((request: Request, response: Response) => {
-          response.end(request.protocol);
-        });
+          response.end(request.protocol)
+        })
 
         await request(app.start())
         .get('/')

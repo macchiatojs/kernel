@@ -10,8 +10,8 @@ describe('kernel', () => {
 
       app.use((request: Request, response: Response) => {
         assert(app.dev === true)
-        response.send(200, app.env);
-      });
+        response.send(200, app.env)
+      })
 
       await request(app.start())
       .get('/')
@@ -24,8 +24,8 @@ describe('kernel', () => {
 
       app.use((request: Request, response: Response) => {
         assert(app.dev === false)
-        response.send(200, app.env);
-      });
+        response.send(200, app.env)
+      })
 
       await request(app.start())
       .get('/')

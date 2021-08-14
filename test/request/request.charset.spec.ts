@@ -12,8 +12,8 @@ describe('request', () => {
   describe('.charset', () => {
     it('with no content-type present', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.charset);
-      });
+        response.end(request.charset)
+      })
 
       await request(app.start())
       .get('/')
@@ -22,8 +22,8 @@ describe('request', () => {
 
     it('with charset present', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.charset);
-      });
+        response.end(request.charset)
+      })
 
       await request(app.start())
       .get('/')
@@ -33,8 +33,8 @@ describe('request', () => {
 
     it('with a charset', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.charset);
-      });
+        response.end(request.charset)
+      })
 
       await request(app.start())
       .get('/')
@@ -44,8 +44,8 @@ describe('request', () => {
 
     it('should return "" if content-type is invalid', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.charset);
-      });
+        response.end(request.charset)
+      })
 
       await request(app.start())
       .get('/')

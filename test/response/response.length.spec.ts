@@ -17,7 +17,7 @@ describe('response', () => {
         response.set('Content-Length', '10')
         response.send(200, response.length)
         assert(response.length === 10)
-      });
+      })
 
       request(app.start())
         .post('/')
@@ -27,7 +27,7 @@ describe('response', () => {
     it('should return a 0 when Content-Length is not defined', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.length)
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -38,7 +38,7 @@ describe('response', () => {
         app.use((request: Request, response: Response) => {
           response.body = 'Hello !'
           assert(response.length === 7)
-        });
+        })
   
         await request(app.start())
           .get('/')
@@ -49,7 +49,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.body = Buffer.from('foo bar')
         assert(response.length === 7)
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -60,7 +60,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.body = { hello: 'world' }
         assert(response.length === 17)
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -71,7 +71,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.body = fs.createReadStream(path.join(__dirname, '../../package.json'))
         assert(response.length === undefined)
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -82,7 +82,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.body = null
         assert(response.length === 0)
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -92,7 +92,7 @@ describe('response', () => {
     it('should return a 0 when Content-Length is not defined and a .body is not', async () => {
       app.use((request: Request, response: Response) => {
         assert(response.length === 0)
-      });
+      })
 
       await request(app.start())
         .get('/')

@@ -107,7 +107,7 @@ describe('response', () => {
     //     // response.type = 'html'
     //     response.body = '<?xml version="1.0" encoding="UTF-8"?><x-tag>1</x-tag>'
 
-    //     console.log(response.body);
+    //     console.log(response.body)
 
     //   })
 

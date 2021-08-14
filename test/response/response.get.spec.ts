@@ -12,9 +12,9 @@ describe('response', () => {
   describe('.get(field)', () => {
     it('should get the response header field', async () => {
       app.use((request: Request, response: Response) => {
-        response.set('Content-Type', 'text/x-foo');
-        response.send(200, response.get('Content-Type'));
-      });
+        response.set('Content-Type', 'text/x-foo')
+        response.send(200, response.get('Content-Type'))
+      })
 
       await request(app.start())
       .get('/')

@@ -14,8 +14,8 @@ describe('request', () => {
       app.use((request: Request, response: Response) => {
         request.acceptsEncodings('gzip').should.be.ok()
         request.acceptsEncodings('deflate').should.be.ok()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -26,8 +26,8 @@ describe('request', () => {
     it('should be false if encoding not accepted', async () => {
       app.use((request: Request, response: Response) => {
         request.acceptsEncodings('bogus').should.not.be.ok()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')

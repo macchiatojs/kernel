@@ -11,8 +11,8 @@ describe('request', () => {
   describe('.host', () => {
     it('should return the Host when present', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.host);
-      });
+        response.end(request.host)
+      })
 
       await request(app.start())
       .post('/')
@@ -22,8 +22,8 @@ describe('request', () => {
 
     it('should strip port number', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.host);
-      });
+        response.end(request.host)
+      })
 
       await request(app.start())
       .post('/')
@@ -33,9 +33,9 @@ describe('request', () => {
 
     it('should return empty string otherwise', async () => {
       app.use((request: Request, response: Response) => {
-        request.headers.host = undefined;        
-        response.end(String(request.host));
-      });
+        request.headers.host = undefined     
+        response.end(String(request.host))
+      })
 
       await request(app.start())
       .post('/')
@@ -44,8 +44,8 @@ describe('request', () => {
 
     // it('should work with IPv6 Host', async () => {
     //   app.use((request: Request, response: Response) => {
-    //     response.end(request.hostname);
-    //   });
+    //     response.end(request.hostname)
+    //   })
 
     //   await request(app.start())
     //   .post('/')
@@ -55,8 +55,8 @@ describe('request', () => {
 
     // it('should work with IPv6 Host and port', async () => {
     //   app.use((request: Request, response: Response) => {
-    //     response.end(request.host);
-    //   });
+    //     response.end(request.host)
+    //   })
 
     //   await request(app.start())
     //   .post('/')
@@ -66,11 +66,11 @@ describe('request', () => {
 
     describe('when "trust proxy" is enabled', () => {
       // it('should respect X-Forwarded-Host', async () => {
-      //     app.config.get('trust proxy');
+      //     app.config.get('trust proxy')
 
       //   app.use((request: Request, response: Response) => {
-      //     response.end(request.host);
-      //   });
+      //     response.end(request.host)
+      //   })
 
       //   await request(app.start())
       //   .get('/')
@@ -80,11 +80,11 @@ describe('request', () => {
       // })
 
       // it('should ignore X-Forwarded-Host if socket addr not trusted', async () => {
-      //     app.config.set('trust proxy', '10.0.0.1');
+      //     app.config.set('trust proxy', '10.0.0.1')
 
       //   app.use((request: Request, response: Response) => {
-      //     response.end(request.host);
-      //   });
+      //     response.end(request.host)
+      //   })
 
       //   await request(app.start())
       //   .get('/')
@@ -94,11 +94,11 @@ describe('request', () => {
       // })
 
       it('should default to Host', async () => {
-          app.config.set('trust proxy', true);
+          app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
-          response.end(request.host);
-        });
+          response.end(request.host)
+        })
 
         await request(app.start())
         .get('/')
@@ -108,11 +108,11 @@ describe('request', () => {
 
       describe('when trusting hop count', function () {
         it('should respect X-Forwarded-Host', async () => {
-              app.config.set('trust proxy', 1);
+              app.config.set('trust proxy', 1)
 
           app.use((request: Request, response: Response) => {
-            response.end(request.host);
-          });
+            response.end(request.host)
+          })
 
           await request(app.start())
           .get('/')
@@ -126,8 +126,8 @@ describe('request', () => {
     describe('when "trust proxy" is disabled', () => {
       it('should ignore X-Forwarded-Host', async () => {
           app.use((request: Request, response: Response) => {
-          response.end(request.host);
-        });
+          response.end(request.host)
+        })
 
         await request(app.start())
         .get('/')

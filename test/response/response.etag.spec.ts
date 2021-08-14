@@ -13,7 +13,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.etag = '"asdf"'
         response.send(200, response.etag)
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -25,7 +25,7 @@ describe('response', () => {
         response.etag = 'W/"asdf"'
         
         response.send(200, response.etag)
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -36,7 +36,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.etag = 'asdf'
         response.send(200, response.etag)
-      });
+      })
 
       await request(app.start())
       .get('/')

@@ -14,7 +14,7 @@ describe('response', () => {
     it('should default to a 302 redirect', async () => {
       app.use((request: Request, response: Response) => {
         response.redirect('http://google.com')
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -60,8 +60,8 @@ describe('response', () => {
     it('should set the response status', async () => {
       app.use((request: Request, response: Response) => {
         response.status = 303
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .get('/')
@@ -74,8 +74,8 @@ describe('response', () => {
     it('should ignore the body', async () => {
 
       app.use((request: Request, response: Response) => {
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .head('/')
@@ -90,8 +90,8 @@ describe('response', () => {
     it('should respond with html', async () => {
 
       app.use((request: Request, response: Response) => {
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .get('/')
@@ -104,8 +104,8 @@ describe('response', () => {
     it('should escape the url', async () => {
 
       app.use((request: Request, response: Response) => {
-        response.redirect('<la\'me>');
-      });
+        response.redirect('<la\'me>')
+      })
 
       await request(app.start())
       .get('/')
@@ -120,8 +120,8 @@ describe('response', () => {
 
       app.use((request: Request, response: Response) => {
         response.status = 301
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .get('/')
@@ -136,8 +136,8 @@ describe('response', () => {
     it('should respond with text', async () => {
 
       app.use((request: Request, response: Response) => {
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .get('/')
@@ -150,8 +150,8 @@ describe('response', () => {
     it('should encode the url', async () => {
 
       app.use((request: Request, response: Response) => {
-        response.redirect('http://example.com/?param=<script>alert("hax");</script>');
-      });
+        response.redirect('http://example.com/?param=<script>alert("hax");</script>')
+      })
 
       await request(app.start())
       .get('/')
@@ -166,8 +166,8 @@ describe('response', () => {
 
       app.use((request: Request, response: Response) => {
         response.status = 301
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .get('/')
@@ -182,8 +182,8 @@ describe('response', () => {
     it('should respond with an empty body', async () => {
 
       app.use((request: Request, response: Response) => {
-        response.redirect('http://google.com');
-      });
+        response.redirect('http://google.com')
+      })
 
       await request(app.start())
       .get('/')
@@ -206,8 +206,8 @@ describe('response', () => {
  */
 export function shouldNotHaveHeader(header) {
   return function (response) {
-    assert.ok(!(header.toLowerCase() in response.headers), 'should not have header ' + header);
-  };
+    assert.ok(!(header.toLowerCase() in response.headers), 'should not have header ' + header)
+  }
 }
 
 function shouldNotHaveBody () {

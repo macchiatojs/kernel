@@ -54,7 +54,7 @@ describe('response', function () {
       app.use((request: Request, response: Response) => {
         response.set('Link', '<http://127.0.0.1/>')
         response.end()
-      });
+      })
 
       await request(app.start())
       .get('/')

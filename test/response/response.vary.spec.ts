@@ -14,9 +14,9 @@ describe('response.vary()', () => {
   describe('with an empty array', () => {
     it('should not set Vary', async () => {
       app.use((request: Request, response: Response) => {
-        response.vary([]);
-        response.end();
-      });
+        response.vary([])
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -28,9 +28,9 @@ describe('response.vary()', () => {
   describe('with an array', () => {
     it('should set the values', async () => {
       app.use((request: Request, response: Response) => {
-        response.vary(['Accept', 'Accept-Language', 'Accept-Encoding']);
-        response.end();
-      });
+        response.vary(['Accept', 'Accept-Language', 'Accept-Encoding'])
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -42,9 +42,9 @@ describe('response.vary()', () => {
   describe('with a string', () => {
     it('should set the value', async () => {
       app.use((request: Request, response: Response) => {
-        response.vary('Accept');
-        response.end();
-      });
+        response.vary('Accept')
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -56,13 +56,13 @@ describe('response.vary()', () => {
   describe('when the value is present', () => {
     it('should not add it again', async () => {
       app.use((request: Request, response: Response) => {
-        response.vary('Accept');
-        response.vary('Accept-Encoding');
-        response.vary('Accept-Encoding');
-        response.vary('Accept-Encoding');
-        response.vary('Accept');
-        response.end();
-      });
+        response.vary('Accept')
+        response.vary('Accept-Encoding')
+        response.vary('Accept-Encoding')
+        response.vary('Accept-Encoding')
+        response.vary('Accept')
+        response.end()
+      })
 
       await request(app.start())
       .get('/')

@@ -11,8 +11,8 @@ describe('request', () => {
   describe('.path', () => {
     it('should return the origin of url', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.path);
-      });
+        response.send(200, request.path)
+      })
 
       await request(app.start())
       .get('/login?redirect=/post/1/comments')
@@ -22,8 +22,8 @@ describe('request', () => {
     it('should return the origin of url', async () => {
       app.use((request: Request, response: Response) => {
         request.path = '/kiko'
-        response.send(200, request.path);
-      });
+        response.send(200, request.path)
+      })
 
       await request(app.start())
       .get('/login')

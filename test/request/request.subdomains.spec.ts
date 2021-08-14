@@ -12,8 +12,8 @@ describe('request', () => {
     describe('when present', () => {
       it('should return an array', async () => {
         app.use((request: Request, response: Response) => {
-          response.send(200, request.subdomains);
-        });
+          response.send(200, request.subdomains)
+        })
 
         await request(app.start())
         .get('/')
@@ -24,8 +24,8 @@ describe('request', () => {
       it('should work with IPv4 address', async () => {
 
         app.use((request: Request, response: Response) => {
-          response.send(200, request.subdomains);
-        });
+          response.send(200, request.subdomains)
+        })
 
         await request(app.start())
         .get('/')
@@ -36,8 +36,8 @@ describe('request', () => {
       it('should work with IPv6 address', async () => {
 
         app.use((request: Request, response: Response) => {
-          response.send(200, request.subdomains);
-        });
+          response.send(200, request.subdomains)
+        })
 
         await request(app.start())
         .get('/')
@@ -50,8 +50,8 @@ describe('request', () => {
       it('should return an empty array', async () => {
 
         app.use((request: Request, response: Response) => {
-          response.send(200, request.subdomains);
-        });
+          response.send(200, request.subdomains)
+        })
 
         await request(app.start())
         .get('/')
@@ -64,9 +64,9 @@ describe('request', () => {
       it('should return an empty array', async () => {
 
         app.use((request: Request, response: Response) => {
-          request.headers.host = undefined;
-          response.send(200, request.subdomains);
-        });
+          request.headers.host = undefined
+          response.send(200, request.subdomains)
+        })
 
         await request(app.start())
         .get('/')
@@ -76,11 +76,11 @@ describe('request', () => {
 
     describe('with trusted X-Forwarded-Host', function () {
       it('should return an array', async () => {
-        app.config.set('trust proxy', true);
+        app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
-          response.send(200, request.subdomains);
-        });
+          response.send(200, request.subdomains)
+        })
 
         await request(app.start())
         .get('/')
@@ -92,11 +92,11 @@ describe('request', () => {
     describe('when subdomain offset is set', () => {
       describe('when subdomain offset is zero', () => {
         it('should return an array with the whole domain', async () => {
-          app.config.set('subdomain offset', 0);
+          app.config.set('subdomain offset', 0)
 
           app.use((request: Request, response: Response) => {
-            response.send(200, request.subdomains);
-          });
+            response.send(200, request.subdomains)
+          })
 
           await request(app.start())
           .get('/')
@@ -105,11 +105,11 @@ describe('request', () => {
         })
 
         it('should return an array with the whole IPv4', async () => {
-          app.config.set('subdomain offset', 0);
+          app.config.set('subdomain offset', 0)
 
           app.use((request: Request, response: Response) => {
-            response.send(200, request.subdomains);
-          });
+            response.send(200, request.subdomains)
+          })
 
           await request(app.start())
           .get('/')
@@ -119,11 +119,11 @@ describe('request', () => {
 
         // TODO: fix IPv6
         // it('should return an array with the whole IPv6', async () => {
-        //   app.config.set('subdomain offset', 0);
+        //   app.config.set('subdomain offset', 0)
 
         //   app.use((request: Request, response: Response) => {
-        //     response.send(200, request.subdomains);
-        //   });
+        //     response.send(200, request.subdomains)
+        //   })
 
         //   await request(app.start())
         //   .get('/')
@@ -134,11 +134,11 @@ describe('request', () => {
 
       describe('when present', () => {
         it('should return an array', async () => {
-          app.config.set('subdomain offset', 3);
+          app.config.set('subdomain offset', 3)
 
           app.use((request: Request, response: Response) => {
-            response.send(200, request.subdomains);
-          });
+            response.send(200, request.subdomains)
+          })
 
           await request(app.start())
           .get('/')
@@ -149,11 +149,11 @@ describe('request', () => {
 
       describe('otherwise', () => {
         it('should return an empty array', async () => {
-          app.config.set('subdomain offset', 3);
+          app.config.set('subdomain offset', 3)
 
           app.use((request: Request, response: Response) => {
-            response.send(200, request.subdomains);
-          });
+            response.send(200, request.subdomains)
+          })
 
           await request(app.start())
           .get('/')

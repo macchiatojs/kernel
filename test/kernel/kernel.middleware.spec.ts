@@ -13,25 +13,25 @@ describe('kernel', () => {
   describe('middleware', () => {
     describe('.next()', () => {
       it('should behave like connect', async () => {
-        const calls: string[] = [];
+        const calls: string[] = []
 
         app.use((request: Request, response: Response, next: any) => {
-          calls.push('one');
-          next();
-        });
+          calls.push('one')
+          next()
+        })
 
         app.use((request: Request, response: Response, next: any) => {
-          calls.push('two');
-          next();
-        });
+          calls.push('two')
+          next()
+        })
 
         app.use((request: Request, response: Response) => {
-            let buffer = '';
-            response.set('Content-Type', 'application/json; charset=utf-8;');
+            let buffer = ''
+            response.set('Content-Type', 'application/json; charset=utf-8;')
             request.rawRequest
               .on('data', (chunk) => { buffer += chunk })
               .on('end', () => { response.body = buffer })
-        });
+        })
 
         await request(app.start())
         .get('/')

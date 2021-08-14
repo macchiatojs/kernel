@@ -11,8 +11,8 @@ describe('request', () => {
   describe('.type', () => {
     it('should return type void of parameters', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.type);
-      });
+        response.end(request.type)
+      })
 
       await request(app.start())
       .get('/')
@@ -22,8 +22,8 @@ describe('request', () => {
 
     it('should with no host present', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.type);
-      });
+        response.end(request.type)
+      })
 
       await request(app.start())
       .get('/')

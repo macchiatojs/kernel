@@ -17,7 +17,7 @@ describe('response', () => {
         response.redirect('http://google.com')
         assert(response.headerSent === false)
 
-        response.end();
+        response.end()
       })
 
       await request(app.start()).get('/')

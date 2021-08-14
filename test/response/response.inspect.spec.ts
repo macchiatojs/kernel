@@ -19,8 +19,8 @@ describe('response', () => {
         assert(JSON.stringify(inspect.headers) === '{}')
         assert(inspect.body === undefined)
         
-        response.send(200, inspect);
-      });
+        response.send(200, inspect)
+      })
 
       await request(app.start())
       .get('/')

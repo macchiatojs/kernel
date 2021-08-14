@@ -11,8 +11,8 @@ describe('request', () => {
   describe('.href', () => {
     it('should work with `GET http://127.0.0.1/user', async () => {
       app.use((request: Request, response: Response) => {
-        response.end(request.href);
-      });
+        response.end(request.href)
+      })
 
       await request(app.start())
       .get('/user')

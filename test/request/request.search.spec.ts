@@ -12,8 +12,8 @@ describe('request', () => {
   describe('.search', () => {
     it('should replace the search', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.search);
-      });
+        response.send(200, request.search)
+      })
 
       await request(app.start())
       .get('/store/shoes?page=2&color=blue')
@@ -23,8 +23,8 @@ describe('request', () => {
     it('should .search update the .querystring', async () => {
       app.use((request: Request, response: Response) => {
         request.search = '?page=2&color=blue'
-        response.send(200, request.querystring);
-      });
+        response.send(200, request.querystring)
+      })
 
       await request(app.start())
       .get('/')

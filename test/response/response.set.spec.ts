@@ -13,8 +13,8 @@ describe('response', () => {
     it('should set a field value', async () => {
       app.use((request: Request, response: Response) => {
         response.set('x-foo', 'bar')
-        response.send(200, response.get('x-foo'));
-      });
+        response.send(200, response.get('x-foo'))
+      })
 
       await request(app.start())
       .get('/')
@@ -24,8 +24,8 @@ describe('response', () => {
     it('should set a field value of array', async () => {
       app.use((request: Request, response: Response) => {
         response.set('x-foo', ['foo', 'bar'])
-        response.send(200, response.get('x-foo'));
-      });
+        response.send(200, response.get('x-foo'))
+      })
 
       await request(app.start())
       .get('/')
@@ -35,8 +35,8 @@ describe('response', () => {
     it('should set multiple fields', async () => {
       app.use((request: Request, response: Response) => {
         response.set({ foo: '1', bar: '2' })
-        response.send(200, [response.get('foo'), response.get('bar')]);
-      });
+        response.send(200, [response.get('foo'), response.get('bar')])
+      })
 
       await request(app.start())
       .get('/')

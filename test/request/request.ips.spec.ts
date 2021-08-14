@@ -13,11 +13,11 @@ describe('request', () => {
     describe('when X-Forwarded-For is present', () => {
       describe('when "trust proxy" is enabled', () => {
         it('should return an array of the specified addresses', async () => {
-          app.config.set('trust proxy', true);
+          app.config.set('trust proxy', true)
 
           app.use((request: Request, response: Response) => {
-            response.send(200, request.ips);
-          });
+            response.send(200, request.ips)
+          })
 
           await request(app.start())
           .get('/')
@@ -28,11 +28,11 @@ describe('request', () => {
 
       describe('when "trust proxy" is disabled', () => {
         it('should return an empty array', async () => {
-          app.config.set('trust proxy', false);
+          app.config.set('trust proxy', false)
 
           app.use((request: Request, response: Response) => {
-            response.send(200, request.ips);
-          });
+            response.send(200, request.ips)
+          })
 
           await request(app.start())
           .get('/')

@@ -15,12 +15,12 @@ describe('response', () => {
         response.set('X-Token', 'secret123#crypted')
         response.set('Content-Type', 'application/json')
 
-        next();
-      });
+        next()
+      })
 
       app.use((request: Request, response: Response) => {
-        response.send(200, response.headers);
-      });
+        response.send(200, response.headers)
+      })
 
       await request(app.start())
       .get('/')
@@ -29,8 +29,8 @@ describe('response', () => {
 
     it('should return empty object', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, response.headers);
-      });
+        response.send(200, response.headers)
+      })
 
       await request(app.start())
       .get('/')

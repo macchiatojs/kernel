@@ -14,7 +14,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.message)
         assert(response.message === 'OK')
-      });
+      })
 
       await request(app.start())
         .get('/')
@@ -27,7 +27,7 @@ describe('response', () => {
         response.message = 'OK'
         response.end()
         assert(response.message === 'OK')
-      });
+      })
 
       await request(app.start())
         .get('/')

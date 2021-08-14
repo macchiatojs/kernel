@@ -14,7 +14,7 @@ describe('request', () => {
     it('should exist cookies inside the request', async () => {
       app.use((request: Request) => {
         assert(request.cookies instanceof Cookies)
-      });
+      })
 
       await await request(app.start()).get('/')
     })

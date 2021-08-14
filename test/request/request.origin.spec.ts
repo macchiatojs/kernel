@@ -12,8 +12,8 @@ describe('request', () => {
   describe('.origin', () => {
     it('should return the origin of url', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.origin);
-      });
+        response.send(200, request.origin)
+      })
 
       await request(app.start())
       .get('/')

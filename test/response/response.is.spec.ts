@@ -14,11 +14,11 @@ describe('response', () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'text/html; charset=utf-8'
         next()
-      });
+      })
 
       app.use((request: Request, response: Response) => {
         response.send(200, response.is('text/*'))
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -28,7 +28,7 @@ describe('response', () => {
     it('should return false when no type is set', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, [response.is(), response.is('text'), response.is('text/*')])
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -39,11 +39,11 @@ describe('response', () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'text/html; charset=utf-8'
         next()
-      });
+      })
 
       app.use((request: Request, response: Response) => {
         response.send(200, response.is())
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -54,7 +54,7 @@ describe('response', () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'image/png'
         next()
-      });
+      })
 
       app.use((request: Request, response: Response) => {        
         assert(response.is('png') === 'png')
@@ -74,7 +74,7 @@ describe('response', () => {
         assert.strictEqual(response.is('text/html', 'text/plain', 'application/json; charset=utf-8'), false)
 
         response.end()
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -85,14 +85,14 @@ describe('response', () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'application/x-www-form-urlencoded'
         next()
-      });
+      })
 
       app.use((request: Request, response: Response) => {
         assert(response.is('urlencoded') === 'urlencoded')
         assert(response.is('json', 'urlencoded') === 'urlencoded')
         assert(response.is('urlencoded', 'json') === 'urlencoded')
         response.end()
-      });
+      })
 
       await request(app.start())
       .get('/')

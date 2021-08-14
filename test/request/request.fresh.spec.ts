@@ -10,13 +10,13 @@ describe('request', () => {
 
   describe('.fresh', () => {
     it('should return true when the resource is not modified', async () => {
-      const etag = '"12345"';
+      const etag = '"12345"'
 
       app.use((request: Request, response: Response) => {
-        response.set('ETag', etag);
+        response.set('ETag', etag)
         // TODO: work to use the implictly redirect
-        response.send(304, request.fresh);
-      });
+        response.send(304, request.fresh)
+      })
 
       await request(app.start())
       .get('/')
@@ -26,9 +26,9 @@ describe('request', () => {
 
     it('should return false when the resource is modified', async () => {
       app.use((request: Request, response: Response) => {
-        response.set('ETag', '"123"');
-        response.send(200, request.fresh);
-      });
+        response.set('ETag', '"123"')
+        response.send(200, request.fresh)
+      })
 
       await request(app.start())
       .post('/')
@@ -38,8 +38,8 @@ describe('request', () => {
 
     it('should return false without response headers', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.fresh);
-      });
+        response.send(200, request.fresh)
+      })
 
       await request(app.start())
       .get('/')

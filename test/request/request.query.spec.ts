@@ -12,8 +12,8 @@ describe('request', () => {
   describe('.query', () => {
     it('when missing should return an empty object', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.query);
-      });
+        response.send(200, request.query)
+      })
 
       await request(app.start())
       .get('/')
@@ -22,8 +22,8 @@ describe('request', () => {
 
     it('when missing should return a parsed query-string', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.query.page);
-      });
+        response.send(200, request.query.page)
+      })
 
       await request(app.start())
       .get('/?page=2')
@@ -38,8 +38,8 @@ describe('request', () => {
         request.querystring.should.be.equal('page=2&color=blue')
         request.search.should.be.ok()
         request.search.should.be.equal('?page=2&color=blue')
-        response.send(200, 'work !');
-      });
+        response.send(200, 'work !')
+      })
 
       await request(app.start())
       .get('/store/shoes')
@@ -54,8 +54,8 @@ describe('request', () => {
         request.originalUrl?.should.be.ok()
         request.originalUrl?.should.be.equal('/store/shoes')
 
-        response.send(200, 'work !');
-      });
+        response.send(200, 'work !')
+      })
 
       await request(app.start())
       .get('/store/shoes')
@@ -66,8 +66,8 @@ describe('request', () => {
     it('should .query update the .querystring', async () => {
       app.use((request: Request, response: Response) => {
         request.query = { page: '2', color: 'blue' }
-        response.send(200, request.querystring);
-      });
+        response.send(200, request.querystring)
+      })
 
       await request(app.start())
       .get('/')

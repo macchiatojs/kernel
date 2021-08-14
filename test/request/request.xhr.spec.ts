@@ -13,8 +13,8 @@ describe('request', () => {
     it('should return true when X-Requested-With is xmlhttprequest', async () => {
       app.use((request: Request, response: Response) => {
         request.xhr.should.be.true()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -25,8 +25,8 @@ describe('request', () => {
     it('should case-insensitive', async () => {
       app.use((request: Request, response: Response) => {
         request.xhr.should.be.true()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -37,8 +37,8 @@ describe('request', () => {
     it('should return false otherwise', async () => {
       app.use((request: Request, response: Response) => {
         request.xhr.should.be.false()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')
@@ -49,8 +49,8 @@ describe('request', () => {
     it('should return false when not present', async () => {
       app.use((request: Request, response: Response) => {
         request.xhr.should.be.false()
-        response.end();
-      });
+        response.end()
+      })
 
       await request(app.start())
       .get('/')

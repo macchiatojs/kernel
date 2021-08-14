@@ -13,8 +13,8 @@ describe('response', () => {
     it('should set the Content-Type based on a filename', async () => {
       app.use((request: Request, response: Response) => {
         response.type = 'foo.js'
-        response.end('var name = "tj";')
-      });
+        response.end('let name = "imed";')
+      })
 
       await request(app.start())
       .get('/')
@@ -25,8 +25,8 @@ describe('response', () => {
     it('should default to empty', async () => {
       app.use((request: Request, response: Response) => {
         response.type = 'rawr'
-        response.end('var name = "tj";');
-      });
+        response.end('let name = "imed";')
+      })
 
       await request(app.start())
       .get('/')
@@ -37,8 +37,8 @@ describe('response', () => {
     it('should set the Content-Type with type/subtype', async () => {
       app.use((request: Request, response: Response) => {
         response.type = 'application/vnd.amazon.ebook'
-        response.end('var name = "tj";');
-      });
+        response.end('let name = "imed";')
+      })
 
       await request(app.start())
       .get('/')

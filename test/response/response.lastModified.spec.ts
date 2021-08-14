@@ -15,7 +15,7 @@ describe('response', () => {
         const date = new Date()
         response.lastModified = date
         response.send(200, response.headers['last-modified'] === date.toUTCString())
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -27,7 +27,7 @@ describe('response', () => {
         const date = new Date()
         response.lastModified = date.toString()
         response.send(200, response.headers['last-modified'] === date.toUTCString())
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -40,7 +40,7 @@ describe('response', () => {
         const date = new Date()
         response.lastModified = date
         response.send(200, (response.lastModified.getTime() / 1000 === Math.floor(date.getTime() / 1000)))
-      });
+      })
 
       await request(app.start())
       .get('/')
@@ -50,7 +50,7 @@ describe('response', () => {
     it('when lastModified not set should get undefined', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.lastModified)
-      });
+      })
 
       await request(app.start())
       .get('/')

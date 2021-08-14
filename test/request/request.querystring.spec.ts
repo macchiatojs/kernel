@@ -12,8 +12,8 @@ describe('request', () => {
   describe('.querystring', () => {
     it('should return the querystring', async () => {
       app.use((request: Request, response: Response) => {
-        response.send(200, request.querystring);
-      });
+        response.send(200, request.querystring)
+      })
 
       await request(app.start())
       .get('/store/shoes?page=2&color=blue')
@@ -29,8 +29,8 @@ describe('request', () => {
         request.query.page?.should.be.equal('2')
         request.query.color?.should.be.equal('blue')
 
-        response.send(200, 'work !');
-      });
+        response.send(200, 'work !')
+      })
 
       await request(app.start())
       .get('/store/shoes')
@@ -45,8 +45,8 @@ describe('request', () => {
         request.originalUrl?.should.be.ok()
         request.originalUrl?.should.be.equal('/store/shoes')
 
-        response.send(200, 'work !');
-      });
+        response.send(200, 'work !')
+      })
 
       await request(app.start())
       .get('/store/shoes')

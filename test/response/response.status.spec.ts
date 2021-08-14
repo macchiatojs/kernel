@@ -13,7 +13,7 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.status = 201
         response.end('Created')
-      });
+      })
 
       await request(app.start())
       .get('/')

@@ -13,8 +13,8 @@ describe('response', () => {
       app.use((request: Request, response: Response) => {
         response.set('x-foo', 'bar')
         response.remove('x-foo')
-        response.send(200, response.get('x-foo'));
-      });
+        response.send(200, response.get('x-foo'))
+      })
 
       await request(app.start())
       .get('/')

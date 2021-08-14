@@ -13,8 +13,8 @@ describe('response', () => {
     it('should return the request socket object', async () => {
       app.use((request: Request, response: Response) => {
         console.dir(response.socket)
-        response.send(200, (request.socket instanceof Socket));
-      });
+        response.send(200, (request.socket instanceof Socket))
+      })
 
       await request(app.start())
       .get('/')

@@ -12,7 +12,7 @@ describe('kernel', () => {
   })
   
   describe('.onError', () => {
-    it('handle catch should response and throws 500', (done) => {
+    it('handle catch should response and throws 500', async () => {
       app.use(() => {
         throw new HttpError()
       })
@@ -21,13 +21,13 @@ describe('kernel', () => {
         assert(err !== null)        
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .expect(500, '500') // /HttpError: Internal Server Error/
-      .end(done)
+      
     })
 
-    it('handle catch should response and throws 404', (done) => {
+    it('handle catch should response and throws 404', async () => {
       app.use(() => {
         throw new HttpError(404, 'Not found')
       })
@@ -36,13 +36,13 @@ describe('kernel', () => {
         assert(err !== null)        
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .expect(404, '404') // /HttpError: Not found/
-      .end(done)
+      
     })
 
-    it('should handle errors when no content status', (done) => {
+    it('should handle errors when no content status', async () => {
       app.use((request:Request, response: Response) => {
         response.status = 204
         response.body = fs.createReadStream('does not exist')
@@ -52,13 +52,13 @@ describe('kernel', () => {
         assert(err !== null)        
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .expect(204)
-      .end(done)
+      
     })
 
-    it('should handle all intermediate stream body errors', (done) => {
+    it('should handle all intermediate stream body errors', async () => {
       app.use((request:Request, response: Response) => {
         response.body = fs.createReadStream('does not exist')
         response.body = fs.createReadStream('does not exist')
@@ -69,13 +69,13 @@ describe('kernel', () => {
         assert(err !== null)        
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .expect(404)
-      .end(done)
+      
     })
     
-    it('should expose message', (done) => {
+    it('should expose message', async () => {
       app.dev = false
 
       app.use(() => {
@@ -86,13 +86,13 @@ describe('kernel', () => {
         assert(err !== null)        
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .expect(404, /Nothing/)
-      .end(done)
+      
     })
 
-    // it('should ignore error after headerSent', (done) => {
+    // it('should ignore error after headerSent', async () => {
     //   app.dev = false
 
     //   app.use(async (request: Request, response: Response) => {
@@ -109,10 +109,10 @@ describe('kernel', () => {
     //     // assert(err.headersSent === true)
     //   })
 
-    //   request(app.start())
+    //   await request(app.start())
     //   .post('/')
     //   .expect(200, '')
-    //   .end(done)
+    //   
     // })
   })
 })

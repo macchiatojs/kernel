@@ -9,38 +9,38 @@ describe('response', () => {
   })
 
   describe('.etag', () => {
-    it('should not modify an etag with quotes', (done) => {
+    it('should not modify an etag with quotes', async () => {
       app.use((request: Request, response: Response) => {
         response.etag = '"asdf"'
         response.send(200, response.etag)
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('"asdf"', done);
+      .expect('"asdf"')
     })
 
-    it('should not modify a weak etag', (done) => {
+    it('should not modify a weak etag', async () => {
       app.use((request: Request, response: Response) => {
         response.etag = 'W/"asdf"'
         
         response.send(200, response.etag)
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('W/"asdf"', done);
+      .expect('W/"asdf"')
     })
 
-    it('should add quotes around an etag if necessary', (done) => {
+    it('should add quotes around an etag if necessary', async () => {
       app.use((request: Request, response: Response) => {
         response.etag = 'asdf'
         response.send(200, response.etag)
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('"asdf"', done);
+      .expect('"asdf"')
     })
   })
 })

@@ -12,49 +12,49 @@ describe('response.vary()', () => {
   // with no arguments --> handled by TS.
 
   describe('with an empty array', () => {
-    it('should not set Vary', (done) => {
+    it('should not set Vary', async () => {
       app.use((request: Request, response: Response) => {
         response.vary([]);
         response.end();
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect(shouldNotHaveHeader('Vary'))
-      .expect(200, done);
+      .expect(200)
     })
   })
 
   describe('with an array', () => {
-    it('should set the values', (done) => {
+    it('should set the values', async () => {
       app.use((request: Request, response: Response) => {
         response.vary(['Accept', 'Accept-Language', 'Accept-Encoding']);
         response.end();
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Vary', 'Accept, Accept-Language, Accept-Encoding')
-      .expect(200, done);
+      .expect(200)
     })
   })
 
   describe('with a string', () => {
-    it('should set the value', (done) => {
+    it('should set the value', async () => {
       app.use((request: Request, response: Response) => {
         response.vary('Accept');
         response.end();
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Vary', 'Accept')
-      .expect(200, done);
+      .expect(200)
     })
   })
 
   describe('when the value is present', () => {
-    it('should not add it again', (done) => {
+    it('should not add it again', async () => {
       app.use((request: Request, response: Response) => {
         response.vary('Accept');
         response.vary('Accept-Encoding');
@@ -64,10 +64,10 @@ describe('response.vary()', () => {
         response.end();
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Vary', 'Accept, Accept-Encoding')
-      .expect(200, done);
+      .expect(200)
     })
   })
 })

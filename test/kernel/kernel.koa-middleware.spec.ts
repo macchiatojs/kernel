@@ -7,7 +7,7 @@ import Kernel, { Context, WrapKoaCompose } from '../../src'
 describe('kernel', () => {
   describe('koa-style middleware', () => {
     describe('.next()', () => {
-      it('should behave like koa', (done) => {
+      it('should behave like koa', async () => {
         const app = new Kernel({ expressify: false })
         const calls: number[] = []
     
@@ -31,16 +31,16 @@ describe('kernel', () => {
           })
         })
 
-        request(app.start())
+        await request(app.start())
           .get('/')
           .expect(() => { assert.deepStrictEqual(calls, [1, 2, 3, 4, 5, 6]) })
           .expect(200, '')
-          .end(done)
+          
       })
     })
 
     describe('compose', () => {
-      it('should wrap and compose the middlewares under the hood with koa compose module', (done) => {
+      it('should wrap and compose the middlewares under the hood with koa compose module', async () => {
         const app = new Kernel({ koaCompose: new WrapKoaCompose(compose) })
         const calls: number[] = []
     
@@ -64,11 +64,11 @@ describe('kernel', () => {
           })
         })
 
-        request(app.start())
+        await request(app.start())
           .get('/')
           .expect(() => { assert.deepStrictEqual(calls, [1, 2, 3, 4, 5, 6]) })
           .expect(200, '')
-          .end(done)
+          
       })
     })
   })

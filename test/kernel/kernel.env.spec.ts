@@ -4,7 +4,7 @@ import Kernel, { Request, Response } from '../../src'
 
 describe('kernel', () => {
   describe('.env', () => {
-    it('should be development', (done) => {
+    it('should be development', async () => {
       process.env.NODE_ENV = ''
       const app = new Kernel()
 
@@ -13,12 +13,12 @@ describe('kernel', () => {
         response.send(200, app.env);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'development', done);
+      .expect(200, 'development')
     })
 
-    it('should be test', (done) => {
+    it('should be test', async () => {
       process.env.NODE_ENV = 'test'
       const app = new Kernel()
 
@@ -27,9 +27,9 @@ describe('kernel', () => {
         response.send(200, app.env);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'test', done);
+      .expect(200, 'test')
     })
   })
 })

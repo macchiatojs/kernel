@@ -9,143 +9,143 @@ describe('request.is()', function () {
   })
 
   describe('when given a mime type', function () {
-    it('should return the type when matching', (done) => {
+    it('should return the type when matching', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('application/json'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'application/json', done)
+      .expect(200, 'application/json')
     })
 
-    it('should return false when not matching', (done) => {
+    it('should return false when not matching', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('image/jpeg'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'false', done)
+      .expect(200, 'false')
     })
 
-    it('should ignore charset', (done) => {
+    it('should ignore charset', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('application/json'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json; charset=UTF-8')
       .send('{}')
-      .expect(200, 'application/json', done)
+      .expect(200, 'application/json')
     })
   })
 
   describe('when content-type is not present', () => {
-    it('should return false', (done) => {
+    it('should return false', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('application/json'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .send('{}')
-      .expect(200, 'false', done)
+      .expect(200, 'false')
     })
   })
 
   describe('when given an extension', () => {
-    it('should lookup the mime type', (done) => {
+    it('should lookup the mime type', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('json'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'json', done)
+      .expect(200, 'json')
     })
   })
 
   describe('when given */subtype', () => {
-    it('should return the full type when matching', (done) => {
+    it('should return the full type when matching', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('*/json'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'application/json', done)
+      .expect(200, 'application/json')
     })
 
-    it('should return false when not matching', (done) => {
+    it('should return false when not matching', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('*/html'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'false', done)
+      .expect(200, 'false')
     })
 
-    it('should ignore charset', (done) => {
+    it('should ignore charset', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('*/json'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json; charset=UTF-8')
       .send('{}')
-      .expect(200, 'application/json', done)
+      .expect(200, 'application/json')
     })
   })
 
   describe('when given type/*', () => {
-    it('should return the full type when matching', (done) => {
+    it('should return the full type when matching', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('application/*'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'application/json', done)
+      .expect(200, 'application/json')
     })
 
-    it('should return false when not matching', (done) => {
+    it('should return false when not matching', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('text/*'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json')
       .send('{}')
-      .expect(200, 'false', done)
+      .expect(200, 'false')
     })
 
-    it('should ignore charset', (done) => {
+    it('should ignore charset', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.is('application/*'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .type('application/json; charset=UTF-8')
       .send('{}')
-      .expect(200, 'application/json', done)
+      .expect(200, 'application/json')
     })
   })
 })

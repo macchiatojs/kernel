@@ -9,103 +9,103 @@ describe('request', () => {
   })
 
   describe('.accepts(type)', () => {
-    it('should return true when Accept is not present', (done) => {
+    it('should return true when Accept is not present', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts('json') ? 'yes' : 'no')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect('yes', done)
+        .expect('yes')
     })
 
-    it('should return true when present', (done) => {
+    it('should return true when present', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts('json') ? 'yes' : 'no')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Accept', 'application/json')
-        .expect('yes', done)
+        .expect('yes')
     })
 
-    it('should return false otherwise', (done) => {
+    it('should return false otherwise', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts('json') ? 'yes' : 'no')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Accept', 'text/html')
-        .expect('no', done)
+        .expect('no')
     })
   })
 
-  it('should accept an argument list of type names', (done) => {
+  it('should accept an argument list of type names', async () => {
     app.use((request: Request, response: Response) => {
       response.end(request.accepts('json', 'html'))
     })
 
-    request(app.start())
+    await request(app.start())
       .get('/')
       .set('Accept', 'application/json')
-      .expect('json', done)
+      .expect('json')
   })
 
   describe('.accepts(types)', () => {
-    it('should return the first when Accept is not present', (done) => {
+    it('should return the first when Accept is not present', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['json', 'html']))
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect('json', done)
+        .expect('json')
     })
 
-    it('should return the first acceptable type', (done) => {
+    it('should return the first acceptable type', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['json', 'html']))
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Accept', 'text/html')
-        .expect('html', done)
+        .expect('html')
     })
 
-    it('should return false when no match is made', (done) => {
+    it('should return false when no match is made', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['text/html', 'application/json']) ? 'yup' : 'nope')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Accept', 'foo/bar, bar/baz')
-        .expect('nope', done)
+        .expect('nope')
     })
 
-    it('should take quality into account', (done) => {
+    it('should take quality into account', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['text/html', 'application/json']))
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Accept', '*/html q=.5, application/json')
-        .expect('application/json', done)
+        .expect('application/json')
     })
 
-    it('should return the first acceptable type with canonical mime types', (done) => {
+    it('should return the first acceptable type with canonical mime types', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['application/json', 'text/html']))
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Accept', '*/html')
-        .expect('text/html', done)
+        .expect('text/html')
     })
   })
 })

@@ -9,16 +9,16 @@ describe('response', () => {
   })
   
   describe('.remove(field, value)', () => {
-    it('should remove a field', (done) => {
+    it('should remove a field', async () => {
       app.use((request: Request, response: Response) => {
         response.set('x-foo', 'bar')
         response.remove('x-foo')
         response.send(200, response.get('x-foo'));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '', done);
+      .expect(200, '')
     })
   })
 })

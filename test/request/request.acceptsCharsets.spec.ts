@@ -11,38 +11,38 @@ describe('request', () => {
 
   describe('.acceptsCharsets(type)', () => {
     describe('when Accept-Charset is not present', () => {
-      it('should return true', (done) => {
+      it('should return true', async () => {
         app.use((request: Request, response: Response) => {
           response.end(request.acceptsCharsets('utf-8') ? 'yes' : 'no')
         })
 
-        request(app.start())
+        await request(app.start())
           .get('/')
-          .expect('yes', done)
+          .expect('yes')
       })
     })
 
     describe('when Accept-Charset is present', function () {
-      it('should return true', (done) => {
+      it('should return true', async () => {
         app.use((request: Request, response: Response) => {
           response.end(request.acceptsCharsets('utf-8') ? 'yes' : 'no')
         })
 
-        request(app.start())
+        await request(app.start())
           .get('/')
           .set('Accept-Charset', 'foo, bar, utf-8')
-          .expect('yes', done)
+          .expect('yes')
       })
 
-      it('should return false otherwise', (done) => {
+      it('should return false otherwise', async () => {
         app.use((request: Request, response: Response) => {
           response.end(request.acceptsCharsets('utf-8') ? 'yes' : 'no')
         })
 
-        request(app.start())
+        await request(app.start())
           .get('/')
           .set('Accept-Charset', 'foo, bar')
-          .expect('no', done)
+          .expect('no')
       })
     })
   })

@@ -10,15 +10,15 @@ describe('response', () => {
   })
   
   describe('.get(field)', () => {
-    it('should get the response header field', (done) => {
+    it('should get the response header field', async () => {
       app.use((request: Request, response: Response) => {
         response.set('Content-Type', 'text/x-foo');
         response.send(200, response.get('Content-Type'));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'text/x-foo', done);
+      .expect(200, 'text/x-foo')
     })
   })
 })

@@ -10,7 +10,7 @@ describe('request', () => {
   })
 
   describe('.idempotent', () => {
-    it('when the request method is idempotent', (done) => {
+    it('when the request method is idempotent', async () => {
       app.use((request: Request, response: Response) => {
 
         [
@@ -28,12 +28,12 @@ describe('request', () => {
         response.end('Welcome !');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('Welcome !', done);
+      .expect('Welcome !')
     })
 
-    it('when the request method is idempotent', (done) => {
+    it('when the request method is idempotent', async () => {
       app.use((request: Request, response: Response) => {
         request.method = 'POST'
         request.idempotent.should.be.False
@@ -41,9 +41,9 @@ describe('request', () => {
         response.end('Welcome !');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('Welcome !', done);
+      .expect('Welcome !')
     })
   })
 })

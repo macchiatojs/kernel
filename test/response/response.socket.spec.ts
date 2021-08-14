@@ -10,15 +10,15 @@ describe('response', () => {
   })
   
   describe('.socket()', () => {
-    it('should return the request socket object', (done) => {
+    it('should return the request socket object', async () => {
       app.use((request: Request, response: Response) => {
         console.dir(response.socket)
         response.send(200, (request.socket instanceof Socket));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'true', done);
+      .expect(200, 'true')
     })
   })
 })

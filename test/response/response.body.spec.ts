@@ -12,20 +12,20 @@ describe('response', () => {
   })
 
   describe('.body', () => {
-    it('should not override when Content-Type is set', (done) => {
+    it('should not override when Content-Type is set', async () => {
       app.use((request: Request, response: Response) => {
         assert(response.body === undefined)
         response.type = 'png'
         response.body = Buffer.from('something')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .expect('content-type', 'image/png')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('should override as json when body is an object', (done) => {
+    it('should override as json when body is an object', async () => {
       app.use((request: Request, response: Response, next: any) => {
         assert.strictEqual(response.body, undefined)
         response.type = 'html'
@@ -45,13 +45,13 @@ describe('response', () => {
         response.body = { foo: 'bar' }
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .expect('Content-Type', 'application/json')
-        .expect(200, '{"foo":"bar"}', done)
+        .expect(200, '{"foo":"bar"}')
     })
 
-    it('should override length when body is an object', (done) => {
+    it('should override length when body is an object', async () => {
       app.use((request: Request, response: Response) => {
         assert.strictEqual(response.body, undefined)
         response.type = 'html'
@@ -60,49 +60,49 @@ describe('response', () => {
         assert.strictEqual(response.length, 9)
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .expect('Content-Type', 'text/html; charset=utf-8')
-        .expect(200, 'something', done)
+        .expect(200, 'something')
     })
 
-    it('should default to undefined when a string is given', (done) => {
+    it('should default to undefined when a string is given', async () => {
       app.use((request: Request, response: Response) => {
         assert.strictEqual(response.body, undefined)
         response.body = 'Imed'
         assert.strictEqual(response.headers['content-type'], undefined)
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, 'Imed', done)
+        .expect(200, 'Imed')
     })
 
-    it('should set length when a string is given', (done) => {
+    it('should set length when a string is given', async () => {
       app.use((request: Request, response: Response) => {
         response.body = 'Imed'
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Content-Length', '4')
-        .expect(200, 'Imed', done)
+        .expect(200, 'Imed')
     })
 
-    it('should set length when an html is given', (done) => {
+    it('should set length when an html is given', async () => {
       const string = '<h1>Tobi</h1>'
 
       app.use((request: Request, response: Response) => {
         response.body = string
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .set('Content-Length', String(string.length))
-        .expect(200, string, done)
+        .expect(200, string)
     })
 
-    // it('should get html when an xml is given', (done) => {
+    // it('should get html when an xml is given', async () => {
     //   app.use((request: Request, response: Response) => {
     //     // response.type = 'html'
     //     response.body = '<?xml version="1.0" encoding="UTF-8"?><x-tag>1</x-tag>'
@@ -111,55 +111,55 @@ describe('response', () => {
 
     //   })
 
-    //   request(app.start())
+    //   await request(app.start())
     //     .get('/')
     //     .set('Content-Length', 'text/html; charset=utf-8')
-    //     .expect(400, '', done)
+    //     .expect(400, '')
     // })
 
-    // it('when a stream is given should default to an octet stream', (done) => {
+    // it('when a stream is given should default to an octet stream', async () => {
     //   app.use((request: Request, response: Response) => {
     //     response.body = fs.createReadStream(path.join(__dirname, '../../LICENSE'))
     //   })
 
-    //   request(app.start())
+    //   await request(app.start())
     //     .get('/')
     //     .set('Content-Length', 'application/octet-stream')
-    //     .expect(200, done)
+    //     .expect(200)
     // })
 
-    it('should default to an octet stream when a buffer is given', (done) => {
+    it('should default to an octet stream when a buffer is given', async () => {
       app.use((request: Request, response: Response) => {
         response.body = Buffer.from('hey')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .expect('Content-Type', 'application/octet-stream')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('should set length when a buffer is given', (done) => {
+    it('should set length when a buffer is given', async () => {
       app.use((request: Request, response: Response) => {
         response.body = Buffer.from('Imed')
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .expect('Content-Type', 'application/octet-stream')
         .expect('Content-Length', '4')
-        .expect(200, done)
+        .expect(200)
     })
 
-    it('should default to json when an object is given', (done) => {
+    it('should default to json when an object is given', async () => {
       app.use((request: Request, response: Response) => {
         response.body = { foo: 'bar' }
       })
 
-      request(app.start())
+      await request(app.start())
         .get('/')
         .expect('Content-Type', 'application/json')
-        .expect(200, done)
+        .expect(200)
     })
   })
 })

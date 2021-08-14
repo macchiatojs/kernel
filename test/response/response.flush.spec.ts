@@ -10,31 +10,31 @@ describe('response', () => {
   })
 
   describe('.flush', () => {
-    it('should set headersSent', (done) => {
+    it('should set headersSent', async () => {
       app.use((request: Request, response: Response) => {
         response.flush()
         response.flush() // Should be idempotent.
         response.send(200, response.headerSent)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect('true', done);
+        .expect('true')
     })
 
-    it('should allow a response afterwards', (done) => {
+    it('should allow a response afterwards', async () => {
       app.use((request: Request, response: Response) => {
         response.set('foo', 'bar')
         response.flush()
         response.send(200, response.get('foo'))
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect('bar', done);
+        .expect('bar')
     })
 
-    it('should send the correct status code', (done) => {
+    it('should send the correct status code', async () => {
       app.use((request: Request, response: Response) => {
         // sould put the status 1st before the flush method.
         response.status = 401
@@ -43,12 +43,12 @@ describe('response', () => {
         response.send(401, [response.status, response.get('foo')])
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(401, '[401,"bar"]', done)
+        .expect(401, '[401,"bar"]')
     })
 
-    it('should fail to set the headers after flushHeaders', (done) => {
+    it('should fail to set the headers after flushHeaders', async () => {
       app.use((request: Request, response: Response) => {
         // sould put the status 1st before the flush method.
         response.status = 401
@@ -74,12 +74,12 @@ describe('response', () => {
         response.body = body
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(401, 'response.set fail response.status fail response.length fail', done)
+        .expect(401, 'response.set fail response.status fail response.length fail')
     })
 
-    // it('should flush headers first and delay to send data', (done) => {
+    // it('should flush headers first and delay to send data', async () => {
     //   app.use((request: Request, response: Response) => {
     //     response.type = 'json'
     //     response.status = 200
@@ -92,9 +92,9 @@ describe('response', () => {
     //     }, 5000)
     //   });
 
-    //   request(app.start())
+    //   await request(app.start())
     //   .get('/')
-    //   .expect(200, '{"message":"hello!"}', done)
+    //   .expect(200, '{"message":"hello!"}')
     // }).timeout(6000)
   })
 })

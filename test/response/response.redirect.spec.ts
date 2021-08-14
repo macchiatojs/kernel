@@ -11,181 +11,181 @@ describe('response', () => {
   })
   
   describe('.redirect(url)', () => {
-    it('should default to a 302 redirect', (done) => {
+    it('should default to a 302 redirect', async () => {
       app.use((request: Request, response: Response) => {
         response.redirect('http://google.com')
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('location', 'http://google.com')
-      .expect(302, done);
+      .expect(302)
     })
 
-    it('should encode "url"', (done) => {
+    it('should encode "url"', async () => {
       app.use((request: Request, response: Response) => {
         response.redirect('https://google.com?q= 256 §10')
       })
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Location', 'https://google.com?q= 256 Â§10')
-      .expect(302, done)
+      .expect(302)
     })
 
-    it('should not touch already-encoded sequences in "url"', (done) => {
+    it('should not touch already-encoded sequences in "url"', async () => {
       app.use((request: Request, response: Response) => {
         response.redirect('https://google.com?q=%A710')
       })
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Location', 'https://google.com?q=%A710')
-      .expect(302, done)
+      .expect(302)
     })
 
-    it('should back respond correctly', (done) => {
+    it('should back respond correctly', async () => {
       app.use((request: Request, response: Response) => {
         response.redirect('back')
       })
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Location', '/')
-      .expect(302, done)
+      .expect(302)
     })
   })
 
   describe('.redirect(url) with status', () => {
-    it('should set the response status', (done) => {
+    it('should set the response status', async () => {
       app.use((request: Request, response: Response) => {
         response.status = 303
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Location', 'http://google.com')
-      .expect(303, done)
+      .expect(303)
     })
   })
 
   describe('when the request method is HEAD', () => {
-    it('should ignore the body', (done) => {
+    it('should ignore the body', async () => {
 
       app.use((request: Request, response: Response) => {
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .head('/')
       .expect(302)
       .expect('Location', 'http://google.com')
       .expect(shouldNotHaveBody())
-      .end(done)
+      
     })
   })
 
   describe('when accepting html', () => {
-    it('should respond with html', (done) => {
+    it('should respond with html', async () => {
 
       app.use((request: Request, response: Response) => {
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept', 'text/html')
       .expect('Content-Type', /html/)
       .expect('Location', 'http://google.com')
-      .expect(302, 'Redirecting to <a href="http%3A%2F%2Fgoogle.com">http%3A%2F%2Fgoogle.com</a>.', done)
+      .expect(302, 'Redirecting to <a href="http%3A%2F%2Fgoogle.com">http%3A%2F%2Fgoogle.com</a>.')
     })
 
-    it('should escape the url', (done) => {
+    it('should escape the url', async () => {
 
       app.use((request: Request, response: Response) => {
         response.redirect('<la\'me>');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Host', 'http://example.com')
       .set('Accept', 'text/html')
       .expect('Content-Type', /html/)
       .expect('Location', '<la\'me>')
-      .expect(302, `Redirecting to <a href="%3Cla'me%3E">%3Cla'me%3E</a>.`, done)
+      .expect(302, `Redirecting to <a href="%3Cla'me%3E">%3Cla'me%3E</a>.`)
     })
 
-    it('should include the redirect type', (done) => {
+    it('should include the redirect type', async () => {
 
       app.use((request: Request, response: Response) => {
         response.status = 301
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept', 'text/html')
       .expect('Content-Type', /html/)
       .expect('Location', 'http://google.com')
-      .expect(301, 'Redirecting to <a href="http%3A%2F%2Fgoogle.com">http%3A%2F%2Fgoogle.com</a>.', done);
+      .expect(301, 'Redirecting to <a href="http%3A%2F%2Fgoogle.com">http%3A%2F%2Fgoogle.com</a>.')
     })
   })
 
   describe('when accepting text', () => {
-    it('should respond with text', (done) => {
+    it('should respond with text', async () => {
 
       app.use((request: Request, response: Response) => {
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept', 'text/plain')
       .expect('Content-Type', /text/)
       .expect('Location', 'http://google.com')
-      .expect(302, 'Redirecting to http%3A%2F%2Fgoogle.com.', done)
+      .expect(302, 'Redirecting to http%3A%2F%2Fgoogle.com.')
     })
 
-    it('should encode the url', (done) => {
+    it('should encode the url', async () => {
 
       app.use((request: Request, response: Response) => {
         response.redirect('http://example.com/?param=<script>alert("hax");</script>');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Host', 'http://example.com')
       .set('Accept', 'text/plain, */*')
       .expect('Content-Type', /text/)
       .expect('Location', 'http://example.com/?param=<script>alert("hax");</script>')
-      .expect(302, 'Redirecting to <a href="http%3A%2F%2Fexample.com%2F%3Fparam%3D%3Cscript%3Ealert(%22hax%22)%3B%3C%2Fscript%3E">http%3A%2F%2Fexample.com%2F%3Fparam%3D%3Cscript%3Ealert(%22hax%22)%3B%3C%2Fscript%3E</a>.', done)
+      .expect(302, 'Redirecting to <a href="http%3A%2F%2Fexample.com%2F%3Fparam%3D%3Cscript%3Ealert(%22hax%22)%3B%3C%2Fscript%3E">http%3A%2F%2Fexample.com%2F%3Fparam%3D%3Cscript%3Ealert(%22hax%22)%3B%3C%2Fscript%3E</a>.')
     })
 
-    it('should include the redirect type', (done) => {
+    it('should include the redirect type', async () => {
 
       app.use((request: Request, response: Response) => {
         response.status = 301
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept', 'text/plain, */*')
       .expect('Content-Type', /text/)
       .expect('Location', 'http://google.com')
-      .expect(301, 'Redirecting to <a href="http%3A%2F%2Fgoogle.com">http%3A%2F%2Fgoogle.com</a>.', done);
+      .expect(301, 'Redirecting to <a href="http%3A%2F%2Fgoogle.com">http%3A%2F%2Fgoogle.com</a>.')
     })
   })
 
   describe('when accepting neither text or html', () => {
-    it('should respond with an empty body', (done) => {
+    it('should respond with an empty body', async () => {
 
       app.use((request: Request, response: Response) => {
         response.redirect('http://google.com');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept', 'application/octet-stream')
       .expect('location', 'http://google.com')
@@ -193,7 +193,7 @@ describe('response', () => {
       .expect(shouldNotHaveHeader('Content-Type'))
       .expect(shouldNotHaveBody)
       .expect(302)
-      .end(done)
+      
     })
   })
 })

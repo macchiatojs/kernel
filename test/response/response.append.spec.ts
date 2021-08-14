@@ -14,7 +14,7 @@ describe('response', function () {
   // headers can appear multiple times; there is no such white list
   // for outgoing, though
   describe('.append(field, val)', function () {
-    it('should append multiple headers', (done) => {
+    it('should append multiple headers', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.append('Link', '<http://localhost/>')
         next()
@@ -25,26 +25,26 @@ describe('response', function () {
         response.end()
       })
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('Link', '<http://localhost/>, <http://localhost:80/>', done)
+      .expect('Link', '<http://localhost/>, <http://localhost:80/>')
     })
 
-    it('should accept array of values', (done) => {
+    it('should accept array of values', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.append('Set-Cookie', ['foo=bar', 'fizz=buzz'])
         response.end()
       })
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect(function (response) {
         should(response.headers['set-cookie']).eql(['foo=bar', 'fizz=buzz'])
       })
-      .expect(200, done)
+      .expect(200)
     })
 
-    it('should get reset by response.set(field, val)', (done) => {
+    it('should get reset by response.set(field, val)', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.append('Link', '<http://localhost/>')
         response.append('Link', '<http://localhost:80/>')
@@ -56,12 +56,12 @@ describe('response', function () {
         response.end()
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('Link', '<http://127.0.0.1/>', done)
+      .expect('Link', '<http://127.0.0.1/>')
     })
 
-    it('should work with response.set(field, val) first', (done) => {
+    it('should work with response.set(field, val) first', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.set('Link', '<http://localhost/>')
         next()
@@ -72,13 +72,13 @@ describe('response', function () {
         response.end()
       })
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('Link', '<http://localhost/>, <http://localhost:80/>', done)
+      .expect('Link', '<http://localhost/>, <http://localhost:80/>')
     })
 
     // TODO: work to support cookies.
-    // it('should work with cookies', (done) => {
+    // it('should work with cookies', async () => {
     //   app.use((request: Request, response: Response, next: any) => {
     //     response.cookie('foo', 'bar')
     //     next()
@@ -89,12 +89,12 @@ describe('response', function () {
     //     response.end()
     //   })
 
-    //   request(app.start())
+    //   await request(app.start())
     //   .get('/')
     //   .expect(function (res) {
     //     should(response.headers['set-cookie']).eql(['foo=bar; Path=/', 'bar=baz'])
     //   })
-    //   .expect(200, done)
+    //   .expect(200)
     // })
   })
 })

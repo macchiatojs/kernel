@@ -10,29 +10,29 @@ describe('request', () => {
   })
   
   describe('.acceptsEncodings', () => {
-    it('should be true if encoding accepted', (done) => {
+    it('should be true if encoding accepted', async () => {
       app.use((request: Request, response: Response) => {
         request.acceptsEncodings('gzip').should.be.ok()
         request.acceptsEncodings('deflate').should.be.ok()
         response.end();
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept-Encoding', ' gzip, deflate')
-      .expect(200, done);
+      .expect(200)
     })
 
-    it('should be false if encoding not accepted', (done) => {
+    it('should be false if encoding not accepted', async () => {
       app.use((request: Request, response: Response) => {
         request.acceptsEncodings('bogus').should.not.be.ok()
         response.end();
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('Accept-Encoding', ' gzip, deflate')
-      .expect(200, done);
+      .expect(200)
     })
   })
 })

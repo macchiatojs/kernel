@@ -12,7 +12,7 @@ describe('kernel', () => {
 
   describe('middleware', () => {
     describe('.next()', () => {
-      it('should behave like connect', (done) => {
+      it('should behave like connect', async () => {
         const calls: string[] = [];
 
         app.use((request: Request, response: Response, next: any) => {
@@ -33,14 +33,14 @@ describe('kernel', () => {
               .on('end', () => { response.body = buffer })
         });
 
-        request(app.start())
+        await request(app.start())
         .get('/')
         .set('Content-Type', 'application/json')
         .send('{"foo":"bar"}')
         .expect('Content-Type', 'application/json; charset=utf-8;')
         .expect(() => { assert.deepStrictEqual(calls, ['one', 'two']) })
         .expect(200, '')
-        .end(done)
+        
       })
     })
   })

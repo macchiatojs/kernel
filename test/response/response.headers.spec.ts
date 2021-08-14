@@ -10,7 +10,7 @@ describe('response', () => {
   })
   
   describe('.headers', () => {
-    it('should return the response header object', (done) => {
+    it('should return the response header object', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.set('X-Token', 'secret123#crypted')
         response.set('Content-Type', 'application/json')
@@ -22,19 +22,19 @@ describe('response', () => {
         response.send(200, response.headers);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '{"x-token":"secret123#crypted","content-type":"application/json"}', done);
+      .expect(200, '{"x-token":"secret123#crypted","content-type":"application/json"}')
     })
 
-    it('should return empty object', (done) => {
+    it('should return empty object', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.headers);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '{}', done);
+      .expect(200, '{}')
     })
   })
 })

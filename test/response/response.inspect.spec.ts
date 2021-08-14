@@ -10,7 +10,7 @@ describe('response', () => {
   })
   
   describe('.inspect()', () => {
-    it('should return a json representation', (done) => {
+    it('should return a json representation', async () => {
       app.use((request: Request, response: Response) => {
         const inspect = response.inspect()
 
@@ -22,9 +22,9 @@ describe('response', () => {
         response.send(200, inspect);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '{"status":200,"headers":{}}', done);
+      .expect(200, '{"status":200,"headers":{}}')
     })
   })
 })

@@ -9,25 +9,25 @@ describe('request', () => {
   })
 
   describe('.path', () => {
-    it('should return the origin of url', (done) => {
+    it('should return the origin of url', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.path);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/login?redirect=/post/1/comments')
-      .expect('/login', done);
+      .expect('/login')
     })
 
-    it('should return the origin of url', (done) => {
+    it('should return the origin of url', async () => {
       app.use((request: Request, response: Response) => {
         request.path = '/kiko'
         response.send(200, request.path);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/login')
-      .expect('/kiko', done);
+      .expect('/kiko')
     })
   })
 })

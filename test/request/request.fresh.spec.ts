@@ -9,7 +9,7 @@ describe('request', () => {
   })
 
   describe('.fresh', () => {
-    it('should return true when the resource is not modified', (done) => {
+    it('should return true when the resource is not modified', async () => {
       const etag = '"12345"';
 
       app.use((request: Request, response: Response) => {
@@ -18,32 +18,32 @@ describe('request', () => {
         response.send(304, request.fresh);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('If-None-Match', etag)
-      .expect(304, done);
+      .expect(304)
     })
 
-    it('should return false when the resource is modified', (done) => {
+    it('should return false when the resource is modified', async () => {
       app.use((request: Request, response: Response) => {
         response.set('ETag', '"123"');
         response.send(200, request.fresh);
       });
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .set('If-None-Match', '"12345"')
-      .expect(200, 'false', done);
+      .expect(200, 'false')
     })
 
-    it('should return false without response headers', (done) => {
+    it('should return false without response headers', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.fresh);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'false', done);
+      .expect(200, 'false')
     })
   })
 })

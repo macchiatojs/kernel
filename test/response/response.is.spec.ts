@@ -10,7 +10,7 @@ describe('response', () => {
   })
 
   describe('.is()', () => {
-    it('should ignore params', (done) => {
+    it('should ignore params', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'text/html; charset=utf-8'
         next()
@@ -20,22 +20,22 @@ describe('response', () => {
         response.send(200, response.is('text/*'))
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'text/html', done);
+      .expect(200, 'text/html')
     })
 
-    it('should return false when no type is set', (done) => {
+    it('should return false when no type is set', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, [response.is(), response.is('text'), response.is('text/*')])
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '[false,false,false]', done);
+      .expect(200, '[false,false,false]')
     })
 
-    it('should return the type give no types', (done) => {
+    it('should return the type give no types', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'text/html; charset=utf-8'
         next()
@@ -45,12 +45,12 @@ describe('response', () => {
         response.send(200, response.is())
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'text/html', done);
+      .expect(200, 'text/html')
     })
 
-    it('should return the type or false given one type', (done) => {
+    it('should return the type or false given one type', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'image/png'
         next()
@@ -76,12 +76,12 @@ describe('response', () => {
         response.end()
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, done);
+      .expect(200)
     })
 
-    it('when Content-Type: application/x-www-form-urlencoded should match "urlencoded"', (done) => {
+    it('when Content-Type: application/x-www-form-urlencoded should match "urlencoded"', async () => {
       app.use((request: Request, response: Response, next: any) => {
         response.type = 'application/x-www-form-urlencoded'
         next()
@@ -94,9 +94,9 @@ describe('response', () => {
         response.end()
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, done);
+      .expect(200)
     })
   })
 })

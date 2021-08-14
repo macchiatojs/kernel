@@ -24,79 +24,79 @@ describe('response', () => {
         .expect(200, done())
     })
 
-    it('should return a 0 when Content-Length is not defined', (done) => {
+    it('should return a 0 when Content-Length is not defined', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.length)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, '0', done)
+        .expect(200, '0')
     })
 
-    it('should return a number when Content-Length is not defined and a .body is set to string', (done) => {
+    it('should return a number when Content-Length is not defined and a .body is set to string', async () => {
         app.use((request: Request, response: Response) => {
           response.body = 'Hello !'
           assert(response.length === 7)
         });
   
-        request(app.start())
+        await request(app.start())
           .get('/')
-          .expect(200, 'Hello !', done)
+          .expect(200, 'Hello !')
     })
 
-    it('should return a number when Content-Length is not defined and a .body is set to buffer', (done) => {
+    it('should return a number when Content-Length is not defined and a .body is set to buffer', async () => {
       app.use((request: Request, response: Response) => {
         response.body = Buffer.from('foo bar')
         assert(response.length === 7)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, undefined, done)
+        .expect(200, undefined)
     })
 
-    it('should return a number when Content-Length is not defined and a .body is set to JSON object', (done) => {
+    it('should return a number when Content-Length is not defined and a .body is set to JSON object', async () => {
       app.use((request: Request, response: Response) => {
         response.body = { hello: 'world' }
         assert(response.length === 17)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, '{"hello":"world"}', done)
+        .expect(200, '{"hello":"world"}')
     })
 
-    it('should not return a number when Content-Length is not defined and a .body is set to stream', (done) => {
+    it('should not return a number when Content-Length is not defined and a .body is set to stream', async () => {
       app.use((request: Request, response: Response) => {
         response.body = fs.createReadStream(path.join(__dirname, '../../package.json'))
         assert(response.length === undefined)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, undefined, done)
+        .expect(200, undefined)
     })
 
-    it('should return a 0 when Content-Length is not defined and a .body is set to null', (done) => {
+    it('should return a 0 when Content-Length is not defined and a .body is set to null', async () => {
       app.use((request: Request, response: Response) => {
         response.body = null
         assert(response.length === 0)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(204, '', done)
+        .expect(204, '')
     })
 
-    it('should return a 0 when Content-Length is not defined and a .body is not', (done) => {
+    it('should return a 0 when Content-Length is not defined and a .body is not', async () => {
       app.use((request: Request, response: Response) => {
         assert(response.length === 0)
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, '', done)
+        .expect(200, '')
     })
   })
 })

@@ -10,14 +10,14 @@ describe('request', () => {
   })
 
   describe('.origin', () => {
-    it('should return the origin of url', (done) => {
+    it('should return the origin of url', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.origin);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('http://127.0.0.1', done);
+      .expect('http://127.0.0.1')
     })
   })
 })

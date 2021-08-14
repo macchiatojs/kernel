@@ -9,16 +9,16 @@ describe('response', () => {
   })
   
   describe('.status(code)', () => {
-    it('should set the response .statusCode', (done) => {
+    it('should set the response .statusCode', async () => {
       app.use((request: Request, response: Response) => {
         response.status = 201
         response.end('Created')
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .expect('Created')
-      .expect(201, done);
+      .expect(201)
     })
   })
 })

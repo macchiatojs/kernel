@@ -16,7 +16,7 @@ describe('response', () => {
         assert(response.cookies instanceof Cookies)
       });
 
-      await request(app.start()).get('/')
+      await await request(app.start()).get('/')
     })
   })
 })

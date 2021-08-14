@@ -10,25 +10,25 @@ describe('request', () => {
   })
 
   describe('.length', () => {
-    it('should return length in content-length', (done) => {
+    it('should return length in content-length', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.length);
       });
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .set('content-length', '10')
-      .expect('10', done);
+      .expect('10')
     })
 
-    it('with no content-length present', (done) => {
+    it('with no content-length present', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.length);
       });
 
-      request(app.start())
+      await request(app.start())
       .post('/')
-      .expect('0', done);
+      .expect('0')
     })
   })
 })

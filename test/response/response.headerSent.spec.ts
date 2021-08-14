@@ -11,7 +11,7 @@ describe('response', () => {
   })
   
   describe('.headerSent', () => {
-    it('should sent header', (done) => {
+    it('should sent header', async () => {
       app.use(async (request: Request, response: Response) => {
         assert(response.headerSent === false)
         response.redirect('http://google.com')
@@ -20,7 +20,7 @@ describe('response', () => {
         response.end();
       })
 
-      request(app.start()).get('/').end(done)
+      await request(app.start()).get('/')
     })
   })
 })

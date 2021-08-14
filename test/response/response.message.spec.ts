@@ -10,18 +10,18 @@ describe('response', () => {
   })
 
   describe('.message', () => {
-    it('should return the response status message', (done) => {
+    it('should return the response status message', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.message)
         assert(response.message === 'OK')
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, '', done)
+        .expect(200, '')
     })
 
-    it('should set response status message', (done) => {
+    it('should set response status message', async () => {
       app.use((request: Request, response: Response) => {
         assert(response.message === undefined)         
         response.message = 'OK'
@@ -29,9 +29,9 @@ describe('response', () => {
         assert(response.message === 'OK')
       });
 
-      request(app.start())
+      await request(app.start())
         .get('/')
-        .expect(200, '', done)
+        .expect(200, '')
     })
   })
 })

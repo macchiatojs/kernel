@@ -9,25 +9,25 @@ describe('request', () => {
   })
 
   describe('.type', () => {
-    it('should return type void of parameters', (done) => {
+    it('should return type void of parameters', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.type);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
       .set('content-type', 'text/html; charset=utf-8')
-      .expect(200, 'text/html',done)
+      .expect(200, 'text/html')
     })
 
-    it('should with no host present', (done) => {
+    it('should with no host present', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.type);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '', done)
+      .expect(200, '')
     })
   })
 })

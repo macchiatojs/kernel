@@ -10,37 +10,37 @@ describe('response', () => {
   })
   
   describe('.set(field, value)', () => {
-    it('should set a field value', (done) => {
+    it('should set a field value', async () => {
       app.use((request: Request, response: Response) => {
         response.set('x-foo', 'bar')
         response.send(200, response.get('x-foo'));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'bar', done);
+      .expect(200, 'bar')
     })
 
-    it('should set a field value of array', (done) => {
+    it('should set a field value of array', async () => {
       app.use((request: Request, response: Response) => {
         response.set('x-foo', ['foo', 'bar'])
         response.send(200, response.get('x-foo'));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '["foo","bar"]', done);
+      .expect(200, '["foo","bar"]')
     })
 
-    it('should set multiple fields', (done) => {
+    it('should set multiple fields', async () => {
       app.use((request: Request, response: Response) => {
         response.set({ foo: '1', bar: '2' })
         response.send(200, [response.get('foo'), response.get('bar')]);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, '["1","2"]', done);
+      .expect(200, '["1","2"]')
     })
   })
 })

@@ -11,27 +11,27 @@ describe('request', () => {
   })
   
   describe('.get(field)', () => {
-    it('should return the header field value', (done) => {
+    it('should return the header field value', async () => {
       app.use((request: Request, response: Response) => {
         assert(request.get('Something-Else') === '')
         response.end(request.get('Content-Type'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .set('Content-Type', 'application/json')
-      .expect('application/json', done)
+      .expect('application/json')
     })
 
-    it('should special-case Referer', (done) => {
+    it('should special-case Referer', async () => {
       app.use((request: Request, response: Response) => {
         response.end(request.get('Referer'))
       })
 
-      request(app.start())
+      await request(app.start())
       .post('/')
       .set('Referrer', 'http://foobar.com')
-      .expect('http://foobar.com', done);
+      .expect('http://foobar.com')
     })
   })
 })

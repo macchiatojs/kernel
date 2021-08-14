@@ -10,25 +10,25 @@ describe('response', () => {
   })
   
   describe('.has(field)', () => {
-    it('should has a field', (done) => {
+    it('should has a field', async () => {
       app.use((request: Request, response: Response) => {
         response.set('Content-Type', 'text/x-foo');
         response.send(200, response.has('Content-Type'));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'true', done);
+      .expect(200, 'true')
     })
 
-    it('should has not field', (done) => {
+    it('should has not field', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, response.has('Content-Type'));
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'false', done);
+      .expect(200, 'false')
     })
   })
 })

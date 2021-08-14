@@ -10,7 +10,7 @@ describe('request', () => {
   })
 
   describe('.inspect', () => {
-    it('should return the inspect object', (done) => {
+    it('should return the inspect object', async () => {
       app.use((request: Request, response: Response) => {
         request.inspect().should.be.ok()
         request.inspect().should.be.containDeep({
@@ -25,9 +25,9 @@ describe('request', () => {
         response.end('Welcome !');
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect('Welcome !', done);
+      .expect('Welcome !')
     })
   })
 })

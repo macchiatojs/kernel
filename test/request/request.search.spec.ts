@@ -10,25 +10,25 @@ describe('request', () => {
   })
 
   describe('.search', () => {
-    it('should replace the search', (done) => {
+    it('should replace the search', async () => {
       app.use((request: Request, response: Response) => {
         response.send(200, request.search);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/store/shoes?page=2&color=blue')
-      .expect(200, '?page=2&color=blue', done);
+      .expect(200, '?page=2&color=blue')
     })
 
-    it('should .search update the .querystring', (done) => {
+    it('should .search update the .querystring', async () => {
       app.use((request: Request, response: Response) => {
         request.search = '?page=2&color=blue'
         response.send(200, request.querystring);
       });
 
-      request(app.start())
+      await request(app.start())
       .get('/')
-      .expect(200, 'page=2&color=blue', done);
+      .expect(200, 'page=2&color=blue')
     })
 
     // TESTED IN REQUEST.QUERY AND REQUEST.QUERYSTRING.

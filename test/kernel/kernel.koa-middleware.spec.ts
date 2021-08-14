@@ -1,7 +1,7 @@
 import assert from 'assert'
 import request from 'supertest'
-import koaCompose from 'koa-compose'
-import Kernel, { Context } from '../../src'
+import compose from 'koa-compose'
+import Kernel, { Context, WrapKoaCompose } from '../../src'
 
 
 describe('kernel', () => {
@@ -41,7 +41,7 @@ describe('kernel', () => {
 
     describe('compose', () => {
       it('should wrap and compose the middlewares under the hood with koa compose module', (done) => {
-        const app = new Kernel({ koaCompose })
+        const app = new Kernel({ koaCompose: new WrapKoaCompose(compose) })
         const calls: number[] = []
     
         app

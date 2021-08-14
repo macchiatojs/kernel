@@ -21,6 +21,7 @@ export function respondHook(rawResponse: ServerResponse, body: any = null) {
 
   // body is stream
   if (flag === FLAG_STREAM) {
+    /* istanbul ignore next */
     if (needSetType) {
       rawResponse.setHeader('content-type', 'application/octet-stream')
     }
@@ -64,6 +65,7 @@ export function respond({ rawResponse, response, request: { method } }: Context)
   }
 
   //
+  /* istanbul ignore if */
   if (method === 'HEAD') {
     return rawResponse.end()
   }

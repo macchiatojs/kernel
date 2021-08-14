@@ -695,3 +695,6 @@ class Request {
 }
 
 export default Request
+
+// cookies
+// signedCookies

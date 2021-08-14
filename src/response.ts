@@ -62,16 +62,6 @@ class Response {
   }
 
   /**
-   * Return the raw response.
-   *
-   * @return {ServerResponse}
-   * @api public
-   */
-  public get raw() {
-    return this.rawResponse
-  }
-
-  /**
    * Get response status code.
    *
    * @return {Number}
@@ -453,8 +443,7 @@ class Response {
 
     if (prev) {
       value = Array.isArray(prev)
-        /* istanbul ignore next */
-        ? prev.concat(value)
+        ? /* istanbul ignore next */ prev.concat(value)
         : [prev].concat(value)
     }
 
@@ -522,6 +511,7 @@ class Response {
    * @api public
    */
   send(code, body) {
+    /* istanbul ignore next */
     if (getFlag(body) !== 4) {
       this.rawResponse['responded'] = true
       this.rawResponse.statusCode = code
@@ -561,3 +551,20 @@ class Response {
 }
 
 export default Response
+
+  // /* express style */ 
+  // statusCode(code) {
+  //   this.status = code
+  //   return this
+  // }
+
+  // json(payload) {
+  //   return this.send(this.status, payload)
+  // }
+
+  // jsonp() {}
+  // sendFile() {}
+  // sendStatus() {}
+  // cookie() {}
+  // clearCookie() {}
+  // render() {}

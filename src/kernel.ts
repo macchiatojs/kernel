@@ -39,8 +39,8 @@ class Kernel extends Emitter {
     super()    
     this.expressify = options?.koaCompose ? false : options?.expressify ?? true    
     this.middleware = this.expressify 
-      ? new Middleware() 
-      : options?.koaCompose ?? new KoaifyMiddleware()
+      ? new Middleware()
+      : /* istanbul ignore next */ options?.koaCompose ?? new KoaifyMiddleware()
     this.env = process.env.NODE_ENV || 'development'
     this.dev = this.env.startsWith('dev')
     this.config = new Map<string, unknown>([

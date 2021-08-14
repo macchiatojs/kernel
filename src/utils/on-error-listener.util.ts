@@ -10,6 +10,7 @@ export function onErrorListener (err: HttpError|Error|null) {
       if (err === null) return
 
       if (!HttpError.isHttpError(err)) {
+        /* istanbul ignore next */
         err = new HttpError((err as any)?.code, err.message, err)
       }
 
@@ -25,8 +26,11 @@ export function onErrorListener (err: HttpError|Error|null) {
 
       rawResponse.getHeaderNames().forEach(name => rawResponse.removeHeader(name))
 
+      /* istanbul ignore next */
       let { message = 'Internal Server Error', stack, expose } = err as any // eslint-disable-line prefer-const
+      /* istanbul ignore next */
       let statusCode = (err as any).status || (err as any).statusCode || 500
+      /* istanbul ignore next */
       message = app.dev ? stack : (expose ? message : `${statusCode}`)
 
       if ((err as any).code === 'ENOENT') statusCode = 404;

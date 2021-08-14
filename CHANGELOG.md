@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.6.0 (14 Aug 2021)
+
+- use async/await over callbacks in tests
+
 ### v0.5.0 (14 Aug 2021)
 
 - add cookies support `cookies@0.8.0`

@@ -1,8 +1,8 @@
 import Stream from 'stream'
 import { EMPTY_BODY_STATUES } from './statues.util'
 import { FLAG_OBJECT, FLAG_BUFFER, FLAG_STREAM, getFlag } from './flags.utils'
-import Context from '../context'
-import { ServerResponse } from 'http'
+import type Context from '../context'
+import type { ServerResponse } from 'http'
 
 // response helper for .send()
 export function respondHook(rawResponse: ServerResponse, body: any = null) {

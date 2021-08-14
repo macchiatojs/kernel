@@ -1,22 +1,24 @@
-import { Server, IncomingMessage, ServerResponse } from 'http'
-import KoaifyMiddleware from '@macchiatojs/koaify-middleware'
+import Emitter from 'events'
+import { Server } from 'http'
+import type { IncomingMessage, ServerResponse } from 'http'
 import Middleware from '@macchiatojs/middleware'
+import KoaifyMiddleware from '@macchiatojs/koaify-middleware'
 import HttpError from '@macchiatojs/http-error'
 import onFinished from 'on-finished'
-import Emitter from 'events'
 
-import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils'
 import Context from './context'
 import Request from './request'
 import Response from './response'
+import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils'
 
 /**
  * @types
  */
-export type Next = () => Promise<any>;
-export type KoaStyleMiddleware<Context> = (context: Context, next: Next) => any
-export type ExpressStyleMiddleware<Request, Response> = (request: Request, response: Response, next: Next) => any
-export type MacchiatoMiddleware = ExpressStyleMiddleware<Request, Response>|KoaStyleMiddleware<Context>
+export type Next<T=any> = () => Promise<T>;
+export type KoaStyleMiddleware<C=Context, N=Next<any>, R=any> = (context: C, next: N) => R
+export type ExpressStyleMiddleware<Req=Request, Res=Response, N=Next<any>, R=any> = (request: Req, response: Res, next: N) => R
+export type MacchiatoMiddleware = ExpressStyleMiddleware|KoaStyleMiddleware
+export type onErrorHandler<T = Error> = (err?: T) => void
 
 /**
  * Kernel
@@ -33,19 +35,18 @@ class Kernel extends Emitter {
   middleware: any
   config: Map<string, unknown>
 
-  constructor(options?: { expressify?: boolean, koaCompose?: any }) {
-    super()
-    this.expressify = options?.expressify ?? true
+  constructor(options?: { expressify?: boolean, koaCompose?: WrapKoaCompose }) {
+    super()    
+    this.expressify = options?.koaCompose ? false : options?.expressify ?? true    
+    this.middleware = this.expressify 
+      ? new Middleware() 
+      : options?.koaCompose ?? new KoaifyMiddleware()
     this.env = process.env.NODE_ENV || 'development'
     this.dev = this.env.startsWith('dev')
-    this.config = new Map<string, unknown>([['subdomain offset', 2], ['trust proxy', false]])
-    // this.middleware = this.expressify ? new Middleware() : new KoaifyMiddleware()
-    if (options?.koaCompose) {
-      this.expressify = false
-      this.middleware = new WrapKoaCompose(options.koaCompose)
-    } else {
-      this.middleware = this.expressify ? new Middleware() : new KoaifyMiddleware()
-    }
+    this.config = new Map<string, unknown>([
+      ['subdomain offset', 2],
+      ['trust proxy', false]
+    ])
   }
 
   use(fn: MacchiatoMiddleware) {
@@ -56,7 +57,7 @@ class Kernel extends Emitter {
   #handleRequest() {
     return (req: IncomingMessage, res: ServerResponse) => {
       const context = new Context(this, this.config, req, res)
-      const onError = (err: HttpError|Error|null) => { onErrorListener(err)(this, res)(context) }
+      const onError = (err?: HttpError|Error|null) => onErrorListener(err as any)(this, res)(context)
       const handleResponse = () => respond(context)
 
       onFinished(res, (context.response.onError = onError))
@@ -76,7 +77,7 @@ class Kernel extends Emitter {
     return this.#server.listen(...args)
   }
 
-  stop(callback?: (err?: Error) => void) {
+  stop(callback?: onErrorHandler) {
     if (this.#server) {
       this.#server.close(callback)
     }
@@ -84,7 +85,7 @@ class Kernel extends Emitter {
     return this
   }
 
-  reload(callback?: (err?: Error) => void, ...args) {
+  reload(callback?: onErrorHandler, ...args) {
     return this.stop(callback).start(...args)
   }
 }

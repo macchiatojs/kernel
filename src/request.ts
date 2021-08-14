@@ -1,19 +1,21 @@
-import { IncomingMessage as httpIncomingMessage } from 'http'
-import { format as stringify, URL, Url } from 'url'
+import type { IncomingMessage as httpIncomingMessage } from 'http'
+import { format as stringify, URL } from 'url'
+import type { Url } from 'url'
 import { parse as parseType } from 'content-type'
-import qs, { ParsedUrlQuery } from 'querystring'
-import accepts, { Accepts } from 'accepts'
+import qs from 'querystring'
+import type { ParsedUrlQuery } from 'querystring'
+import accepts from 'accepts'
+import type { Accepts } from 'accepts'
 import parseRange from 'range-parser'
-import { TLSSocket } from 'tls'
+import type { TLSSocket } from 'tls'
 import parseUrl from 'parseurl'
 import typeIs from 'type-is'
 import { isIP } from 'net'
 import fresh from 'fresh'
 
-import Response from './response'
-import Kernel from './kernel'
-
-const METHODS = ['GET', 'HEAD', 'PUT', 'DELETE', 'OPTIONS', 'TRACE']
+import type Response from './response'
+import type Kernel from './kernel'
+import { METHODS } from './utils'
 
 /**
  * Request

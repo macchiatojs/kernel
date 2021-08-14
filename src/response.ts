@@ -1,12 +1,15 @@
-import { TLSSocket } from 'tls';
-import { STATUS_CODES as statuses, ServerResponse } from 'http'
-import contentDisposition from 'content-disposition'
-import HttpError from '@macchiatojs/http-error'
-import { is as typeIs } from 'type-is'
+import type { TLSSocket } from 'tls'
+import { STATUS_CODES as statuses } from 'http'
+import type { ServerResponse } from 'http'
 import { extname } from 'path'
 import assert from 'assert'
+import { is as typeIs } from 'type-is'
+import contentDisposition from 'content-disposition'
+import HttpError from '@macchiatojs/http-error'
 import vary from 'vary'
 
+import type Request from './request'
+import type { default as Kernel, onErrorHandler } from './kernel'
 import { 
   getFlag,
   getLength,
@@ -16,8 +19,6 @@ import {
   EMPTY_BODY_STATUES,
   respondHook
 } from './utils'
-import Request from './request'
-import Kernel from './kernel'
 
 /**
  * Response
@@ -33,7 +34,7 @@ class Response {
   #BODY: any
   config!: Map<string, unknown>
   flag!: number
-  onError!: (err: HttpError|Error) => void
+  onError!: onErrorHandler<HttpError|Error|null>
 
   constructor(public rawResponse: ServerResponse) {}
 

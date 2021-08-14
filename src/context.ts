@@ -1,7 +1,7 @@
-import { IncomingMessage, ServerResponse } from 'http'
-import Kernel from './kernel'
 import Request from './request'
 import Response from './response'
+import type Kernel from './kernel'
+import type { IncomingMessage, ServerResponse } from 'http'
 
 /**
  * Initializer

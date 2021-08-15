@@ -1,5 +1,10 @@
 # CHANGE LOG
 
+### v0.8.0 (15 Aug 2021)
+
+- use only HttpError (remove Error)
+- remove any from on-error
+
 ### v0.7.0 (15 Aug 2021)
 
 - lint code by remove ; and use ' over " ...etc

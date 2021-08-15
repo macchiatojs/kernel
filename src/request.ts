@@ -17,6 +17,7 @@ import type Response from './response'
 import type Kernel from './kernel'
 import type Cookies from 'cookies'
 import { METHODS } from './utils'
+
 type toJSON = {
   method: string,
   url: string,

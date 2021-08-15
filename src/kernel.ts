@@ -1,5 +1,4 @@
-/* TODO: fix all any types here --lint-warn */
-import Emitter from 'events'
+import EE from 'events'
 import { Server } from 'http'
 import type { IncomingMessage, ServerResponse } from 'http'
 import Middleware from '@macchiatojs/middleware'
@@ -18,7 +17,7 @@ import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils
  * @extends Emitter
  * @api public
  */
-class Kernel extends Emitter {
+class Kernel extends EE {
   #server!: Server
   expressify: boolean
   env: string
@@ -48,10 +47,10 @@ class Kernel extends Emitter {
   #handleRequest() {
     return (req: IncomingMessage, res: ServerResponse): Promise<Next|void>|void => {
       const context = new Context(this, this.config, req, res)
-      const onError = (err?: HttpError|Error|null): void => onErrorListener(err as any)(this, res)(context)
+      const onError = (err?: HttpError|null): void => onErrorListener(err!)(this, res)(context)
       const handleResponse = () => respond(context)
 
-      onFinished(res, (context.response.onError = onError))
+      onFinished(res, (context.response.onError = onError) as (err: Error | null, msg: unknown) => void)
 
       // invoke
       return (

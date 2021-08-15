@@ -44,7 +44,7 @@ class Response {
   config!: Map<string, unknown>
   #cookies!: Cookies
   flag!: number
-  onError!: onErrorHandler<HttpError|Error|null>
+  onError!: onErrorHandler<HttpError|null>
 
   constructor(public rawResponse: ServerResponse) {}
 

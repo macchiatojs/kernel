@@ -563,6 +563,28 @@ class Response {
   }
 
   /**
+   * Send given HTTP status code.
+   *
+   * Sets the response status to `statusCode` and the body of the
+   * response to the standard description from node's http.STATUS_CODES
+   * or the statusCode number if no description.
+   *
+   * Examples:
+   *
+   *     response.sendStatus(200);
+   *
+   * @param {number} statusCode
+   * @public
+   */
+
+  sendStatus(statusCode: number) {
+    const body = statuses[statusCode] || String(statusCode)
+    this.type = 'txt'
+
+    return this.send(statusCode, body);
+  }
+
+  /**
    * Inspect implementation.
    *
    * @return {object}
@@ -591,10 +613,3 @@ class Response {
 }
 
 export default Response
-
-  // /* express style */ 
-
-  // jsonp() {}
-  // sendFile() {}
-  // sendStatus() {}
-  // render() {}

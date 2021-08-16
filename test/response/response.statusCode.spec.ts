@@ -8,11 +8,10 @@ describe('response', () => {
     app = new Kernel()
   })
   
-  describe('.status', () => {
+  describe('.statusCode(code)', () => {
     it('should set the response .statusCode', async () => {
       app.use((request: Request, response: Response) => {
-        response.status = 201
-        response.end('Created')
+        response.statusCode(201).end('Created')
       })
 
       await request(app.start())

@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+// import fs from 'fs'
+// import path from 'path'
 import assert from 'assert'
 import request from 'supertest'
 import Kernel, { Request, Response } from '../../src'

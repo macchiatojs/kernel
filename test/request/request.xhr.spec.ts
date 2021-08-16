@@ -7,7 +7,6 @@ describe('request', () => {
   beforeEach(() => {
     app = new Kernel()
   })
-  
 
   describe('.xhr', () => {
     it('should return true when X-Requested-With is xmlhttprequest', async () => {

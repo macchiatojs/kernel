@@ -20,7 +20,8 @@ import {
   writable,
   FLAG_STREAM,
   EMPTY_BODY_STATUES,
-  respondHook
+  respondHook,
+  FLAG_OBJECT
 } from './utils'
 
 type toJSON = { 
@@ -533,6 +534,35 @@ class Response {
   }
 
   /**
+   * Set response status code.
+   * 
+   * @param   {number} code 
+   * @return  {ServerResponse}
+   */
+  statusCode(code) {
+    this.status = code
+    return this
+  }
+
+  /**
+   * Send a JSON response.
+   * 
+   *     response.json(null);
+   *     response.json({ user: 'imed' });
+   * @param   {object} payload
+   * @return  {Kernel}
+   */
+  json(payload: KeyValueObject|null) {
+    return this.send(
+      ...(
+        payload && getFlag(payload) !== FLAG_OBJECT 
+          ? [400, new HttpError(400).message]
+          : [this.status, payload]
+      ) as [number, unknown]
+    )
+  }
+
+  /**
    * Inspect implementation.
    *
    * @return {object}
@@ -563,13 +593,7 @@ class Response {
 export default Response
 
   // /* express style */ 
-  // statusCode(code) {
-  //   this.status = code
-  //   return this
-  // }
-  // json(payload) {
-  //   return this.send(this.status, payload)
-  // }
+
   // jsonp() {}
   // sendFile() {}
   // sendStatus() {}

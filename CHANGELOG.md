@@ -1,5 +1,10 @@
 # CHANGE LOG
 
+### v0.9.0 (16 Aug 2021)
+
+- add statusCode method --expressify
+- add json method --expressify
+
 ### v0.8.0 (15 Aug 2021)
 
 - use only HttpError (remove Error)

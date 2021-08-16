@@ -1,7 +1,6 @@
 import request from 'supertest'
 import Kernel, { Request, Response } from '../../src'
 
-
 describe('request', () => {
   let app: Kernel
 

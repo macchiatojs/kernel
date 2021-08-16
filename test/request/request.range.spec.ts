@@ -1,4 +1,3 @@
-import RangeParser from 'range-parser'
 import request from 'supertest'
 import Kernel, { Request, Response } from '../../src'
 

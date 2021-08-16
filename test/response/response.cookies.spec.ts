@@ -1,6 +1,6 @@
-import Cookies from 'cookies'
 import assert from 'assert'
 import request from 'supertest'
+import Cookies from 'cookies'
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {

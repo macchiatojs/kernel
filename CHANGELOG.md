@@ -1,5 +1,10 @@
 # CHANGE LOG
 
+### v0.10.0 (16 Aug 2021)
+
+- add sendStatus method --expressify
+- remove unused lines
+
 ### v0.9.0 (16 Aug 2021)
 
 - add statusCode method --expressify

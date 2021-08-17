@@ -7,7 +7,7 @@ import HttpError from '@macchiatojs/http-error'
 import onFinished from 'on-finished'
 
 import Context from './context'
-import type { MacchiatoMiddleware, Next, onErrorHandler } from './types'
+import type { MacchiatoHandler, Next, onErrorHandler } from './types'
 import { paramsFactory, respond, onErrorListener, WrapKoaCompose } from './utils'
 
 /**
@@ -39,7 +39,7 @@ class Kernel extends EE {
     ])
   }
 
-  use(fn: MacchiatoMiddleware): Kernel {
+  use(fn: MacchiatoHandler): Kernel {
     this.middleware.push(fn)
     return this
   }

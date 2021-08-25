@@ -28,7 +28,7 @@ describe('kernel', () => {
         app.use((request: Request, response: Response) => {
             let buffer = ''
             response.set('Content-Type', 'application/json; charset=utf-8;')
-            request.rawRequest
+            request.raw
               .on('data', (chunk) => { buffer += chunk })
               .on('end', () => { response.body = buffer })
         })

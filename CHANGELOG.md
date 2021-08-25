@@ -1,5 +1,10 @@
 # CHANGE LOG
 
+### v0.11.0 (26 Aug 2021)
+
+- remove access to '.rawRequest' and add access with '.raw' [break]
+- remove access to '.rawResponse' and add access with '.raw' [break]
+
 ### v0.10.0 (16 Aug 2021)
 
 - add sendStatus method --expressify

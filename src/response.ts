@@ -40,6 +40,7 @@ type toJSON = {
  */
 class Response {
   #app!: Kernel
+  #rawResponse: ServerResponse
   #request!: Request
   #BODY: BodyContent
   config!: Map<string, unknown>
@@ -47,7 +48,9 @@ class Response {
   flag!: number
   onError!: onErrorHandler<HttpError|null>
 
-  constructor(public rawResponse: ServerResponse) {}
+  constructor(rawResponse: ServerResponse) {
+    this.#rawResponse = rawResponse
+  }
 
   /**
    * Initialize.
@@ -74,13 +77,23 @@ class Response {
   }
 
   /**
+   * Return the raw response.
+   *
+   * @return {ServerResponse}
+   * @api public
+   */
+  public get raw(): ServerResponse {
+    return this.#rawResponse
+  }
+
+  /**
    * Get response status code.
    *
    * @return {number}
    * @api public
    */
   public get status(): number {
-    return this.rawResponse.statusCode
+    return this.#rawResponse.statusCode
   }
 
   /**
@@ -93,9 +106,9 @@ class Response {
     assert(typeof code === 'number', 'status code must be a number')
     const message = statuses[code]
     assert(message, `invalueid status code: ${code}`)
-    assert(!this.rawResponse.headersSent, 'headers have already been sent')
-    this.rawResponse.statusCode = code
-    this.rawResponse.statusMessage = message
+    assert(!this.#rawResponse.headersSent, 'headers have already been sent')
+    this.#rawResponse.statusCode = code
+    this.#rawResponse.statusMessage = message
   }
 
   /**
@@ -105,7 +118,7 @@ class Response {
    * @api public
    */
   public get message(): string {
-    return this.rawResponse.statusMessage 
+    return this.#rawResponse.statusMessage 
   }
 
   /**
@@ -115,7 +128,7 @@ class Response {
    * @api public
    */
   public set message(msg: string) {
-    this.rawResponse.statusMessage = msg
+    this.#rawResponse.statusMessage = msg
   }
 
   /**
@@ -137,7 +150,7 @@ class Response {
   public set body(value: BodyContent) {
     this.#BODY = value
 
-    if (this.rawResponse.headersSent) return
+    if (this.#rawResponse.headersSent) return
 
     // no content
     if (value === null) {
@@ -166,7 +179,7 @@ class Response {
    * @api public
    */
   public get headers(): OutgoingHttpHeaders {
-    return this.rawResponse.getHeaders()
+    return this.#rawResponse.getHeaders()
   }
 
   /**
@@ -185,7 +198,7 @@ class Response {
    * @api public
    */
   public get(field: string): string {
-    return this.rawResponse.getHeader(field) as string
+    return this.#rawResponse.getHeader(field) as string
   }
 
   /**
@@ -206,7 +219,7 @@ class Response {
     value?: string | string[]
   ): void {
     if (arguments.length === 2) {
-      this.rawResponse.setHeader(field as string, value as string)
+      this.#rawResponse.setHeader(field as string, value as string)
       return
     }
 
@@ -232,7 +245,7 @@ class Response {
    * @api public
    */
   has(field: string): boolean {
-    return this.rawResponse.hasHeader(field)
+    return this.#rawResponse.hasHeader(field)
   }
 
   /**
@@ -291,7 +304,7 @@ class Response {
    * @api public
    */
   public get headerSent(): boolean {
-    return this.rawResponse.headersSent
+    return this.#rawResponse.headersSent
   }
 
   /**
@@ -301,7 +314,7 @@ class Response {
    * @api public
    */
   vary(field: string | string[]): void {
-    vary(this.rawResponse, field)
+    vary(this.#rawResponse, field)
   }
 
   /**
@@ -465,7 +478,7 @@ class Response {
    * @api public
    */
   remove(field: string): void {
-    this.rawResponse.removeHeader(field.toLowerCase())
+    this.#rawResponse.removeHeader(field.toLowerCase())
   }
 
   /**
@@ -477,7 +490,7 @@ class Response {
    * @api private
    */
   get writable(): boolean {
-    return writable(this.rawResponse)
+    return writable(this.#rawResponse)
   }
 
   /**
@@ -486,7 +499,7 @@ class Response {
    * @api public
    */
   flush(): void {
-    return this.rawResponse.flushHeaders()
+    return this.#rawResponse.flushHeaders()
   }
 
   /**
@@ -496,7 +509,7 @@ class Response {
    * @api public
    */
   end(...args: any): void {
-    return this.rawResponse.end(...args)
+    return this.#rawResponse.end(...args)
   }
 
   /**
@@ -516,11 +529,11 @@ class Response {
   send(code: number, body: BodyContent): ServerResponse|void {
     /* istanbul ignore next */
     if (getFlag(body) !== 4) {
-      this.rawResponse['responded'] = true
-      this.rawResponse.statusCode = code
+      this.#rawResponse['responded'] = true
+      this.#rawResponse.statusCode = code
     }
 
-    return respondHook(this.rawResponse, body)
+    return respondHook(this.#rawResponse, body)
   }
 
   /**

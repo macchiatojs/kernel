@@ -1,4 +1,4 @@
-import type { IncomingHttpHeaders, IncomingMessage as httpIncomingMessage } from 'http'
+import type { IncomingHttpHeaders, IncomingMessage } from 'http'
 import { format as stringify, URL } from 'url'
 import type { Url } from 'url'
 import { parse as parseType } from 'content-type'
@@ -34,6 +34,7 @@ type toJSON = {
 class Request {
   #app!: Kernel
   #response?: Response
+  #rawRequest: IncomingMessage
   #accept: Accepts
   #memoizedURL?: URL
   #ip?: string
@@ -45,7 +46,8 @@ class Request {
    * 
    * @param request 
    */
-  constructor(public rawRequest: httpIncomingMessage) {
+  constructor(rawRequest: IncomingMessage) {
+    this.#rawRequest = rawRequest
     this.#accept = accepts(rawRequest)
   }
 
@@ -61,7 +63,7 @@ class Request {
     this.config = config
     this.#response = response
     this.#cookies = cookies
-    this.#ip = this.ips[0] || this.rawRequest.socket.remoteAddress || ''
+    this.#ip = this.ips[0] || this.#rawRequest.socket.remoteAddress || ''
   }
 
   /**
@@ -71,18 +73,18 @@ class Request {
    * @api public
    */
   public get socket(): TLSSocket {
-    return this.rawRequest.socket as TLSSocket
+    return this.#rawRequest.socket as TLSSocket
   }
 
-  // /**
-  //  * Return the raw request.
-  //  *
-  //  * @return {httpIncomingMessage}
-  //  * @api public
-  //  */
-  // public get raw() {
-  //   return this.rawRequest
-  // }
+  /**
+   * Return the raw request.
+   *
+   * @return {IncomingMessage}
+   * @api public
+   */
+  public get raw(): IncomingMessage {
+    return this.#rawRequest
+  }
 
   /**
    * Get request original url.
@@ -91,7 +93,7 @@ class Request {
    * @api public
    */
   public get originalUrl(): string|undefined {
-    return this.rawRequest.url?.split('?')[0]
+    return this.#rawRequest.url?.split('?')[0]
   }
 
   /**
@@ -101,7 +103,7 @@ class Request {
    * @api public
    */
   public get method(): string|undefined {
-    return this.rawRequest.method
+    return this.#rawRequest.method
   }
 
   /**
@@ -111,7 +113,7 @@ class Request {
    * @api public
    */
   set method(value) {
-    this.rawRequest.method = value
+    this.#rawRequest.method = value
   }
 
   /**
@@ -121,7 +123,7 @@ class Request {
    * @api public
    */
   public get url(): string|undefined {
-    return this.rawRequest.url
+    return this.#rawRequest.url
   }
 
   /**
@@ -131,7 +133,7 @@ class Request {
    * @api public
    */
   set url(value) {
-    this.rawRequest.url = value
+    this.#rawRequest.url = value
   }
 
   /**
@@ -141,7 +143,7 @@ class Request {
    * @api public
    */
   public get headers(): IncomingHttpHeaders {
-    return this.rawRequest.headers
+    return this.#rawRequest.headers
   }
 
   /**
@@ -291,7 +293,7 @@ class Request {
    * @api public
    */
   is(type: string, ...types: string[]): string|false|null {    
-    return typeIs(this.rawRequest, type, ...types)
+    return typeIs(this.#rawRequest, type, ...types)
   }
 
   /**
@@ -332,15 +334,15 @@ class Request {
    * @api public
    */
   public get fresh(): boolean {
-    const method = this.rawRequest.method
-    const status = this.#response!.status
+    const method = this.#rawRequest.method
+    const status = (this.#response as Response).status
 
     // GET or HEAD for weak freshness validation only
     if (method !== 'GET' && method !== 'HEAD') return false
 
     // 2xx or 304 as per rfc2616 14.26
     if ((status >= 200 && status < 300) || status === 304) {
-      return fresh(this.rawRequest.headers, this.#response!.headers)
+      return fresh(this.#rawRequest.headers, (this.#response as Response).headers)
     }
 
     return false
@@ -480,7 +482,7 @@ class Request {
    */
   public get href(): string|undefined {
     // Support: `GET http://example.com/foo`
-    if (/^https?:\/\//i.test(this.originalUrl!)) return this.originalUrl
+    if (/^https?:\/\//i.test(this.originalUrl as string)) return this.originalUrl
     return this.origin + this.originalUrl
   }
 
@@ -564,7 +566,7 @@ class Request {
    * @api public
    */
   public get path(): string {
-    return parseUrl(this.rawRequest)?.pathname as string
+    return parseUrl(this.#rawRequest)?.pathname as string
   }
 
   /**
@@ -574,11 +576,11 @@ class Request {
    * @api public
    */
   public set path(path: string) {
-    const url = parseUrl(this.rawRequest)
+    const url = parseUrl(this.#rawRequest)
     if (url?.pathname === path) return
 
-    url!.pathname = path
-    url!.path = null
+    (url as Url).pathname = path
+    ;(url as Url).path = null
     this.url = stringify(url as Url as unknown as URL)
   }
 
@@ -598,10 +600,10 @@ class Request {
   /**
    * Set query-string as an object.
    *
-   * @param {object} object
+   * @param {qs.ParsedUrlQueryInput} object
    * @api public
    */
-  public set query(object) {
+  public set query(object: qs.ParsedUrlQueryInput) {
     this.querystring = qs.stringify(object)
   }
 
@@ -611,8 +613,8 @@ class Request {
    * @return {string}
    * @api public
    */
-  public get querystring() {
-    return parseUrl(this.rawRequest)?.query || ''
+  public get querystring(): string|qs.ParsedUrlQuery {
+    return parseUrl(this.#rawRequest)?.query || ''
   }
 
   /**
@@ -622,11 +624,11 @@ class Request {
    * @api public
    */
   public set querystring(str) {
-    const url = parseUrl(this.rawRequest)
+    const url = parseUrl(this.#rawRequest)
     if (url?.search === `?${str}`) return
 
-    url!.search = str as string
-    url!.path = null
+    (url as Url).search = str as string
+    ;(url as Url).path = null
 
     this.url = stringify(url as Url as unknown as URL)
   }
@@ -705,8 +707,8 @@ class Request {
    */
   toJSON(): toJSON {
     return {
-      method: this.method!,
-      url: this.url!,
+      method: this.method as string,
+      url: this.url as string,
       headers: this.headers
     }
   }

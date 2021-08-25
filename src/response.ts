@@ -442,7 +442,7 @@ class Response {
    * @return {string|false}
    * @api public
    */
-  is(type?, ...types: string[]): string|false {
+  is(type?, ...types): string|false {
     return typeIs(this.type, type, ...types)
   }
 

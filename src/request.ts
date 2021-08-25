@@ -292,7 +292,7 @@ class Request {
    * @return {string|false|null}
    * @api public
    */
-  is(type: string, ...types: string[]): string|false|null {    
+  is(type, ...types): string|false|null {    
     return typeIs(this.#rawRequest, type, ...types)
   }
 

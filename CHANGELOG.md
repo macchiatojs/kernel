@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.12.0 (26 Aug 2021)
+
+- remove types from `.is()`
+
 ### v0.11.0 (26 Aug 2021)
 
 - remove access to '.rawRequest' and add access with '.raw' [break]

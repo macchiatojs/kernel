@@ -1,10 +1,7 @@
-import type KoaifyMiddleware from '@macchiatojs/koaify-middleware';
-import type Middleware from '@macchiatojs/middleware'
 import type { Stream } from 'stream'
 import type Context from './context'
 import type Request from './request'
 import type Response from './response'
-import type { WrapKoaCompose } from './utils'
 
 /**
  * @types

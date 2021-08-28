@@ -112,7 +112,7 @@ class Request {
    * @param {string} value
    * @api public
    */
-  set method(value) {
+   public set method(value) {
     this.#rawRequest.method = value
   }
 
@@ -132,7 +132,7 @@ class Request {
    * @param {string} value
    * @api public
    */
-  set url(value) {
+  public set url(value) {
     this.#rawRequest.url = value
   }
 
@@ -215,7 +215,7 @@ class Request {
    * @return {string|string[]|false}
    * @api public
    */
-  accepts(...args): string|false|string[] {
+  public accepts(...args): string|false|string[] {
     return this.#accept.types(...args)
   }
 
@@ -231,7 +231,7 @@ class Request {
    * @return {string[]}
    * @api public
    */
-  acceptsEncodings(...args: string[]): string|false {
+  public acceptsEncodings(...args: string[]): string|false {
     return this.#accept.encodings(...args)
   }
 
@@ -247,7 +247,7 @@ class Request {
    * @return {string[]}
    * @api public
    */
-  acceptsCharsets(...args: string[]): string|false {  
+  public acceptsCharsets(...args: string[]): string|false {  
     return this.#accept.charsets(...args)
   }
 
@@ -263,7 +263,7 @@ class Request {
    * @return {string|false}
    * @api public
    */
-  acceptsLanguages(...args: string[]): string|false{
+  public acceptsLanguages(...args: string[]): string|false{
     return this.#accept.languages(...args)
   }
 
@@ -292,7 +292,7 @@ class Request {
    * @return {string|false|null}
    * @api public
    */
-  is(type, ...types): string|false|null {    
+  public is(type, ...types): string|false|null {    
     return typeIs(this.#rawRequest, type, ...types)
   }
 
@@ -553,7 +553,7 @@ class Request {
    * @return {number|array}
    * @public
    */
-  range(size: number, options?: parseRange.Options): parseRange.Result | parseRange.Ranges | void {
+  public range(size: number, options?: parseRange.Options): parseRange.Result | parseRange.Ranges | void {
     const range = this.get('range')
     if (!range) return
     return parseRange(size, range, options)
@@ -695,7 +695,7 @@ class Request {
    * @return {object}
    * @api public
    */
-  inspect(): toJSON {
+  public inspect(): toJSON {
     return this.toJSON()
   }
 
@@ -705,7 +705,7 @@ class Request {
    * @return {object}
    * @api public
    */
-  toJSON(): toJSON {
+  public toJSON(): toJSON {
     return {
       method: this.method as string,
       url: this.url as string,

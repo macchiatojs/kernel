@@ -46,7 +46,7 @@ class Response {
   config!: Map<string, unknown>
   #cookies!: Cookies
   flag!: number
-  onError!: onErrorHandler<HttpError|null>
+  onError!: onErrorHandler<Error|HttpError|null>
 
   constructor(rawResponse: ServerResponse) {
     this.#rawResponse = rawResponse
@@ -244,7 +244,7 @@ class Response {
    * @param {boolean}
    * @api public
    */
-  has(field: string): boolean {
+  public has(field: string): boolean {
     return this.#rawResponse.hasHeader(field)
   }
 
@@ -313,7 +313,7 @@ class Response {
    * @param {string} field
    * @api public
    */
-  vary(field: string | string[]): void {
+  public vary(field: string | string[]): void {
     vary(this.#rawResponse, field)
   }
 
@@ -332,7 +332,7 @@ class Response {
    * @param {string} url
    * @api public
    */
-  redirect(url: string): void {
+  public redirect(url: string): void {
     // location
     if (url === 'back') url = this.#request.get('referrer') || '/'
     this.set('location', url)
@@ -365,7 +365,7 @@ class Response {
    * @param {string} filename
    * @api public
    */
-  attachment(filename?: string): void {
+  public attachment(filename?: string): void {
     if (filename) this.type = extname(filename)
     this.set('content-disposition', contentDisposition(filename))
   }
@@ -442,7 +442,7 @@ class Response {
    * @return {string|false}
    * @api public
    */
-  is(type?, ...types): string|false {
+  public is(type?, ...types): string|false {
     return typeIs(this.type, type, ...types)
   }
 
@@ -459,7 +459,7 @@ class Response {
    * @param {string|string[]} value
    * @api public
    */
-  append(field: string, value: string | string[]): void {
+  public append(field: string, value: string | string[]): void {
     const prev = this.get(field) as string
 
     if (prev) {
@@ -477,7 +477,7 @@ class Response {
    * @param {string} field
    * @api public
    */
-  remove(field: string): void {
+  public remove(field: string): void {
     this.#rawResponse.removeHeader(field.toLowerCase())
   }
 
@@ -489,7 +489,7 @@ class Response {
    * @return {boolean}
    * @api private
    */
-  get writable(): boolean {
+  public get writable(): boolean {
     return writable(this.#rawResponse)
   }
 
@@ -498,7 +498,7 @@ class Response {
    *
    * @api public
    */
-  flush(): void {
+  public flush(): void {
     return this.#rawResponse.flushHeaders()
   }
 
@@ -508,7 +508,7 @@ class Response {
    * @return {boolean}
    * @api public
    */
-  end(...args: any): void {
+  public end(...args: any): void {
     return this.#rawResponse.end(...args)
   }
 
@@ -526,7 +526,7 @@ class Response {
    * @param {string|number|Buffer|object|stream|null|undefined} body
    * @api public
    */
-  send(code: number, body: BodyContent): ServerResponse|void {
+  public send(code: number, body: BodyContent): ServerResponse|void {
     /* istanbul ignore next */
     if (getFlag(body) !== 4) {
       this.#rawResponse['responded'] = true
@@ -542,7 +542,7 @@ class Response {
    * @return {Cookies}
    * @api public
    */
-  get cookies(): Cookies{
+  public get cookies(): Cookies{
     return this.#cookies
   }
 
@@ -552,7 +552,7 @@ class Response {
    * @param   {number} code 
    * @return  {ServerResponse}
    */
-  statusCode(code) {
+  public statusCode(code) {
     this.status = code
     return this
   }
@@ -565,7 +565,7 @@ class Response {
    * @param   {object} payload
    * @return  {Kernel}
    */
-  json(payload: KeyValueObject|null) {
+  public json(payload: KeyValueObject|null) {
     return this.send(
       ...(
         payload && getFlag(payload) !== FLAG_OBJECT 
@@ -589,8 +589,7 @@ class Response {
    * @param {number} statusCode
    * @public
    */
-
-  sendStatus(statusCode: number) {
+  public sendStatus(statusCode: number) {
     const body = statuses[statusCode] || String(statusCode)
     this.type = 'txt'
 
@@ -603,7 +602,7 @@ class Response {
    * @return {object}
    * @api public
    */
-  inspect(): toJSON {
+  public inspect(): toJSON {
     const object = this.toJSON()
     object.body = this.body
 
@@ -616,7 +615,7 @@ class Response {
    * @return {object}
    * @api public
    */
-  toJSON(): toJSON {
+  public toJSON(): toJSON {
     return {
       status: this.status,
       message: this.message,

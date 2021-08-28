@@ -47,10 +47,10 @@ class Kernel extends EE {
   #handleRequest() {
     return (req: IncomingMessage, res: ServerResponse): Promise<Next|void>|void => {
       const context = new Context(this, this.config, req, res)
-      const onError = (err?: HttpError|null): void => onErrorListener(err!)(this, res)(context)
+      const onError: onErrorHandler<Error|HttpError|null> = (err?: Error|HttpError|null): void => onErrorListener(err!)(this, res)(context)
       const handleResponse = () => respond(context)
 
-      onFinished(res, (context.response.onError = onError) as (err: Error | null, msg: unknown) => void)
+      onFinished(res, context.response.onError = onError)
 
       // invoke
       return (

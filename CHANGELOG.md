@@ -1,5 +1,11 @@
 # CHANGE LOG
 
+### v0.13.0 (28 Aug 2021)
+
+- add missing accessor `public`
+- add Error as accepted type ins `on-error`.
+- remove unused line.
+
 ### v0.12.0 (26 Aug 2021)
 
 - remove types from `.is()`

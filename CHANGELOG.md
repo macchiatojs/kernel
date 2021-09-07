@@ -1,5 +1,13 @@
 # CHANGE LOG
 
+### v0.14.0 (07 Sep 2021)
+
+- use MiddlewareEngine interface to handle multi-middlewares.
+- update @macchiatojs/middleware to v0.2.0.
+- update @macchiatojs/koaify-middleware to v0.2.0.
+- remove WrapKoaCompose and move it to external (@macchiatojs/wrap-koa-compose).
+- adapte with the new WrapKoaCompose behave.
+
 ### v0.13.0 (28 Aug 2021)
 
 - add missing accessor `public`

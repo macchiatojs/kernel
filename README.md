@@ -40,11 +40,13 @@ app.start(2222);
 If you want to use the famous `koa-compose` for mws;
 
 ```ts
-import Macchiato, { WrapKoaCompose } from "@macchiatojs/kernel";
-import compose from "koa-compose";
-const koaCompose = new WrapKoaCompose(compose);
+import Macchiato, { Context, Next } from "@macchiatojs/kernel";
+// don't forget to add '@macchiatojs/wrap-koa-compose' and 'koa-compose'
+import WrapKoaCompose from "@macchiatojs/wrap-koa-compose";
 
-const app = new Macchiato({ koaCompose });
+const app = new Macchiato({
+  koaCompose: new WrapKoaCompose<Context, Next>(),
+});
 ```
 
 ## `Support`

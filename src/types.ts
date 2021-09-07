@@ -13,3 +13,8 @@ export type MacchiatoHandler = ExpressStyleHandler|KoaStyleHandler
 export type onErrorHandler<T = Error> = (err?: T) => void
 export type KeyValueObject<T = unknown> = { [key:string]: T }
 export type BodyContent<T= unknown[]|unknown> = string|number|boolean|Buffer|Stream|KeyValueObject|null|undefined|T
+// super model for (Middleware/KoaifyMiddleware/WrapKoaCompose)
+// TODO: make a behave to re-use this interface and fix types.
+export interface MiddlewareEngine extends Array<MacchiatoHandler> {
+  compose(...args: any): Promise<unknown>
+}

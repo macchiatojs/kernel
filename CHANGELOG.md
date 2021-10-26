@@ -2,7 +2,7 @@
 
 ### v0.15.0 (26 Oct 2021)
 
-- replace `on-finished` with custom behave using `ee-first`.
+- use custom behave using `ee-first` over `on-finished`.
 
 ### v0.14.0 (07 Sep 2021)
 

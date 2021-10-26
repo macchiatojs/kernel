@@ -5,11 +5,10 @@ import Middleware from '@macchiatojs/middleware'
 import KoaifyMiddleware from '@macchiatojs/koaify-middleware'
 import WrapKoaCompose from '@macchiatojs/wrap-koa-compose'
 import type HttpError from '@macchiatojs/http-error'
-import onFinished from 'on-finished'
 
 import Context from './context'
 import type { MacchiatoHandler, Next, onErrorHandler, MiddlewareEngine } from './types'
-import { paramsFactory, respond, onErrorListener } from './utils'
+import { paramsFactory, respond, onFinishedAfterware, onErrorListener } from './utils'
 
 /**
  * Kernel
@@ -58,7 +57,7 @@ class Kernel extends EE {
       const onError: onErrorHandler<Error|HttpError|null> = (err?: Error|HttpError|null): void => onErrorListener(err!)(this, res)(context)
       const handleResponse = () => respond(context)
 
-      onFinished(res, context.response.onError = onError)
+      onFinishedAfterware(res, context.response.onError = onError)
 
       // invoke
       return (

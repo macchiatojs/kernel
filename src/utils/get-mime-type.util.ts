@@ -1,3 +1,5 @@
+// TODO: rebuild this module and make it ovverrided when we create a new app.
+// behave like fastify - https://www.fastify.io/docs/latest/ContentTypeParser/
 import { contentType as getType } from 'mime-types'
 import hashlruCache  from 'hashlru'
 

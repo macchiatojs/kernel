@@ -72,7 +72,25 @@ describe('kernel', () => {
       await request(app.start())
       .post('/')
       .expect(404)
+    })
+
+    it('should handle socket errors', async () => {
+      const app = new Kernel()
+  
+      app.use((request: Request, response: Response) => {
+        // triggers request.socket.writable == false
+        response.socket.emit('error', new Error('boom'))
+      })
       
+      let makeSureIsThrowError = 10
+      app.on('error', err => {
+        assert(err !== null)
+        makeSureIsThrowError += 100
+        assert(err.message === 'boom')
+      })
+  
+      await request(app.start()).get('/')      
+      assert(makeSureIsThrowError === 110)
     })
     
     it('should expose message', async () => {

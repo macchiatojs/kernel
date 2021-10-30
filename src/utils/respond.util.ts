@@ -5,9 +5,15 @@ import type Context from '../context'
 import type { ServerResponse } from 'http'
 import type { BodyContent } from '../types'
 
-// response helper for .send()
+/**
+ * response helper for .send().
+ * 
+ * @param {ServerResponse} rawResponse 
+ * @param {BodyContent} body 
+ * @return {ServerResponse|void}
+ */
 export function respondHook(rawResponse: ServerResponse, body: BodyContent = null): ServerResponse|void {
-  // 
+  // pick the right flag type of the body payload
   const flag = getFlag(body)
 
   // body is null
@@ -53,24 +59,27 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   rawResponse.end(`${body}`)
 }
 
-// response helper for main request hanlder.
+/**
+ * response helper for main request hanlder.
+ * 
+ * @param {Context} context 
+ * @return {void}
+ */
 export function respond({ rawResponse, response, request: { method } }: Context): void {
-  //
-  if (!response.writable) return
+  if (
+    // early respond when the respond is not writable
+    !response.writable ||
+    // https://github.com/koajs/koa/issues/1547
+    /* istanbul ignore if */
+    method === 'HEAD'
+  ) return rawResponse.end()
 
   // ignore body
   if (EMPTY_BODY_STATUES.has(response.status)) {
-    // strip headers
     response.body = null
     return rawResponse.end()
   }
 
-  //
-  /* istanbul ignore if */
-  if (method === 'HEAD') {
-    return rawResponse.end()
-  }
-
-  //
+  // respond
   respondHook(rawResponse, response.body)
 }

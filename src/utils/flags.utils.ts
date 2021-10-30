@@ -7,7 +7,12 @@ export const FLAG_OBJECT = 1
 export const FLAG_BUFFER = 2
 export const FLAG_STREAM = 4
 
-// determine the right flag for the current body.
+/**
+ * determine the right flag for the current body.
+ * 
+ * @param {BodyContent} body 
+ * @return {number}
+ */
 export function getFlag(body: BodyContent): number {
   if (!body || typeof body === 'string') return FLAG_STRING
   if (Buffer.isBuffer(body)) return FLAG_BUFFER

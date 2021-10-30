@@ -6,7 +6,12 @@ import hashlruCache  from 'hashlru'
 // cache use to improve the mime type fetch process.
 const typeHashlruCache = hashlruCache(100)
 
-// better performance than getType.
+/**
+ * better performance than getType.
+ * 
+ * @param {string} type 
+ * @return {string}
+ */
 export function getMimeType(type:string): string {
   let mimeType: string = typeHashlruCache.get(type)
 

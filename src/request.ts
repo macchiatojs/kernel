@@ -448,7 +448,7 @@ class Request {
    */
   public get protocol(): string {
     if (this.socket.encrypted) return 'https'
-    if (!this.config?.get('trust proxy')) return 'http'
+    if (!this.config!.get('trust proxy')) return 'http'
     return (this.get('x-forwarded-proto') || 'http').split(/\s*,\s*/)[0]
   }
 

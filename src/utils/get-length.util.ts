@@ -1,5 +1,5 @@
 import { BodyContent } from '../types'
-import { FLAG_STRING, FLAG_OBJECT, FLAG_BUFFER } from './flags.utils'
+import { FLAG_STRING, FLAG_OBJECT, FLAG_BUFFER } from './flags.util'
 
 /**
  * determine the length the current body.

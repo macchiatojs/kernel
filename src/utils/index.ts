@@ -1,4 +1,4 @@
-export * from './flags.utils'
+export * from './flags.util'
 export * from './get-length.util'
 export * from './get-mime-type.util'
 export * from './on-error-listener.util'

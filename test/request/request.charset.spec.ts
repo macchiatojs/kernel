@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,47 +10,47 @@ describe('request', () => {
   })
 
   describe('.charset', () => {
-    it('with no content-type present', async () => {
+    it('with no content-type present', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.charset)
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '')
+        .get('/')
+        .expect(200, '')
     })
 
-    it('with charset present', async () => {
+    it('with charset present', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.charset)
       })
 
       await request(app.start())
-      .get('/')
-      .set('Content-Type', 'text/plain')
-      .expect(200, '')
+        .get('/')
+        .set('Content-Type', 'text/plain')
+        .expect(200, '')
     })
 
-    it('with a charset', async () => {
+    it('with a charset', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.charset)
       })
 
       await request(app.start())
-      .get('/')
-      .set('Content-Type', 'text/plain; charset=utf-8')
-      .expect(200, 'utf-8')
+        .get('/')
+        .set('Content-Type', 'text/plain; charset=utf-8')
+        .expect(200, 'utf-8')
     })
 
-    it('should return "" if content-type is invalid', async () => {
+    it('should return "" if content-type is invalid', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.charset)
       })
 
       await request(app.start())
-      .get('/')
-      .set('Content-Type', 'application/json; application/text; charset=utf-8')
-      .expect(200, '')
+        .get('/')
+        .set('Content-Type', 'application/json; application/text; charset=utf-8')
+        .expect(200, '')
     })
   })
 })

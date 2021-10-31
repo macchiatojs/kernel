@@ -1,6 +1,7 @@
 import assert from 'assert'
 import request from 'supertest'
-import Kernel, { Request, Response } from '../../src'
+
+import Kernel, { Request, Response, Next } from '../../src'
 
 describe('response', () => {
   let app: Kernel
@@ -10,8 +11,8 @@ describe('response', () => {
   })
 
   describe('.is()', () => {
-    it('should ignore params', async () => {
-      app.use((request: Request, response: Response, next: any) => {
+    it('should ignore params', async () => { 
+      app.use((request: Request, response: Response, next: Next) => {
         response.type = 'text/html; charset=utf-8'
         next()
       })
@@ -21,22 +22,22 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'text/html')
+        .get('/')
+        .expect(200, 'text/html')
     })
 
-    it('should return false when no type is set', async () => {
+    it('should return false when no type is set', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, [response.is(), response.is('text'), response.is('text/*')])
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '[false,false,false]')
+        .get('/')
+        .expect(200, '[false,false,false]')
     })
 
-    it('should return the type give no types', async () => {
-      app.use((request: Request, response: Response, next: any) => {
+    it('should return the type give no types', async () => { 
+      app.use((request: Request, response: Response, next: Next) => {
         response.type = 'text/html; charset=utf-8'
         next()
       })
@@ -46,12 +47,12 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'text/html')
+        .get('/')
+        .expect(200, 'text/html')
     })
 
-    it('should return the type or false given one type', async () => {
-      app.use((request: Request, response: Response, next: any) => {
+    it('should return the type or false given one type', async () => { 
+      app.use((request: Request, response: Response, next: Next) => {
         response.type = 'image/png'
         next()
       })
@@ -77,12 +78,12 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200)
+        .get('/')
+        .expect(200)
     })
 
-    it('when Content-Type: application/x-www-form-urlencoded should match "urlencoded"', async () => {
-      app.use((request: Request, response: Response, next: any) => {
+    it('when Content-Type: application/x-www-form-urlencoded should match "urlencoded"', async () => { 
+      app.use((request: Request, response: Response, next: Next) => {
         response.type = 'application/x-www-form-urlencoded'
         next()
       })
@@ -95,8 +96,8 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200)
+        .get('/')
+        .expect(200)
     })
   })
 })

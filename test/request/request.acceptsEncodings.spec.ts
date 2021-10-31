@@ -1,5 +1,6 @@
 import should from 'should'
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -10,7 +11,7 @@ describe('request', () => {
   })
   
   describe('.acceptsEncodings', () => {
-    it('should be true if encoding accepted', async () => {
+    it('should be true if encoding accepted', async () => { 
       app.use((request: Request, response: Response) => {
         request.acceptsEncodings('gzip').should.be.ok()
         request.acceptsEncodings('deflate').should.be.ok()
@@ -18,21 +19,21 @@ describe('request', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .set('Accept-Encoding', ' gzip, deflate')
-      .expect(200)
+        .get('/')
+        .set('Accept-Encoding', ' gzip, deflate')
+        .expect(200)
     })
 
-    it('should be false if encoding not accepted', async () => {
+    it('should be false if encoding not accepted', async () => { 
       app.use((request: Request, response: Response) => {
         request.acceptsEncodings('bogus').should.not.be.ok()
         response.end()
       })
 
       await request(app.start())
-      .get('/')
-      .set('Accept-Encoding', ' gzip, deflate')
-      .expect(200)
+        .get('/')
+        .set('Accept-Encoding', ' gzip, deflate')
+        .expect(200)
     })
   })
 })

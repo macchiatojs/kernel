@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,7 +10,7 @@ describe('request', () => {
   })
 
   describe('.stale', () => {
-    it('should return false when the resource is not modified', async () => {
+    it('should return false when the resource is not modified', async () => { 
       const etag = '"12345"'
 
       app.use((request: Request, response: Response) => {
@@ -19,32 +20,31 @@ describe('request', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .set('If-None-Match', etag)
-      .expect(304)
+        .get('/')
+        .set('If-None-Match', etag)
+        .expect(304)
     })
 
-    it('should return true when the resource is modified', async () => {
-
+    it('should return true when the resource is modified', async () => { 
       app.use((request: Request, response: Response) => {
         response.set('ETag', '"123"')
         response.send(200, request.stale)
       })
 
       await request(app.start())
-      .get('/')
-      .set('If-None-Match', '"12345"')
-      .expect(200, 'true')
+        .get('/')
+        .set('If-None-Match', '"12345"')
+        .expect(200, 'true')
     })
 
-    it('should return true without response headers', async () => {
+    it('should return true without response headers', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, request.stale)
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'true')
+        .get('/')
+        .expect(200, 'true')
     })
   })
 })

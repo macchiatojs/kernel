@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,27 +10,27 @@ describe('request', () => {
   })
 
   describe('.query', () => {
-    it('when missing should return an empty object', async () => {
+    it('when missing should return an empty object', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, request.query)
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '{}')
+        .get('/')
+        .expect(200, '{}')
     })
 
-    it('when missing should return a parsed query-string', async () => {
+    it('when missing should return a parsed query-string', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, request.query.page)
       })
 
       await request(app.start())
-      .get('/?page=2')
-      .expect(200, '2')
+        .get('/?page=2')
+        .expect(200, '2')
     })
 
-    it('should stringify and replace the querystring and search', async () => {
+    it('should stringify and replace the querystring and search', async () => { 
       app.use((request: Request, response: Response) => {
         request.url?.should.be.ok()
         request.url?.should.be.equal('/store/shoes?page=2&color=blue')
@@ -41,12 +42,12 @@ describe('request', () => {
       })
 
       await request(app.start())
-      .get('/store/shoes')
-      .query({ page: 2, color: 'blue' })
-      .expect(200, 'work !')
+        .get('/store/shoes')
+        .query({ page: 2, color: 'blue' })
+        .expect(200, 'work !')
     })
 
-    it('should change .url but not .originalUrl', async () => {
+    it('should change .url but not .originalUrl', async () => { 
       app.use((request: Request, response: Response) => {
         request.url?.should.be.ok()
         request.url?.should.be.equal('/store/shoes?page=2')
@@ -57,20 +58,20 @@ describe('request', () => {
       })
 
       await request(app.start())
-      .get('/store/shoes')
-      .query({ page: 2 })
-      .expect(200, 'work !')
+        .get('/store/shoes')
+        .query({ page: 2 })
+        .expect(200, 'work !')
     })
 
-    it('should .query update the .querystring', async () => {
+    it('should .query update the .querystring', async () => { 
       app.use((request: Request, response: Response) => {
         request.query = { page: '2', color: 'blue' }
         response.send(200, request.querystring)
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'page=2&color=blue')
+        .get('/')
+        .expect(200, 'page=2&color=blue')
     })
   })
 })

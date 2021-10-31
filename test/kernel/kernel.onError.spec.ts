@@ -12,7 +12,7 @@ describe('kernel', () => {
   })
   
   describe('.onError', () => {
-    it('handle catch should response and throws 500', async () => {
+    it('handle catch should response and throws 500', async () => { 
       app.use(() => {
         throw new HttpError()
       })
@@ -27,7 +27,7 @@ describe('kernel', () => {
       
     })
 
-    it('handle catch should response and throws 404', async () => {
+    it('handle catch should response and throws 404', async () => { 
       app.use(() => {
         throw new HttpError(404, 'Not found')
       })
@@ -42,8 +42,8 @@ describe('kernel', () => {
       
     })
 
-    it('should handle errors when no content status', async () => {
-      app.use((request:Request, response: Response) => {
+    it('should handle errors when no content status', async () => { 
+      app.use((request: Request, response: Response) => {
         response.status = 204
         response.body = fs.createReadStream('does not exist')
       })
@@ -58,8 +58,8 @@ describe('kernel', () => {
       
     })
 
-    it('should handle all intermediate stream body errors', async () => {
-      app.use((request:Request, response: Response) => {
+    it('should handle all intermediate stream body errors', async () => { 
+      app.use((request: Request, response: Response) => {
         response.body = fs.createReadStream('does not exist')
         response.body = fs.createReadStream('does not exist')
         response.body = fs.createReadStream('does not exist')
@@ -74,7 +74,7 @@ describe('kernel', () => {
       .expect(404)
     })
 
-    it('should handle socket errors', async () => {
+    it('should handle socket errors', async () => { 
       const app = new Kernel()
   
       app.use((request: Request, response: Response) => {
@@ -93,7 +93,7 @@ describe('kernel', () => {
       assert(makeSureIsThrowError === 110)
     })
     
-    it('should expose message', async () => {
+    it('should expose message', async () => { 
       app.dev = false
 
       app.use(() => {
@@ -110,27 +110,29 @@ describe('kernel', () => {
       
     })
 
-    // it('should ignore error after headerSent', async () => {
-    //   app.dev = false
+    it('should ignore error after headerSent', (done) => {
+      // app.dev = false 
 
-    //   app.use(async (request: Request, response: Response) => {
-    //     response.status = 200
-    //     response.set('X-FOO', 'bar')
-    //     response.flush()
-    //     await Promise.reject(new Error('mock error'))
-    //     response.body = 'response'
-    //   })
+      app.use(async (request: Request, response: Response) => {
+        response.status = 200
+        response.set('X-FOO', 'bar')
+        response.flush()
+        await Promise.reject(new Error('mock error'))
+        response.body = 'response'
+      })
     
-    //   app.on('error', err => {
-    //     assert(err !== null)        
-    //     // assert(err.message === 'mock error')
-    //     // assert(err.headersSent === true)
-    //   })
+      app.on('error', err => {
+        assert(err !== null)        
+        assert(err.message === 'mock error')
+        assert(err.headersSent === true)
+        done()
+      })
 
-    //   await request(app.start())
-    //   .post('/')
-    //   .expect(200, '')
-    //   
-    // })
+      request(app.start())
+      .get('/')
+      .expect('X-Foo', 'Bar')
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      .expect(200, () => {}) 
+    })
   })
 })

@@ -1,9 +1,9 @@
 import assert from 'assert'
-import Kernel, { Request, Response } from '../../src'
+import Kernel from '../../src'
 
 describe('kernel', () => {
   describe('.stop', () => {
-    it('should stop', function () {
+    it('should stop', () => {
       const app = new Kernel()
 
       const started = app.start().address()
@@ -13,7 +13,7 @@ describe('kernel', () => {
       assert(stoped instanceof Kernel)
     })
 
-    it('should throw when stop before start', function () {
+    it('should throw when stop before start', () => {
       const app = new Kernel()
     
       const stoped = app.stop()
@@ -27,7 +27,7 @@ describe('kernel', () => {
   })
 
   describe('.reload', () => {
-    it('should stop then start again', function () {
+    it('should stop then start again', () => {
       const app = new Kernel()
       
       const started = app.start().address()      

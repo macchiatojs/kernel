@@ -8,24 +8,24 @@ import type { Context, Next } from '../../src'
 describe('kernel', () => {
   describe('koa-style middleware', () => {
     describe('.next()', () => {
-      it('should behave like koa', async () => {
+      it('should behave like koa', async () => { 
         const app = new Kernel({ expressify: false })
         const calls: number[] = []
     
         app
-        .use((context: Context, next: any) => {
+        .use((context: Context, next: Next) => {
           calls.push(1)
           return next().then(() => {
             calls.push(6)
           })
         })
-        .use((context: Context, next: any) => {
+        .use((context: Context, next: Next) => {
           calls.push(2)
           return next().then(() => {
             calls.push(5)
           })
         })
-        .use((context: Context, next: any) => {
+        .use((context: Context, next: Next) => {
           calls.push(3)
           return next().then(() => {
             calls.push(4)
@@ -41,24 +41,24 @@ describe('kernel', () => {
     })
 
     describe('compose', () => {
-      it('should wrap and compose the middlewares under the hood with koa compose module', async () => {
+      it('should wrap and compose the middlewares under the hood with koa compose module', async () => { 
         const app = new Kernel({ koaCompose: new WrapKoaCompose<Context, Next>() })
         const calls: number[] = []
     
         app
-        .use((context: Context, next: any) => {
+        .use((context: Context, next: Next) => {
           calls.push(1)
           return next().then(() => {
             calls.push(6)
           })
         })
-        .use((context: Context, next: any) => {
+        .use((context: Context, next: Next) => {
           calls.push(2)
           return next().then(() => {
             calls.push(5)
           })
         })
-        .use((context: Context, next: any) => {
+        .use((context: Context, next: Next) => {
           calls.push(3)
           return next().then(() => {
             calls.push(4)

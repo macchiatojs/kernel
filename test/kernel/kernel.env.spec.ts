@@ -4,7 +4,7 @@ import Kernel, { Request, Response } from '../../src'
 
 describe('kernel', () => {
   describe('.env', () => {
-    it('should be development', async () => {
+    it('should be development', async () => { 
       process.env.NODE_ENV = ''
       const app = new Kernel()
 
@@ -18,7 +18,7 @@ describe('kernel', () => {
       .expect(200, 'development')
     })
 
-    it('should be test', async () => {
+    it('should be test', async () => { 
       process.env.NODE_ENV = 'test'
       const app = new Kernel()
 

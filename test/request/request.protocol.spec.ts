@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,19 +10,18 @@ describe('request', () => {
   })
 
   describe('.protocol', () => {
-    it('should return the protocol string', async () => {
+    it('should return the protocol string', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.protocol)
       })
 
       await request(app.start())
-      .get('/')
-      .expect('http')
+        .get('/')
+        .expect('http')
     })
 
     describe('when "trust proxy" is enabled', () => {
-      it('should respect X-Forwarded-Proto', async () => {
-
+      it('should respect X-Forwarded-Proto', async () => { 
         app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
@@ -29,12 +29,12 @@ describe('request', () => {
         })
 
         await request(app.start())
-        .get('/')
-        .set('X-Forwarded-Proto', 'https')
-        .expect('https')
+          .get('/')
+          .set('X-Forwarded-Proto', 'https')
+          .expect('https')
       })
 
-      it('should default to the socket addr if X-Forwarded-Proto not present', async () => {
+      it('should default to the socket addr if X-Forwarded-Proto not present', async () => { 
         app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
@@ -43,11 +43,12 @@ describe('request', () => {
         })
 
         await request(app.start())
-        .get('/')
-        .expect('https')
+          .get('/')
+          .expect('https')
       })
 
-      // it('should ignore X-Forwarded-Proto if socket addr not trusted', async () => {
+      // // TODO: should add white-list and black-list with some fn...
+      // it('should ignore X-Forwarded-Proto if socket addr not trusted', async () => { 
       //   app.config.set('trust proxy', '10.0.0.1')
 
       //   app.use((request: Request, response: Response) => {
@@ -60,7 +61,7 @@ describe('request', () => {
       //   .expect('http')
       // })
 
-      it('should default to http', async () => {
+      it('should default to http', async () => { 
         app.config.set('trust proxy', true)
 
         app.use((request: Request, response: Response) => {
@@ -68,12 +69,12 @@ describe('request', () => {
         })
 
         await request(app.start())
-        .get('/')
-        .expect('http')
+          .get('/')
+          .expect('http')
       })
 
-      describe('when trusting hop count', function () {
-        it('should respect X-Forwarded-Proto', async () => {
+      describe('when trusting hop count', () => {
+        it('should respect X-Forwarded-Proto', async () => { 
           app.config.set('trust proxy', 1)
 
           app.use((request: Request, response: Response) => {
@@ -81,23 +82,23 @@ describe('request', () => {
           })
 
           await request(app.start())
-          .get('/')
-          .set('X-Forwarded-Proto', 'https')
-          .expect('https')
+            .get('/')
+            .set('X-Forwarded-Proto', 'https')
+            .expect('https')
         })
       })
     })
 
     describe('when "trust proxy" is disabled', () => {
-      it('should ignore X-Forwarded-Proto', async () => {
+      it('should ignore X-Forwarded-Proto', async () => { 
         app.use((request: Request, response: Response) => {
           response.end(request.protocol)
         })
 
         await request(app.start())
-        .get('/')
-        .set('X-Forwarded-Proto', 'https')
-        .expect('http')
+          .get('/')
+          .set('X-Forwarded-Proto', 'https')
+          .expect('http')
       })
     })
   })

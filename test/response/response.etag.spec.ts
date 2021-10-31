@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -9,7 +10,7 @@ describe('response', () => {
   })
 
   describe('.etag', () => {
-    it('should not modify an etag with quotes', async () => {
+    it('should not modify an etag with quotes', async () => { 
       app.use((request: Request, response: Response) => {
         response.etag = '"asdf"'
         response.send(200, response.etag)
@@ -20,7 +21,7 @@ describe('response', () => {
       .expect('"asdf"')
     })
 
-    it('should not modify a weak etag', async () => {
+    it('should not modify a weak etag', async () => { 
       app.use((request: Request, response: Response) => {
         response.etag = 'W/"asdf"'
         
@@ -28,19 +29,19 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect('W/"asdf"')
+        .get('/')
+        .expect('W/"asdf"')
     })
 
-    it('should add quotes around an etag if necessary', async () => {
+    it('should add quotes around an etag if necessary', async () => { 
       app.use((request: Request, response: Response) => {
         response.etag = 'asdf'
         response.send(200, response.etag)
       })
 
       await request(app.start())
-      .get('/')
-      .expect('"asdf"')
+        .get('/')
+        .expect('"asdf"')
     })
   })
 })

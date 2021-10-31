@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -9,37 +10,37 @@ describe('response', () => {
   })
   
   describe('.set(field, value)', () => {
-    it('should set a field value', async () => {
+    it('should set a field value', async () => { 
       app.use((request: Request, response: Response) => {
         response.set('x-foo', 'bar')
         response.send(200, response.get('x-foo'))
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'bar')
+        .get('/')
+        .expect(200, 'bar')
     })
 
-    it('should set a field value of array', async () => {
+    it('should set a field value of array', async () => { 
       app.use((request: Request, response: Response) => {
         response.set('x-foo', ['foo', 'bar'])
         response.send(200, response.get('x-foo'))
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '["foo","bar"]')
+        .get('/')
+        .expect(200, '["foo","bar"]')
     })
 
-    it('should set multiple fields', async () => {
+    it('should set multiple fields', async () => { 
       app.use((request: Request, response: Response) => {
         response.set({ foo: '1', bar: '2' })
         response.send(200, [response.get('foo'), response.get('bar')])
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '["1","2"]')
+        .get('/')
+        .expect(200, '["1","2"]')
     })
   })
 })

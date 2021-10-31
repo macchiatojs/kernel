@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 import { shouldNotHaveHeader } from './response.redirect.spec'
 
@@ -10,39 +11,37 @@ describe('response', () => {
   })
 
   describe('.type(str)', () => {
-    it('should set the Content-Type based on a filename', async () => {
+    it('should set the Content-Type based on a filename', async () => { 
       app.use((request: Request, response: Response) => {
         response.type = 'foo.js'
         response.end('let name = "imed";')
       })
 
       await request(app.start())
-      .get('/')
-      .expect('Content-Type', 'application/javascript; charset=utf-8')
-      
+        .get('/')
+        .expect('Content-Type', 'application/javascript; charset=utf-8')
     })
 
-    it('should default to empty', async () => {
+    it('should default to empty', async () => { 
       app.use((request: Request, response: Response) => {
         response.type = 'rawr'
         response.end('let name = "imed";')
       })
 
       await request(app.start())
-      .get('/')
-      .expect(shouldNotHaveHeader('Content-Type')) 
-      ;
+        .get('/')
+        .expect(shouldNotHaveHeader('Content-Type'))
     })
 
-    it('should set the Content-Type with type/subtype', async () => {
+    it('should set the Content-Type with type/subtype', async () => { 
       app.use((request: Request, response: Response) => {
         response.type = 'application/vnd.amazon.ebook'
         response.end('let name = "imed";')
       })
 
       await request(app.start())
-      .get('/')
-      .expect('Content-Type', 'application/vnd.amazon.ebook')
+        .get('/')
+        .expect('Content-Type', 'application/vnd.amazon.ebook')
     })
   })
 })

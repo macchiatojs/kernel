@@ -1,5 +1,6 @@
 import assert from 'assert'
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -10,7 +11,7 @@ describe('response', () => {
   })
   
   describe('.headerSent', () => {
-    it('should sent header', async () => {
+    it('should sent header', async () => { 
       app.use(async (request: Request, response: Response) => {
         assert(response.headerSent === false)
         response.redirect('http://google.com')

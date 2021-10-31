@@ -1,6 +1,6 @@
 import assert from 'assert'
 import request from 'supertest'
-import Kernel, { Request, Response } from '../../src'
+import Kernel, { Request, Response, Next } from '../../src'
 
 
 describe('kernel', () => {
@@ -12,15 +12,15 @@ describe('kernel', () => {
 
   describe('middleware', () => {
     describe('.next()', () => {
-      it('should behave like connect', async () => {
+      it('should behave like connect', async () => { 
         const calls: string[] = []
 
-        app.use((request: Request, response: Response, next: any) => {
+        app.use((request: Request, response: Response, next: Next) => {
           calls.push('one')
           next()
         })
 
-        app.use((request: Request, response: Response, next: any) => {
+        app.use((request: Request, response: Response, next: Next) => {
           calls.push('two')
           next()
         })

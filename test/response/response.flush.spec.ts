@@ -1,5 +1,6 @@
 // import { PassThrough } from 'stream'
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -10,7 +11,7 @@ describe('response', () => {
   })
 
   describe('.flush', () => {
-    it('should set headersSent', async () => {
+    it('should set headersSent', async () => { 
       app.use((request: Request, response: Response) => {
         response.flush()
         response.flush() // Should be idempotent.
@@ -22,7 +23,7 @@ describe('response', () => {
         .expect('true')
     })
 
-    it('should allow a response afterwards', async () => {
+    it('should allow a response afterwards', async () => { 
       app.use((request: Request, response: Response) => {
         response.set('foo', 'bar')
         response.flush()
@@ -34,7 +35,7 @@ describe('response', () => {
         .expect('bar')
     })
 
-    it('should send the correct status code', async () => {
+    it('should send the correct status code', async () => { 
       app.use((request: Request, response: Response) => {
         // sould put the status 1st before the flush method.
         response.status = 401
@@ -48,7 +49,7 @@ describe('response', () => {
         .expect(401, '[401,"bar"]')
     })
 
-    it('should fail to set the headers after flushHeaders', async () => {
+    it('should fail to set the headers after flushHeaders', async () => { 
       app.use((request: Request, response: Response) => {
         // sould put the status 1st before the flush method.
         response.status = 401
@@ -79,7 +80,8 @@ describe('response', () => {
         .expect(401, 'response.set fail response.status fail response.length fail')
     })
 
-    // it('should flush headers first and delay to send data', async () => {
+    // // TODO: see this.
+    // it('should flush headers first and delay to send data', async () => { 
     //   app.use((request: Request, response: Response) => {
     //     response.type = 'json'
     //     response.status = 200

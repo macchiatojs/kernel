@@ -1,5 +1,6 @@
 import assert from 'assert'
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -10,7 +11,7 @@ describe('response', () => {
   })
   
   describe('.inspect()', () => {
-    it('should return a json representation', async () => {
+    it('should return a json representation', async () => { 
       app.use((request: Request, response: Response) => {
         const inspect = response.inspect()
 
@@ -23,8 +24,8 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '{"status":200,"headers":{}}')
+        .get('/')
+        .expect(200, '{"status":200,"headers":{}}')
     })
   })
 })

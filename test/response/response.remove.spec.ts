@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -9,7 +10,7 @@ describe('response', () => {
   })
   
   describe('.remove(field, value)', () => {
-    it('should remove a field', async () => {
+    it('should remove a field', async () => { 
       app.use((request: Request, response: Response) => {
         response.set('x-foo', 'bar')
         response.remove('x-foo')
@@ -17,8 +18,8 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '')
+        .get('/')
+        .expect(200, '')
     })
   })
 })

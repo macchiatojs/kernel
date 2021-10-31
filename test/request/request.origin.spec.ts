@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,14 +10,14 @@ describe('request', () => {
   })
 
   describe('.origin', () => {
-    it('should return the origin of url', async () => {
+    it('should return the origin of url', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, request.origin)
       })
 
       await request(app.start())
-      .get('/')
-      .expect('http://127.0.0.1')
+        .get('/')
+        .expect('http://127.0.0.1')
     })
   })
 })

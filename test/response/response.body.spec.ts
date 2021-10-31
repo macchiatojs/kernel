@@ -2,7 +2,8 @@
 // import path from 'path'
 import assert from 'assert'
 import request from 'supertest'
-import Kernel, { Request, Response } from '../../src'
+
+import Kernel, { Request, Response, Next } from '../../src'
 
 describe('response', () => {
   let app: Kernel
@@ -12,7 +13,7 @@ describe('response', () => {
   })
 
   describe('.body', () => {
-    it('should not override when Content-Type is set', async () => {
+    it('should not override when Content-Type is set', async () => { 
       app.use((request: Request, response: Response) => {
         assert(response.body === undefined)
         response.type = 'png'
@@ -25,8 +26,8 @@ describe('response', () => {
         .expect(200)
     })
 
-    it('should override as json when body is an object', async () => {
-      app.use((request: Request, response: Response, next: any) => {
+    it('should override as json when body is an object', async () => { 
+      app.use((request: Request, response: Response, next: Next) => {
         assert.strictEqual(response.body, undefined)
         response.type = 'html'
         response.body = '<em>hey</em>'
@@ -51,7 +52,7 @@ describe('response', () => {
         .expect(200, '{"foo":"bar"}')
     })
 
-    it('should override length when body is an object', async () => {
+    it('should override length when body is an object', async () => { 
       app.use((request: Request, response: Response) => {
         assert.strictEqual(response.body, undefined)
         response.type = 'html'
@@ -66,7 +67,7 @@ describe('response', () => {
         .expect(200, 'something')
     })
 
-    it('should default to undefined when a string is given', async () => {
+    it('should default to undefined when a string is given', async () => { 
       app.use((request: Request, response: Response) => {
         assert.strictEqual(response.body, undefined)
         response.body = 'Imed'
@@ -78,7 +79,7 @@ describe('response', () => {
         .expect(200, 'Imed')
     })
 
-    it('should set length when a string is given', async () => {
+    it('should set length when a string is given', async () => { 
       app.use((request: Request, response: Response) => {
         response.body = 'Imed'
       })
@@ -89,7 +90,7 @@ describe('response', () => {
         .expect(200, 'Imed')
     })
 
-    it('should set length when an html is given', async () => {
+    it('should set length when an html is given', async () => { 
       const string = '<h1>Tobi</h1>'
 
       app.use((request: Request, response: Response) => {
@@ -102,7 +103,8 @@ describe('response', () => {
         .expect(200, string)
     })
 
-    // it('should get html when an xml is given', async () => {
+    // TODO: see this
+    // it('should get html when an xml is given', async () => { 
     //   app.use((request: Request, response: Response) => {
     //     // response.type = 'html'
     //     response.body = '<?xml version="1.0" encoding="UTF-8"?><x-tag>1</x-tag>'
@@ -117,7 +119,7 @@ describe('response', () => {
     //     .expect(400, '')
     // })
 
-    // it('when a stream is given should default to an octet stream', async () => {
+    // it('when a stream is given should default to an octet stream', async () => { 
     //   app.use((request: Request, response: Response) => {
     //     response.body = fs.createReadStream(path.join(__dirname, '../../LICENSE'))
     //   })
@@ -128,7 +130,7 @@ describe('response', () => {
     //     .expect(200)
     // })
 
-    it('should default to an octet stream when a buffer is given', async () => {
+    it('should default to an octet stream when a buffer is given', async () => { 
       app.use((request: Request, response: Response) => {
         response.body = Buffer.from('hey')
       })
@@ -139,7 +141,7 @@ describe('response', () => {
         .expect(200)
     })
 
-    it('should set length when a buffer is given', async () => {
+    it('should set length when a buffer is given', async () => { 
       app.use((request: Request, response: Response) => {
         response.body = Buffer.from('Imed')
       })
@@ -151,7 +153,7 @@ describe('response', () => {
         .expect(200)
     })
 
-    it('should default to json when an object is given', async () => {
+    it('should default to json when an object is given', async () => { 
       app.use((request: Request, response: Response) => {
         response.body = { foo: 'bar' }
       })

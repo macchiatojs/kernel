@@ -1,5 +1,6 @@
 import request from 'supertest'
-import Kernel, { Request, Response } from '../../src'
+
+import Kernel, { Request, Response, Next } from '../../src'
 
 describe('response', () => {
   let app: Kernel
@@ -9,8 +10,8 @@ describe('response', () => {
   })
   
   describe('.headers', () => {
-    it('should return the response header object', async () => {
-      app.use((request: Request, response: Response, next: any) => {
+    it('should return the response header object', async () => { 
+      app.use((request: Request, response: Response, next: Next) => {
         response.set('X-Token', 'secret123#crypted')
         response.set('Content-Type', 'application/json')
 
@@ -26,14 +27,14 @@ describe('response', () => {
       .expect(200, '{"x-token":"secret123#crypted","content-type":"application/json"}')
     })
 
-    it('should return empty object', async () => {
+    it('should return empty object', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, response.headers)
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '{}')
+        .get('/')
+        .expect(200, '{}')
     })
   })
 })

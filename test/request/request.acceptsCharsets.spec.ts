@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -10,7 +11,7 @@ describe('request', () => {
 
   describe('.acceptsCharsets(type)', () => {
     describe('when Accept-Charset is not present', () => {
-      it('should return true', async () => {
+      it('should return true', async () => { 
         app.use((request: Request, response: Response) => {
           response.end(request.acceptsCharsets('utf-8') ? 'yes' : 'no')
         })
@@ -21,8 +22,8 @@ describe('request', () => {
       })
     })
 
-    describe('when Accept-Charset is present', function () {
-      it('should return true', async () => {
+    describe('when Accept-Charset is present', () => {
+      it('should return true', async () => { 
         app.use((request: Request, response: Response) => {
           response.end(request.acceptsCharsets('utf-8') ? 'yes' : 'no')
         })
@@ -33,7 +34,7 @@ describe('request', () => {
           .expect('yes')
       })
 
-      it('should return false otherwise', async () => {
+      it('should return false otherwise', async () => { 
         app.use((request: Request, response: Response) => {
           response.end(request.acceptsCharsets('utf-8') ? 'yes' : 'no')
         })

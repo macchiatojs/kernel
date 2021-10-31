@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,25 +10,25 @@ describe('request', () => {
   })
 
   describe('.length', () => {
-    it('should return length in content-length', async () => {
+    it('should return length in content-length', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, request.length)
       })
 
       await request(app.start())
-      .post('/')
-      .set('content-length', '10')
-      .expect('10')
+        .post('/')
+        .set('content-length', '10')
+        .expect('10')
     })
 
-    it('with no content-length present', async () => {
+    it('with no content-length present', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, request.length)
       })
 
       await request(app.start())
-      .post('/')
-      .expect('0')
+        .post('/')
+        .expect('0')
     })
   })
 })

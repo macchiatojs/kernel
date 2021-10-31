@@ -1,6 +1,7 @@
 import assert from 'assert'
 import request from 'supertest'
 import Cookies from 'cookies'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -11,12 +12,12 @@ describe('response', () => {
   })
 
   describe('.cookies', () => {
-    it('should exist cookies inside the request', async () => {
+    it('should exist cookies inside the request', async () => { 
       app.use((request: Request, response: Response) => {
         assert(response.cookies instanceof Cookies)
       })
 
-      await await request(app.start()).get('/')
+      await request(app.start()).get('/')
     })
   })
 })

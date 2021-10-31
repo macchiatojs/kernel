@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,7 +10,7 @@ describe('request', () => {
   })
 
   describe('.accepts(type)', () => {
-    it('should return true when Accept is not present', async () => {
+    it('should return true when Accept is not present', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts('json') ? 'yes' : 'no')
       })
@@ -19,7 +20,7 @@ describe('request', () => {
         .expect('yes')
     })
 
-    it('should return true when present', async () => {
+    it('should return true when present', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts('json') ? 'yes' : 'no')
       })
@@ -30,7 +31,7 @@ describe('request', () => {
         .expect('yes')
     })
 
-    it('should return false otherwise', async () => {
+    it('should return false otherwise', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts('json') ? 'yes' : 'no')
       })
@@ -42,7 +43,7 @@ describe('request', () => {
     })
   })
 
-  it('should accept an argument list of type names', async () => {
+  it('should accept an argument list of type names', async () => { 
     app.use((request: Request, response: Response) => {
       response.end(request.accepts('json', 'html'))
     })
@@ -54,7 +55,7 @@ describe('request', () => {
   })
 
   describe('.accepts(types)', () => {
-    it('should return the first when Accept is not present', async () => {
+    it('should return the first when Accept is not present', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['json', 'html']))
       })
@@ -64,7 +65,7 @@ describe('request', () => {
         .expect('json')
     })
 
-    it('should return the first acceptable type', async () => {
+    it('should return the first acceptable type', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['json', 'html']))
       })
@@ -75,7 +76,7 @@ describe('request', () => {
         .expect('html')
     })
 
-    it('should return false when no match is made', async () => {
+    it('should return false when no match is made', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['text/html', 'application/json']) ? 'yup' : 'nope')
       })
@@ -86,7 +87,7 @@ describe('request', () => {
         .expect('nope')
     })
 
-    it('should take quality into account', async () => {
+    it('should take quality into account', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['text/html', 'application/json']))
       })
@@ -97,7 +98,7 @@ describe('request', () => {
         .expect('application/json')
     })
 
-    it('should return the first acceptable type with canonical mime types', async () => {
+    it('should return the first acceptable type with canonical mime types', async () => { 
       app.use((request: Request, response: Response) => {
         response.end(request.accepts(['application/json', 'text/html']))
       })

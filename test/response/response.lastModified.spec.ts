@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -9,7 +10,7 @@ describe('response', () => {
   })
 
   describe('.lastModified', () => {
-    it('should set the header as a UTCString', async () => {
+    it('should set the header as a UTCString', async () => { 
       app.use((request: Request, response: Response) => {
         const date = new Date()
         response.lastModified = date
@@ -17,11 +18,11 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'true')
+        .get('/')
+        .expect(200, 'true')
     })
 
-    it('should work with date strings', async () => {
+    it('should work with date strings', async () => { 
       app.use((request: Request, response: Response) => {
         const date = new Date()
         response.lastModified = date.toString()
@@ -29,11 +30,11 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'true')
+        .get('/')
+        .expect(200, 'true')
     })
 
-    it('should get the header as a Date', async () => {
+    it('should get the header as a Date', async () => { 
       // Note: Date() removes milliseconds, but it's practically important.
       app.use((request: Request, response: Response) => {
         const date = new Date()
@@ -42,18 +43,18 @@ describe('response', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'true')
+        .get('/')
+        .expect(200, 'true')
     })
 
-    it('when lastModified not set should get undefined', async () => {
+    it('when lastModified not set should get undefined', async () => { 
       app.use((request: Request, response: Response) => {
         response.send(200, response.lastModified)
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, '')
+        .get('/')
+        .expect(200, '')
     })
   })
 })

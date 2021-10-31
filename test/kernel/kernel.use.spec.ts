@@ -1,1 +1,3 @@
-// TESTED INSIDE THE MIDDLEWARES PACKAGE.
+/**
+ * Tested inside the middleware test.
+ */

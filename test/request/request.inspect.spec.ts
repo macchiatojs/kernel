@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('request', () => {
@@ -9,7 +10,7 @@ describe('request', () => {
   })
 
   describe('.inspect', () => {
-    it('should return the inspect object', async () => {
+    it('should return the inspect object', async () => { 
       app.use((request: Request, response: Response) => {
         request.inspect().should.be.ok()
         request.inspect().should.be.containDeep({
@@ -25,8 +26,8 @@ describe('request', () => {
       })
 
       await request(app.start())
-      .get('/')
-      .expect('Welcome !')
+        .get('/')
+        .expect('Welcome !')
     })
   })
 })

@@ -1,4 +1,5 @@
 import request from 'supertest'
+
 import Kernel, { Request, Response } from '../../src'
 
 describe('response', () => {
@@ -9,15 +10,15 @@ describe('response', () => {
   })
   
   describe('.get(field)', () => {
-    it('should get the response header field', async () => {
+    it('should get the response header field', async () => { 
       app.use((request: Request, response: Response) => {
         response.set('Content-Type', 'text/x-foo')
         response.send(200, response.get('Content-Type'))
       })
 
       await request(app.start())
-      .get('/')
-      .expect(200, 'text/x-foo')
+        .get('/')
+        .expect(200, 'text/x-foo')
     })
   })
 })

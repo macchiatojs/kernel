@@ -1,6 +1,6 @@
 {
   "name": "@macchiatojs/kernel",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -11,7 +11,7 @@
     "lint:all": "eslint . --ext .ts",
     "lint": "eslint ./src --ext .ts",
     "pretest": "rimraf dist",
-    "t": "mocha test/kernel/kernel.onError.spec.ts --exit",
+    "test:single:local:dev": "mocha test/kernel/kernel.onError.spec.ts --exit",
     "test": "mocha --recursive --exit",
     "test:watch": "mocha --recursive --watch --exit",
     "build": "tsc -d",

@@ -1,5 +1,14 @@
 # CHANGE LOG
 
+### v0.17.0 (1 Nov 2021)
+
+- fix middleware engine type.
+- fix the picker of middleware engine.
+- ignore some linter warn related to any.
+- improve coverage 98%~99%.
+- update mime-types deps from v2.1.32 to v2.1.33
+- update typescript devDeps from v4.3.5 to v4.4.4
+
 ### v0.16.0 (31 Oct 2021)
 
 - improve ts types and js-doc comments.

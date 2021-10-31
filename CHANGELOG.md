@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.16.0 (31 Oct 2021)
+
+- improve ts types and js-doc comments.
+
 ### v0.15.0 (26 Oct 2021)
 
 - use custom behave using `ee-first` over `on-finished`.

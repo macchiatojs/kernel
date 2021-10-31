@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { IncomingHttpHeaders, IncomingMessage } from 'http'
 import { format as stringify, URL } from 'url'
 import type { Url } from 'url'
@@ -12,10 +13,10 @@ import parseUrl from 'parseurl'
 import typeIs from 'type-is'
 import { isIP } from 'net'
 import fresh from 'fresh'
-
-import type Response from './response'
-import type Kernel from './kernel'
 import type Cookies from 'cookies'
+
+import type Kernel from './kernel'
+import type Response from './response'
 import { METHODS } from './utils'
 
 type toJSON = {
@@ -448,7 +449,7 @@ class Request {
    */
   public get protocol(): string {
     if (this.socket.encrypted) return 'https'
-    if (!this.config!.get('trust proxy')) return 'http'
+    if (!this.config?.get('trust proxy')) return 'http'
     return (this.get('x-forwarded-proto') || 'http').split(/\s*,\s*/)[0]
   }
 

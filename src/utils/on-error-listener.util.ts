@@ -1,5 +1,6 @@
-import HttpError from '@macchiatojs/http-error'
 import type { ServerResponse } from 'http'
+import HttpError from '@macchiatojs/http-error'
+
 import type Context from '../context'
 import type Kernel from '../kernel'
 import { paramsFactory } from './params-factory.util'
@@ -39,6 +40,7 @@ export function onErrorListener(err: Error | HttpError | null): (app: Kernel, ra
         .forEach((name) => rawResponse.removeHeader(name))
 
       /* istanbul ignore next */
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let { message = 'Internal Server Error', stack, expose } = err as any // eslint-disable-line prefer-const
       /* istanbul ignore next */
       let statusCode = err['status'] || err['statusCode'] || 500

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { Stream } from 'stream'
 import type { TLSSocket } from 'tls'
 import { STATUS_CODES as statuses } from 'http'
@@ -8,20 +9,20 @@ import { is as typeIs } from 'type-is'
 import contentDisposition from 'content-disposition'
 import HttpError from '@macchiatojs/http-error'
 import vary from 'vary'
+import type Cookies from 'cookies'
 
 import type Kernel from './kernel'
 import type Request from './request'
-import type Cookies from 'cookies'
 import type { BodyContent, KeyValueObject, onErrorHandler } from './types'
-import { 
+import {
   getFlag,
+  writable,
   getLength,
   getMimeType,
-  writable,
+  respondHook,
+  FLAG_OBJECT,
   FLAG_STREAM,
   EMPTY_BODY_STATUES,
-  respondHook,
-  FLAG_OBJECT
 } from './utils'
 
 type toJSON = { 
@@ -83,6 +84,7 @@ class Response {
    * @api public
    */
   public get raw(): ServerResponse {
+    /* istanbul ignore next */
     return this.#rawResponse
   }
 
@@ -508,6 +510,7 @@ class Response {
    * @return {boolean}
    * @api public
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public end(...args: any): void {
     return this.#rawResponse.end(...args)
   }

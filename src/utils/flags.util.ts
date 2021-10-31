@@ -1,4 +1,5 @@
 import Stream from 'stream'
+
 import type { BodyContent } from '../types'
 
 // body type flags

@@ -1,15 +1,15 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import EE from 'events'
 import { Server } from 'http'
 import type { ListenOptions } from 'net'
 import type { IncomingMessage, ServerResponse } from 'http'
-import Middleware from '@macchiatojs/middleware'
-import KoaifyMiddleware from '@macchiatojs/koaify-middleware'
-import WrapKoaCompose from '@macchiatojs/wrap-koa-compose'
+import type WrapKoaCompose from '@macchiatojs/wrap-koa-compose'
 import type HttpError from '@macchiatojs/http-error'
 
 import Context from './context'
 import type { MacchiatoHandler, Next, onErrorHandler, MiddlewareEngine } from './types'
-import { paramsFactory, respond, onFinishedAfterware, onErrorListener } from './utils'
+import { pickMiddlewareEngine, paramsFactory, respond, onFinishedAfterware, onErrorListener } from './utils'
 
 /**
  * Kernel
@@ -28,17 +28,8 @@ class Kernel extends EE {
 
   constructor(options?: { expressify?: boolean, koaCompose?: WrapKoaCompose<Context, Next> }) {
     super()
-    /**
-     * Think to move Middleware Engine outside the kernel
-     * and remove expressify option and force it by extract
-     * the right behave.
-     * 
-     * ==> better to minify the kernel.
-     */  
     this.expressify = options?.koaCompose ? false : options?.expressify ?? true    
-    this.middleware = this.expressify 
-      ? new Middleware<Request, Response>()
-      : /* istanbul ignore next */ options?.koaCompose ?? new KoaifyMiddleware<Context>()
+    this.middleware = pickMiddlewareEngine(this.expressify, options?.koaCompose)
     this.env = process.env.NODE_ENV || 'development'
     this.dev = this.env.startsWith('dev')
     this.config = new Map<string, unknown>([
@@ -55,6 +46,7 @@ class Kernel extends EE {
   #handleRequest() {
     return (req: IncomingMessage, res: ServerResponse): Promise<Next|void>|void => {
       const context = new Context(this, this.config, req, res)
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const onError: onErrorHandler<Error|HttpError|null> = (err?: Error|HttpError|null): void => onErrorListener(err!)(this, res)(context)
       const handleResponse = () => respond(context)
 

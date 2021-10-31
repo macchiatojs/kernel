@@ -1,8 +1,9 @@
 import Stream from 'stream'
+import type { ServerResponse } from 'http'
+
 import { EMPTY_BODY_STATUES } from './statues.util'
 import { FLAG_OBJECT, FLAG_BUFFER, FLAG_STREAM, getFlag } from './flags.util'
 import type Context from '../context'
-import type { ServerResponse } from 'http'
 import type { BodyContent } from '../types'
 
 /**

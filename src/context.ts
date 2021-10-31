@@ -1,9 +1,10 @@
 import Cookies from 'cookies'
+import type { Option as CookiesOption } from 'cookies'
+import type { IncomingMessage, ServerResponse } from 'http'
+
 import Request from './request'
 import Response from './response'
 import type Kernel from './kernel'
-import type { Option as CookiesOption } from 'cookies'
-import type { IncomingMessage, ServerResponse } from 'http'
 
 /**
  * Initializer

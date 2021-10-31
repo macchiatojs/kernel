@@ -1,5 +1,6 @@
 import EE from 'events'
 import { Server } from 'http'
+import type { ListenOptions } from 'net'
 import type { IncomingMessage, ServerResponse } from 'http'
 import Middleware from '@macchiatojs/middleware'
 import KoaifyMiddleware from '@macchiatojs/koaify-middleware'
@@ -68,6 +69,15 @@ class Kernel extends EE {
     }
   }
 
+  start(port?: number, hostname?: string, backlog?: number, listeningListener?: () => void): Server
+  start(port?: number, hostname?: string, listeningListener?: () => void): Server
+  start(port?: number, backlog?: number, listeningListener?: () => void): Server
+  start(port?: number, listeningListener?: () => void): Server
+  start(path: string, backlog?: number, listeningListener?: () => void): Server
+  start(path: string, listeningListener?: () => void): Server
+  start(options: ListenOptions, listeningListener?: () => void): Server
+  start(handle: any, backlog?: number, listeningListener?: () => void): Server
+  start(handle: any, listeningListener?: () => void): Server
   start(...args: any): Server {
     if (!this.#server) this.#server = new Server()
     this.#server.on('request', this.#handleRequest())
@@ -82,6 +92,15 @@ class Kernel extends EE {
     return this
   }
 
+  reload(callback?: onErrorHandler, port?: number, hostname?: string, backlog?: number, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, port?: number, hostname?: string, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, port?: number, backlog?: number, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, port?: number, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, path?: string, backlog?: number, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, path?: string,  listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, options?: ListenOptions, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, handle?: any, backlog?: number, listeningListener?: () => void): Server
+  reload(callback?: onErrorHandler, handle?: any, listeningListener?: () => void): Server
   reload(callback?: onErrorHandler, ...args: any): Server {
     return this.stop(callback).start(...args)
   }

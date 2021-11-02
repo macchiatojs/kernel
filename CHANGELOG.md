@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.17.1 (1 Nov 2021)
+
+- adapte MiddlewareEngine type for the router module.
+
 ### v0.17.0 (1 Nov 2021)
 
 - fix middleware engine type.

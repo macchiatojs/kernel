@@ -26,10 +26,36 @@ class Kernel extends EE {
   middleware: MiddlewareEngine
   config: Map<string, unknown>
 
-  constructor(options?: { expressify?: boolean, koaCompose?: WrapKoaCompose<Context, Next> }) {
+  // TODO: 
+  // - make some external module to handle thinks like sendFile and render. 
+  //   ---> sendFile (fs.createReadStream(srcFilepath).pipe(res -res.writeHead(200, headers)-))
+  // - make some external logger module.
+  // - make some external session module.
+  // - make some external session providers modules (redis, mongodb, sql).
+  // - make some external views module based on consolidate (+15 views engine).
+  // - make some external views module based on ejs or jade as principle template engine support.
+  // - make some external views module based my costum jsx template engine.
+  // - solve mime-types behave and should support only the famous types and addd to config it.
+  // - add ajv support.
+
+  constructor(options?: { 
+    expressify?: boolean,
+    // middlewares: MacchiatoHandler[],
+    koaCompose?: WrapKoaCompose<Context, Next>
+  }) {
     super()
+    // TODO: 
+    // - migrate to use process.env for configuration.
+    // - inject the options to process.env with some prefix like 'MACCHIATO_CONFIG_*'
     this.expressify = options?.koaCompose ? false : options?.expressify ?? true    
     this.middleware = pickMiddlewareEngine(this.expressify, options?.koaCompose)
+    // // TODO: add support for some middlewares through the start behave.
+    // if(options?.middlewares?.length !== 0) {
+    //   for (const middleware of options?.middlewares as MacchiatoHandler[]) {
+    //     this.middleware.push(middleware)
+    //   }
+    // }
+
     this.env = process.env.NODE_ENV || 'development'
     this.dev = this.env.startsWith('dev')
     this.config = new Map<string, unknown>([

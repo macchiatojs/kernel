@@ -1,4 +1,5 @@
 import assert from 'assert'
+
 import Kernel from '../../src'
 
 describe('kernel', () => {

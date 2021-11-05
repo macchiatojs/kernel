@@ -1,7 +1,8 @@
 import request from 'supertest'
 import assert from 'assert'
 
-import Kernel, { Request, Response } from '../../src'
+import Kernel from '../../src'
+import type { Request, Response } from '../../src'
 
 // TODO: work why header is undefined.
 describe('request', () => {

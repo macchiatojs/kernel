@@ -2,7 +2,9 @@ import fs from 'fs'
 import assert from 'assert'
 import request from 'supertest'
 import HttpError from '@macchiatojs/http-error'
-import Kernel, { Request, Response } from '../../src'
+
+import Kernel from '../../src'
+import type { Request, Response } from '../../src'
 
 describe('kernel', () => {
   let app: Kernel

@@ -1,6 +1,8 @@
 import assert from 'assert'
 import request from 'supertest'
-import Kernel, { Request, Response, Next } from '../../src'
+
+import Kernel from '../../src'
+import type { Request, Response, Next } from '../../src'
 
 
 describe('kernel', () => {

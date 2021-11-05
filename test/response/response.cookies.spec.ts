@@ -2,7 +2,8 @@ import assert from 'assert'
 import request from 'supertest'
 import Cookies from 'cookies'
 
-import Kernel, { Request, Response } from '../../src'
+import Kernel from '../../src'
+import type { Request, Response } from '../../src'
 
 describe('response', () => {
   let app: Kernel

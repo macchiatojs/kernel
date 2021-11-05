@@ -1,6 +1,7 @@
 import request from 'supertest'
 
-import Kernel, { Request, Response } from '../../src'
+import Kernel from '../../src'
+import type { Request, Response } from '../../src'
 
 describe('request.sendStatus()', () => {
   let app: Kernel

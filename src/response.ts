@@ -427,13 +427,14 @@ class Response {
    * @api public
    */
   public set type(type: string) {
-    type = getMimeType(type)
+    type = getMimeType(type, this.#app.__getType) as string
 
     if (type) {
       this.set('content-type', type)
-    } else {
-      this.remove('content-type')
+      return
     }
+      
+    this.remove('content-type')
   }
 
   /**

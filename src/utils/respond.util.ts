@@ -23,7 +23,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   }
 
   // set the content-type only if not yet set
-  const needSetType = !rawResponse.headersSent && !rawResponse.getHeader('content-type')
+  const needSetType = !rawResponse.headersSent && !rawResponse.getHeader('Content-Type')
   // force to set json as content type.
   const needSetJsonType = !rawResponse.headersSent && !rawResponse.hasHeader('Content-Length')
 
@@ -31,7 +31,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   if (flag === FLAG_STREAM) {
     /* istanbul ignore next */
     if (needSetType) {
-      rawResponse.setHeader('content-type', 'application/octet-stream')
+      rawResponse.setHeader('Content-Type', 'application/octet-stream')
     }
 
     return (body as Stream).pipe(rawResponse)
@@ -40,7 +40,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   // body is buffer
   if (flag === FLAG_BUFFER) {
     if (needSetType) {
-      rawResponse.setHeader('content-type', 'application/octet-stream')
+      rawResponse.setHeader('Content-Type', 'application/octet-stream')
     }
 
     return rawResponse.end(body)
@@ -50,7 +50,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   if (flag === FLAG_OBJECT) {
     // https://github.com/koajs/koa/pull/1131/files
     if (needSetType || needSetJsonType) {
-      rawResponse.setHeader('content-type', 'application/json')
+      rawResponse.setHeader('Content-Type', 'application/json')
     }
 
     body = JSON.stringify(body)

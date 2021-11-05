@@ -1,14 +1,7 @@
-/**
- * TODO: support only 2 types ['application/json', 'text/plain']
- *  and make some behave to handle the other types like fastify
- *  here: https://www.fastify.io/docs/latest/ContentTypeParser/
- *  to mnimize the bundle of macchiato.
- *  PS: 'mime-db' take more than 65% as you can see 
- *  here: https://bundlephobia.com/package/@macchiatojs/kernel
- */
-
-import { contentType as getType } from 'mime-types'
 import hashlruCache  from 'hashlru'
+
+import { getType } from './mime-types'
+import { GetContentTypeHandler } from '..'
 
 /**
  * cache use to improve the mime type fetch process.
@@ -21,9 +14,16 @@ const typeHashlruCache = hashlruCache(100)
  * @param {string} type 
  * @return {string}
  */
-export function getMimeType(type: string): string {
+export function getMimeType(type: string, handler?: GetContentTypeHandler): string|boolean {
+  // use the local behave tiny but handle all most requirment.
+  if (!handler) return getType(type)
+
+  // use to handle behave like mime-types.
   let mimeType: string = typeHashlruCache.get(type)
 
+  // should implement all .type in the test with both internal and external behave
+  // and don't worry if it's work with internal 1000% work with external 'mime-type'. 
+  /* istanbul ignore next */
   if (!mimeType) {
     mimeType = getType(type) as string
     typeHashlruCache.set(type, mimeType)

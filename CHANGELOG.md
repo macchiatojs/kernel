@@ -1,6 +1,10 @@
 # CHANGE LOG
 
-### v0.18.0 (xx xxx xxxx)
+### v0.19.0 (6 Nov 2021)
+
+- fix getMimeType to use the correct handler.
+
+### v0.18.0 (5 Nov 2021)
 
 - move @macchiatojs/wrap-koa-compose from devDep. to dep. to avoid the build
   error in some other @macchiatojs project.

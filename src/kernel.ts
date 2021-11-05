@@ -49,6 +49,7 @@ class Kernel extends EE {
   // - make some external views module based on ejs or jade as principle template engine support.
   // - make some external views module based my costum jsx template engine.
   // - add ajv support.
+  // - think to use SWC 🐱‍🐉.
 
   constructor(options?: { 
     expressify?: boolean,

@@ -1,7 +1,7 @@
 import hashlruCache  from 'hashlru'
 
 import { getType } from './mime-types'
-import { GetContentTypeHandler } from '..'
+import { GetContentTypeHandler } from '../types'
 
 /**
  * cache use to improve the mime type fetch process.
@@ -25,7 +25,7 @@ export function getMimeType(type: string, handler?: GetContentTypeHandler): stri
   // and don't worry if it's work with internal 1000% work with external 'mime-type'. 
   /* istanbul ignore next */
   if (!mimeType) {
-    mimeType = getType(type) as string
+    mimeType = handler(type) as string
     typeHashlruCache.set(type, mimeType)
   }
 

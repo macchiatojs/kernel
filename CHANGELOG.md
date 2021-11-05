@@ -4,6 +4,11 @@
 
 - move @macchiatojs/wrap-koa-compose from devDep. to dep. to avoid the build
   error in some other @macchiatojs project.
+- remove mime-types from dep.
+- build internal mime-types module with the same behave.
+- adapte to use external module over the internal mime-types.
+- fix, lint and write tests.
+- ensure the same level of coverage percent.
 
 ### v0.17.1 (1 Nov 2021)
 

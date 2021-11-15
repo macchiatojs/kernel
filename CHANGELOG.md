@@ -1,5 +1,10 @@
 # CHANGE LOG
 
+### v0.20.0 (15 Nov 2021)
+
+- fix getContentType option behave.
+- add render method to response.
+
 ### v0.19.0 (6 Nov 2021)
 
 - fix getMimeType to use the correct handler.

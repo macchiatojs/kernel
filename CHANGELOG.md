@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.20.1 (15 Nov 2021)
+
+- recreate the error listner.
+
 ### v0.20.0 (15 Nov 2021)
 
 - fix getContentType option behave.

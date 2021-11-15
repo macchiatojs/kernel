@@ -39,6 +39,8 @@ class Context {
     // initialize the request and the this.response.
     this.request.initialize(app, config, this.response, this.cookies)
     this.response.initialize(app, config, this.request, this.cookies)
+
+    // TODO: add response.locals - context.locals = response.state - context.state
   }
 }
 

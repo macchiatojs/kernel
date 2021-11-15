@@ -9,11 +9,13 @@ import { is as typeIs } from 'type-is'
 import contentDisposition from 'content-disposition'
 import HttpError from '@macchiatojs/http-error'
 import vary from 'vary'
+import ViewEngine from '@macchiatojs/views'
+import type { ViewEngineSettings } from '@macchiatojs/views'
 import type Cookies from 'cookies'
 
 import type Kernel from './kernel'
 import type Request from './request'
-import type { BodyContent, KeyValueObject, onErrorHandler } from './types'
+import type { BodyContent, KeyValueObject, onErrorHandler, GetContentTypeHandler } from './types'
 import {
   getFlag,
   writable,
@@ -46,6 +48,7 @@ class Response {
   #BODY: BodyContent
   config!: Map<string, unknown>
   #cookies!: Cookies
+  #viewEngineInstance!: ViewEngine
   flag!: number
   onError!: onErrorHandler<Error|HttpError|null>
 
@@ -65,6 +68,9 @@ class Response {
     this.config = config
     this.#request = request
     this.#cookies = cookies
+    this.#viewEngineInstance = new ViewEngine(
+      this.config.get('view engine') as ViewEngineSettings
+    )
   }
 
   /**
@@ -427,7 +433,7 @@ class Response {
    * @api public
    */
   public set type(type: string) {
-    type = getMimeType(type, this.#app.__getType) as string
+    type = getMimeType(type, this.config['getContentType'] as GetContentTypeHandler) as string
 
     if (type) {
       this.set('content-type', type)
@@ -532,7 +538,7 @@ class Response {
    */
   public send(code: number, body: BodyContent): ServerResponse|void {
     /* istanbul ignore next */
-    if (getFlag(body) !== 4) {
+    if (getFlag(body) !== FLAG_STREAM) {
       this.#rawResponse['responded'] = true
       this.#rawResponse.statusCode = code
     }
@@ -598,6 +604,22 @@ class Response {
     this.type = 'txt'
 
     return this.send(statusCode, body);
+  }
+
+  public async render<T = unknown>(targetViewName: string, params?: KeyValueObject<T>) {
+    let content, status
+
+    try {
+      content = await this.#viewEngineInstance.generateHtml(targetViewName, params || {})
+      this.type = 'html'
+      status = this.status
+    } catch (error) {
+      const internalError = new HttpError(500)
+      content = `${internalError.message} - ${error}`
+      status = +internalError.status
+    }
+
+    return this.send(status, content)
   }
 
   /**

@@ -6,6 +6,7 @@ import type { ListenOptions } from 'net'
 import type { IncomingMessage, ServerResponse } from 'http'
 import type WrapKoaCompose from '@macchiatojs/wrap-koa-compose'
 import type HttpError from '@macchiatojs/http-error'
+import type { ViewEngineSettings } from '@macchiatojs/views'
 
 import Context from './context'
 import type { 
@@ -37,7 +38,6 @@ class Kernel extends EE {
   dev: boolean
   middleware: MiddlewareEngine
   config: Map<string, unknown>
-  __getType?: GetContentTypeHandler
 
   // TODO: 
   // - make some external module to handle thinks like sendFile and render. 
@@ -45,14 +45,12 @@ class Kernel extends EE {
   // - make some external logger module.
   // - make some external session module.
   // - make some external session providers modules (redis, mongodb, sql).
-  // - make some external views module based on consolidate (+15 views engine).
-  // - make some external views module based on ejs or jade as principle template engine support.
-  // - make some external views module based my costum jsx template engine.
   // - add ajv support.
   // - think to use SWC 🐱‍🐉.
 
   constructor(options?: { 
     expressify?: boolean,
+    viewEngineConfig?: ViewEngineSettings,
     // middlewares: MacchiatoHandler[],
     getContentType?: GetContentTypeHandler
     koaCompose?: WrapKoaCompose<Context, Next>
@@ -69,13 +67,18 @@ class Kernel extends EE {
     //     this.middleware.push(middleware)
     //   }
     // }
-    this.__getType = options?.getContentType
     this.env = process.env.NODE_ENV || 'development'
     this.dev = this.env.startsWith('dev')
     this.config = new Map<string, unknown>([
       ['subdomain offset', 2],
-      ['trust proxy', false]
+      ['trust proxy', false],
+      ['view engine', {
+        root: 'views',
+        viewExt: 'html',
+        ...options?.viewEngineConfig
+      }],
     ])
+    this.config['getContentType'] = options?.getContentType
   }
 
   use(fn: MacchiatoHandler): Kernel {

@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.20.2 (15 Nov 2021)
+
+- go back to the old error listner style.
+
 ### v0.20.1 (15 Nov 2021)
 
 - recreate the error listner.

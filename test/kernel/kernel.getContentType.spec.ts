@@ -10,7 +10,7 @@ describe('kernel', () => {
       const app = new Kernel({ getContentType: contentType })
 
       app.use((request: Request, response: Response) => {
-        response.send(200, typeof app.__getType !== 'undefined')
+        response.send(200, typeof app.config['getContentType'] !== 'undefined')
       })
 
       await request(app.start())
@@ -22,7 +22,7 @@ describe('kernel', () => {
       const app = new Kernel()
 
       app.use((request: Request, response: Response) => {        
-        response.send(200, typeof app.__getType === 'undefined')
+        response.send(200, typeof app.config['getContentType'] === 'undefined')
       })
 
       await request(app.start())

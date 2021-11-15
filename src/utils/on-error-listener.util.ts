@@ -25,38 +25,41 @@ export function onErrorListener(err: Error | HttpError | null): (app: Kernel, ra
         err = new HttpError(err['code'], err.message, err)
       }
 
-      const headersSent =
+      // send error handler
+      (() => {
+        const headersSent =
         rawResponse.headersSent || !writable(rawResponse)
           ? (err['headersSent'] = true)
           : false
 
+        if (headersSent) return
+
+        rawResponse
+          .getHeaderNames()
+          .forEach((name) => rawResponse.removeHeader(name))
+
+        /* istanbul ignore next */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let { message = 'Internal Server Error', stack, expose } = err as any // eslint-disable-line prefer-const
+        /* istanbul ignore next */
+        let statusCode = err['status'] || err['statusCode'] || 500
+        /* istanbul ignore next */
+        message = app.dev ? stack : expose ? message : `${statusCode}`
+
+        if (err['code'] === 'ENOENT') statusCode = 404
+
+        // force text/plain
+        rawResponse.writeHead(statusCode, {
+          'content-length': Buffer.byteLength(message),
+          'content-type': 'text/plain',
+        })
+
+        // respond
+        rawResponse.end(message)
+      })()
+
       // emit error
       app.emit('error', err, ...paramsFactory(app.expressify, context))
-
-      if (headersSent) return
-
-      rawResponse
-        .getHeaderNames()
-        .forEach((name) => rawResponse.removeHeader(name))
-
-      /* istanbul ignore next */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let { message = 'Internal Server Error', stack, expose } = err as any // eslint-disable-line prefer-const
-      /* istanbul ignore next */
-      let statusCode = err['status'] || err['statusCode'] || 500
-      /* istanbul ignore next */
-      message = app.dev ? stack : expose ? message : `${statusCode}`
-
-      if (err['code'] === 'ENOENT') statusCode = 404
-
-      // force text/plain
-      rawResponse.writeHead(statusCode, {
-        'content-length': Buffer.byteLength(message),
-        'content-type': 'text/plain',
-      })
-
-      // respond
-      rawResponse.end(message)
     }
   }
 }

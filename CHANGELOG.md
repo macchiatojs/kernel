@@ -1,5 +1,14 @@
 # CHANGE LOG
 
+### v0.21.0 (not released yet)
+
+- add `sendFile` method to 'response'.
+- add `code` method to 'response' with same behave as `statusCode`.
+- add description for `render` method on 'response'.
+- TODO: add unit test for `sendFile`.
+- fix eslint.
+- upgrade all deps and devDeps.
+
 ### v0.20.2 (15 Nov 2021)
 
 - go back to the old error listner style.

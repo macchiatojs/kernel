@@ -40,9 +40,6 @@ class Kernel extends EE {
   config: Map<string, unknown>
 
   // TODO: 
-  // - make some external module to handle thinks like sendFile and render. 
-  //   ---> sendFile (fs.createReadStream(srcFilepath).pipe(res -res.writeHead(200, headers)-))
-  // - make some external logger module.
   // - make some external session module.
   // - make some external session providers modules (redis, mongodb, sql).
   // - add ajv support.

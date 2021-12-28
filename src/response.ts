@@ -3,6 +3,8 @@ import type { Stream } from 'stream'
 import type { TLSSocket } from 'tls'
 import { STATUS_CODES as statuses } from 'http'
 import type { OutgoingHttpHeaders, ServerResponse } from 'http'
+import { createReadStream } from 'fs'
+import type { PathLike } from 'fs'
 import { extname } from 'path'
 import assert from 'assert'
 import { is as typeIs } from 'type-is'
@@ -568,6 +570,17 @@ class Response {
   }
 
   /**
+   * Set response status code.
+   * 
+   * @param   {number} code 
+   * @return  {ServerResponse}
+   */
+  public code(code) {
+    this.status = code
+    return this
+  }
+
+  /**
    * Send a JSON response.
    * 
    *     response.json(null);
@@ -606,6 +619,11 @@ class Response {
     return this.send(statusCode, body);
   }
 
+  /**
+   * Render `view` with given `targetViewName` and passed `options`.
+   * 
+   * @public
+   */
   public async render<T = unknown>(targetViewName: string, params?: KeyValueObject<T>) {
     let content, status
 
@@ -620,6 +638,27 @@ class Response {
     }
 
     return this.send(status, content)
+  }
+
+  /**
+   * Send file content through `locatedFilePath`.
+   * TODO: create unit test for this method.
+   * 
+   * @public
+   */
+  public sendFile(locatedFilePath: PathLike): Promise<unknown> {
+    // TODO: 
+    //    ensure that the file exist ---> fs.existsSync(locatedFilePath)
+    //    else respond with 404 or 5xx as INTERNAL_SERVER_ERROR.
+    const readableFileStream = createReadStream(locatedFilePath).pipe(this.raw)
+    
+    // streamEndListener for the readableFileStream
+    return new Promise((resolve, reject) => {
+      readableFileStream
+        .on('end', resolve)
+        .on('finish', resolve)
+        .on('error', reject);
+    })
   }
 
   /**

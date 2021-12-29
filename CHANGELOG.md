@@ -5,7 +5,6 @@
 - add `sendFile` method to 'response'.
 - add `code` method to 'response' with same behave as `statusCode`.
 - add description for `render` method on 'response'.
-- TODO: add unit test for `sendFile`.
 - fix eslint.
 - upgrade all deps and devDeps.
 

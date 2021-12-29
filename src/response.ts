@@ -3,7 +3,7 @@ import type { Stream } from 'stream'
 import type { TLSSocket } from 'tls'
 import { STATUS_CODES as statuses } from 'http'
 import type { OutgoingHttpHeaders, ServerResponse } from 'http'
-import { createReadStream } from 'fs'
+import { existsSync, createReadStream } from 'fs'
 import type { PathLike } from 'fs'
 import { extname } from 'path'
 import assert from 'assert'
@@ -29,7 +29,7 @@ import {
   EMPTY_BODY_STATUES,
 } from './utils'
 
-type toJSON = { 
+type toJSON = {
   status: number,
   message: string,
   headers: OutgoingHttpHeaders
@@ -52,7 +52,7 @@ class Response {
   #cookies!: Cookies
   #viewEngineInstance!: ViewEngine
   flag!: number
-  onError!: onErrorHandler<Error|HttpError|null>
+  onError!: onErrorHandler<Error | HttpError | null>
 
   constructor(rawResponse: ServerResponse) {
     this.#rawResponse = rawResponse
@@ -128,7 +128,7 @@ class Response {
    * @api public
    */
   public get message(): string {
-    return this.#rawResponse.statusMessage 
+    return this.#rawResponse.statusMessage
   }
 
   /**
@@ -386,7 +386,7 @@ class Response {
    * @return {Date}
    * @api public
    */
-  public get lastModified(): string|Date {
+  public get lastModified(): string | Date {
     const date = this.get('last-modified')
     if (date) return new Date(date as string)
     return ''
@@ -441,7 +441,7 @@ class Response {
       this.set('content-type', type)
       return
     }
-      
+
     this.remove('content-type')
   }
 
@@ -453,7 +453,7 @@ class Response {
    * @return {string|false}
    * @api public
    */
-  public is(type?, ...types): string|false {
+  public is(type?, ...types): string | false {
     return typeIs(this.type, type, ...types)
   }
 
@@ -538,7 +538,7 @@ class Response {
    * @param {string|number|Buffer|object|stream|null|undefined} body
    * @api public
    */
-  public send(code: number, body: BodyContent): ServerResponse|void {
+  public send(code: number, body: BodyContent): ServerResponse | void {
     /* istanbul ignore next */
     if (getFlag(body) !== FLAG_STREAM) {
       this.#rawResponse['responded'] = true
@@ -554,7 +554,7 @@ class Response {
    * @return {Cookies}
    * @api public
    */
-  public get cookies(): Cookies{
+  public get cookies(): Cookies {
     return this.#cookies
   }
 
@@ -588,10 +588,10 @@ class Response {
    * @param   {object} payload
    * @return  {Kernel}
    */
-  public json(payload: KeyValueObject|null) {
+  public json(payload: KeyValueObject | null) {
     return this.send(
       ...(
-        payload && getFlag(payload) !== FLAG_OBJECT 
+        payload && getFlag(payload) !== FLAG_OBJECT
           ? [400, new HttpError(400).message]
           : [this.status, payload]
       ) as [number, unknown]
@@ -646,19 +646,23 @@ class Response {
    * 
    * @public
    */
-  public sendFile(locatedFilePath: PathLike): Promise<unknown> {
-    // TODO: 
-    //    ensure that the file exist ---> fs.existsSync(locatedFilePath)
-    //    else respond with 404 or 5xx as INTERNAL_SERVER_ERROR.
+  public async sendFile(locatedFilePath: PathLike): Promise<void> {
+    if (!existsSync(locatedFilePath)) {
+      this.send(404, `File ${new HttpError(404).message}`)
+      return
+    }
+
     const readableFileStream = createReadStream(locatedFilePath).pipe(this.raw)
-    
+
     // streamEndListener for the readableFileStream
-    return new Promise((resolve, reject) => {
+    const streamEndListener = new Promise((resolve, reject) => {
       readableFileStream
         .on('end', resolve)
         .on('finish', resolve)
         .on('error', reject);
     })
+
+    await streamEndListener
   }
 
   /**

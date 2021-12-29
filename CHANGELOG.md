@@ -1,6 +1,6 @@
 # CHANGE LOG
 
-### v0.21.0 (not released yet)
+### v0.21.0 (29 Dec 2021)
 
 - add `sendFile` method to 'response'.
 - add `code` method to 'response' with same behave as `statusCode`.

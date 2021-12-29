@@ -1,4 +1,3 @@
-import assert, { throws } from 'assert';
 import path from 'path';
 import request from 'supertest';
 

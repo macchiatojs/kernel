@@ -521,7 +521,8 @@ class Response {
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public end(...args: any): void {
-    return this.#rawResponse.end(...args)
+    this.#rawResponse.end(...args)
+    return
   }
 
   /**

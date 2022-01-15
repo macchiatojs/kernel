@@ -19,7 +19,8 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
 
   // body is null
   if (body === null) {
-    return rawResponse.end()
+    rawResponse.end()
+    return
   }
 
   // set the content-type only if not yet set
@@ -73,12 +74,16 @@ export function respond({ rawResponse, response, request: { method } }: Context)
     // https://github.com/koajs/koa/issues/1547
     /* istanbul ignore if */
     method === 'HEAD'
-  ) return rawResponse.end()
+  ) {
+    rawResponse.end()
+    return
+  }
 
   // ignore body
   if (EMPTY_BODY_STATUES.has(response.status)) {
     response.body = null
-    return rawResponse.end()
+    rawResponse.end()
+    return
   }
 
   // respond

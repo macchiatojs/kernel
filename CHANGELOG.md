@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.22.0 (15 Jan 2022)
+
+- fix types.
+
 ### v0.21.0 (29 Dec 2021)
 
 - add `sendFile` method to 'response'.

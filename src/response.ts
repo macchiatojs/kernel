@@ -650,39 +650,33 @@ class Response {
    * @public
    */
   public async sendFile(locatedFilePath: PathLike): Promise<void> {
-   try {
-      // verify that the locatedFilePath exist 
-      if (!existsSync(locatedFilePath)) {
-        this.send(404, `File ${new HttpError(404).message}`)
-        return
-      }
-
-      // avoid to use sync behave here because big files can broke the event loop).
-      const stats = await stat(locatedFilePath)
-
-      // update headers for the response
-      this.status = this.#request.fresh ? 304 : 200
-      this.lastModified = stats.mtime
-      this.length = stats.size
-      this.type = extname(locatedFilePath as string)
-
-      // create the readable stream then pipe it to the raw response
-      const readableFileStream = createReadStream(locatedFilePath).pipe(this.raw)
-
-      // streamEndListener for the readableFileStream
-      const streamEndListener = new Promise((resolve, reject) => {
-        readableFileStream
-          .on('end', resolve)
-          .on('finish', resolve)
-          .on('error', reject);
-      })
-
-      await streamEndListener
-    } catch (error) {
-      if (FS_ERROR_CODES_NOT_FOUND[(error as Error)['code']]) return
-      (error as Error)['status'] = 500
-      throw error
+    // verify that the locatedFilePath exist 
+    if (!existsSync(locatedFilePath)) {
+      this.send(404, `File ${new HttpError(404).message}`)
+      return
     }
+
+    // avoid to use sync behave here because big files can broke the event loop).
+    const stats = await stat(locatedFilePath)
+
+    // update headers for the response
+    this.status = /* this.#request.fresh ? 304 : */ 200
+    this.lastModified = stats.mtime
+    this.length = stats.size
+    this.type = extname(locatedFilePath as string)
+
+    // create the readable stream then pipe it to the raw response
+    const readableFileStream = createReadStream(locatedFilePath).pipe(this.raw)
+
+    // streamEndListener for the readableFileStream
+    const streamEndListener = new Promise((resolve, reject) => {
+      readableFileStream
+        .on('end', resolve)
+        .on('finish', resolve)
+        .on('error', reject);
+    })
+
+    await streamEndListener
   }
 
   /**

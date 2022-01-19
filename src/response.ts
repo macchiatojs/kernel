@@ -27,8 +27,7 @@ import {
   respondHook,
   FLAG_OBJECT,
   FLAG_STREAM,
-  EMPTY_BODY_STATUES,
-  FS_ERROR_CODES_NOT_FOUND
+  EMPTY_BODY_STATUES
 } from './utils'
 
 type toJSON = {
@@ -645,7 +644,6 @@ class Response {
 
   /**
    * Send file content through `locatedFilePath`.
-   * TODO: create unit test for this method.
    * 
    * @public
    */

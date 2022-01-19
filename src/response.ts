@@ -4,6 +4,7 @@ import type { TLSSocket } from 'tls'
 import { STATUS_CODES as statuses } from 'http'
 import type { OutgoingHttpHeaders, ServerResponse } from 'http'
 import { existsSync, createReadStream } from 'fs'
+import { stat } from 'fs/promises'
 import type { PathLike } from 'fs'
 import { extname } from 'path'
 import assert from 'assert'
@@ -27,6 +28,7 @@ import {
   FLAG_OBJECT,
   FLAG_STREAM,
   EMPTY_BODY_STATUES,
+  FS_ERROR_CODES_NOT_FOUND
 } from './utils'
 
 type toJSON = {
@@ -648,22 +650,39 @@ class Response {
    * @public
    */
   public async sendFile(locatedFilePath: PathLike): Promise<void> {
-    if (!existsSync(locatedFilePath)) {
-      this.send(404, `File ${new HttpError(404).message}`)
-      return
+   try {
+      // verify that the locatedFilePath exist 
+      if (!existsSync(locatedFilePath)) {
+        this.send(404, `File ${new HttpError(404).message}`)
+        return
+      }
+
+      // avoid to use sync behave here because big files can broke the event loop).
+      const stats = await stat(locatedFilePath)
+
+      // update headers for the response
+      this.status = this.#request.fresh ? 304 : 200
+      this.lastModified = stats.mtime
+      this.length = stats.size
+      this.type = extname(locatedFilePath as string)
+
+      // create the readable stream then pipe it to the raw response
+      const readableFileStream = createReadStream(locatedFilePath).pipe(this.raw)
+
+      // streamEndListener for the readableFileStream
+      const streamEndListener = new Promise((resolve, reject) => {
+        readableFileStream
+          .on('end', resolve)
+          .on('finish', resolve)
+          .on('error', reject);
+      })
+
+      await streamEndListener
+    } catch (error) {
+      if (FS_ERROR_CODES_NOT_FOUND[(error as Error)['code']]) return
+      (error as Error)['status'] = 500
+      throw error
     }
-
-    const readableFileStream = createReadStream(locatedFilePath).pipe(this.raw)
-
-    // streamEndListener for the readableFileStream
-    const streamEndListener = new Promise((resolve, reject) => {
-      readableFileStream
-        .on('end', resolve)
-        .on('finish', resolve)
-        .on('error', reject);
-    })
-
-    await streamEndListener
   }
 
   /**

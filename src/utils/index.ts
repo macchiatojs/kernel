@@ -1,3 +1,4 @@
+export * from './files-error-code'
 export * from './flags.util'
 export * from './get-length.util'
 export * from './get-mime-type.util'

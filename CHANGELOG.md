@@ -1,6 +1,6 @@
 # CHANGE LOG
 
-### v0.23.0 (19 Jan 2022)
+### v0.23.0 (20 Jan 2022)
 
 - add headers when respond with `sendFile`.
 

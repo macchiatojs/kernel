@@ -1,5 +1,9 @@
 # CHANGE LOG
 
+### v0.24.0 (18 Feb 2022)
+
+- improve flags behave by use an enum.
+
 ### v0.23.0 (20 Jan 2022)
 
 - add headers when respond with `sendFile`.

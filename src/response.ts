@@ -25,8 +25,7 @@ import {
   getLength,
   getMimeType,
   respondHook,
-  FLAG_OBJECT,
-  FLAG_STREAM,
+  FLAGS,
   EMPTY_BODY_STATUES
 } from './utils'
 
@@ -175,7 +174,7 @@ class Response {
     this.flag = getFlag(value)
 
     // stream
-    if (this.flag === FLAG_STREAM) {
+    if (this.flag === FLAGS.Stream) {
       /* istanbul ignore next */
       if (!new Set((value as Stream).listeners('error')).has(this.onError)) {
         (value as Stream).on('error', this.onError)
@@ -542,7 +541,7 @@ class Response {
    */
   public send(code: number, body: BodyContent): ServerResponse | void {
     /* istanbul ignore next */
-    if (getFlag(body) !== FLAG_STREAM) {
+    if (getFlag(body) !== FLAGS.Stream) {
       this.#rawResponse['responded'] = true
       this.#rawResponse.statusCode = code
     }
@@ -593,8 +592,7 @@ class Response {
   public json(payload: KeyValueObject | null) {
     return this.send(
       ...(
-        payload && getFlag(payload) !== FLAG_OBJECT
-          ? [400, new HttpError(400).message]
+        payload && getFlag(payload) !== FLAGS.Object ? [400, new HttpError(400).message]
           : [this.status, payload]
       ) as [number, unknown]
     )

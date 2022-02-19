@@ -3,10 +3,12 @@ import Stream from 'stream'
 import type { BodyContent } from '../types'
 
 // body type flags
-export const FLAG_STRING = 0
-export const FLAG_OBJECT = 1
-export const FLAG_BUFFER = 2
-export const FLAG_STREAM = 4
+export enum FLAGS {
+  String,
+  Object,
+  Buffer,
+  Stream
+}
 
 /**
  * determine the right flag for the current body.
@@ -15,8 +17,8 @@ export const FLAG_STREAM = 4
  * @return {number}
  */
 export function getFlag(body: BodyContent): number {
-  if (!body || typeof body === 'string') return FLAG_STRING
-  if (Buffer.isBuffer(body)) return FLAG_BUFFER
-  if (body instanceof Stream) return FLAG_STREAM
-  return FLAG_OBJECT
+  if (!body || typeof body === 'string') return FLAGS.String
+  if (Buffer.isBuffer(body)) return FLAGS.Buffer
+  if (body instanceof Stream) return FLAGS.Stream
+  return FLAGS.Object
 }

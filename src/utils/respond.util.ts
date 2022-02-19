@@ -2,7 +2,7 @@ import Stream from 'stream'
 import type { ServerResponse } from 'http'
 
 import { EMPTY_BODY_STATUES } from './statues.util'
-import { FLAG_OBJECT, FLAG_BUFFER, FLAG_STREAM, getFlag } from './flags.util'
+import { FLAGS, getFlag } from './flags.util'
 import type Context from '../context'
 import type { BodyContent } from '../types'
 
@@ -29,7 +29,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   const needSetJsonType = !rawResponse.headersSent && !rawResponse.hasHeader('Content-Length')
 
   // body is stream
-  if (flag === FLAG_STREAM) {
+  if (flag === FLAGS.Stream) {
     /* istanbul ignore next */
     if (needSetType) {
       rawResponse.setHeader('Content-Type', 'application/octet-stream')
@@ -39,7 +39,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   }
 
   // body is buffer
-  if (flag === FLAG_BUFFER) {
+  if (flag === FLAGS.Buffer) {
     if (needSetType) {
       rawResponse.setHeader('Content-Type', 'application/octet-stream')
     }
@@ -48,7 +48,7 @@ export function respondHook(rawResponse: ServerResponse, body: BodyContent = nul
   }
 
   // body is json
-  if (flag === FLAG_OBJECT) {
+  if (flag === FLAGS.Object) {
     // https://github.com/koajs/koa/pull/1131/files
     if (needSetType || needSetJsonType) {
       rawResponse.setHeader('Content-Type', 'application/json')

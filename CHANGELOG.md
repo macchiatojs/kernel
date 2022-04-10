@@ -1,5 +1,10 @@
 # CHANGE LOG
 
+### unreleased
+
+- imporve the onErrorListener behave and types.
+- improve the code by remove diabled linter comments.
+
 ### v0.24.0 (18 Feb 2022)
 
 - improve flags behave by use an enum.

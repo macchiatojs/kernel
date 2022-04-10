@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import EE from 'events'
 import { Server } from 'http'
 import type { ListenOptions } from 'net'
@@ -86,8 +84,7 @@ class Kernel extends EE {
   #handleRequest() {
     return (req: IncomingMessage, res: ServerResponse): Promise<Next|void>|void => {
       const context = new Context(this, this.config, req, res)
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const onError: onErrorHandler<Error|HttpError|null> = (err?: Error|HttpError|null): void => onErrorListener(err!)(this, res)(context)
+      const onError: onErrorHandler<Error|HttpError|null> = (err?) => onErrorListener(err)(this, res)(context)
       const handleResponse = () => respond(context)
 
       onFinishedAfterware(res, context.response.onError = onError)
@@ -101,15 +98,10 @@ class Kernel extends EE {
     }
   }
 
-  start(port?: number, hostname?: string, backlog?: number, listeningListener?: () => void): Server
   start(port?: number, hostname?: string, listeningListener?: () => void): Server
-  start(port?: number, backlog?: number, listeningListener?: () => void): Server
   start(port?: number, listeningListener?: () => void): Server
-  start(path: string, backlog?: number, listeningListener?: () => void): Server
-  start(path: string, listeningListener?: () => void): Server
   start(options: ListenOptions, listeningListener?: () => void): Server
-  start(handle: any, backlog?: number, listeningListener?: () => void): Server
-  start(handle: any, listeningListener?: () => void): Server
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   start(...args: any): Server {
     if (!this.#server) this.#server = new Server()
     this.#server.on('request', this.#handleRequest())
@@ -117,22 +109,15 @@ class Kernel extends EE {
   }
 
   stop(callback?: onErrorHandler): Kernel {
-    if (this.#server) {
-      this.#server.close(callback)
-    }
-
+    if (!this.#server) console.warn('We cann\'t find the server instance. you should start the server first');
+    else this.#server.close(callback)
     return this
   }
 
-  reload(callback?: onErrorHandler, port?: number, hostname?: string, backlog?: number, listeningListener?: () => void): Server
   reload(callback?: onErrorHandler, port?: number, hostname?: string, listeningListener?: () => void): Server
-  reload(callback?: onErrorHandler, port?: number, backlog?: number, listeningListener?: () => void): Server
   reload(callback?: onErrorHandler, port?: number, listeningListener?: () => void): Server
-  reload(callback?: onErrorHandler, path?: string, backlog?: number, listeningListener?: () => void): Server
-  reload(callback?: onErrorHandler, path?: string,  listeningListener?: () => void): Server
   reload(callback?: onErrorHandler, options?: ListenOptions, listeningListener?: () => void): Server
-  reload(callback?: onErrorHandler, handle?: any, backlog?: number, listeningListener?: () => void): Server
-  reload(callback?: onErrorHandler, handle?: any, listeningListener?: () => void): Server
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   reload(callback?: onErrorHandler, ...args: any): Server {
     return this.stop(callback).start(...args)
   }

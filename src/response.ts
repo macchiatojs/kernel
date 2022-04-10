@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { Stream } from 'stream'
 import type { TLSSocket } from 'tls'
 import { STATUS_CODES as statuses } from 'http'

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import type { IncomingHttpHeaders, IncomingMessage } from 'http'
 import { format as stringify, URL } from 'url'
 import type { Url } from 'url'

@@ -6,6 +6,8 @@ import type Kernel from '../kernel'
 import { paramsFactory } from './params-factory.util'
 import { writable } from './writable.util'
 
+type onErrorListener = (app: Kernel, rawResponse: ServerResponse) => (context: Context) => void
+
 /**
  * Error Handler used from the kernel as response afterware
  * and injected as coreware on response instance to handle
@@ -14,20 +16,18 @@ import { writable } from './writable.util'
  * @param {Error|HttpError|null} err
  * @return void
  */
-export function onErrorListener(err: Error | HttpError | null): (app: Kernel, rawResponse: ServerResponse) => (context: Context) => void {
+export function onErrorListener(err?: Error | HttpError | null): onErrorListener {
   return (app: Kernel, rawResponse: ServerResponse) => {
     return (context: Context) => {
       // don't do anything if there is no error.
-      if (err === null) return
+      if (!err) return
 
-      if (!HttpError.isHttpError(err)) {
-        /* istanbul ignore next */
-        err = new HttpError(err['code'], err.message, err)
-      }
+      /* istanbul ignore next */
+      if (!HttpError.isHttpError(err)) err = new HttpError(err['code'], err.message, err)
 
       const headersSent =
         rawResponse.headersSent || !writable(rawResponse)
-          ? (err['headersSent'] = true)
+          ? (err as HttpError)['headersSent'] = true
           : false
 
       // emit error
@@ -35,28 +35,27 @@ export function onErrorListener(err: Error | HttpError | null): (app: Kernel, ra
 
       if (headersSent) return
 
+      // clean header response
       rawResponse
         .getHeaderNames()
         .forEach((name) => rawResponse.removeHeader(name))
 
       /* istanbul ignore next */
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let { message = 'Internal Server Error', stack, expose } = err as any // eslint-disable-line prefer-const
+      const { message, stack, expose } = err as HttpError
       /* istanbul ignore next */
-      let statusCode = err['status'] || err['statusCode'] || 500
+      const statusCode = err['code'] === 'ENOENT' ? 404 : (err['status'] || err['statusCode'] || 500)
       /* istanbul ignore next */
-      message = app.dev ? stack : expose ? message : `${statusCode}`
-
-      if (err['code'] === 'ENOENT') statusCode = 404
-
-      // force text/plain
-      rawResponse.writeHead(statusCode, {
-        'content-length': Buffer.byteLength(message),
-        'content-type': 'text/plain',
-      })
-
-      // respond
-      rawResponse.end(message)
+      const messageContent = (app.dev ? !!stack && stack : !expose && `${statusCode}`) || message
+      
+      // prepare the response.
+      rawResponse
+        // force text/plain
+        .writeHead(statusCode, {
+          'content-length': Buffer.byteLength(messageContent),
+          'content-type': 'text/plain',
+        })
+        // respond
+        .end(messageContent)
     }
   }
 }

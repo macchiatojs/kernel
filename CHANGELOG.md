@@ -4,6 +4,7 @@
 
 - imporve the onErrorListener behave and types.
 - improve the code by remove diabled linter comments.
+- update dependencies and devDep.
 
 ### v0.24.0 (18 Feb 2022)
 
